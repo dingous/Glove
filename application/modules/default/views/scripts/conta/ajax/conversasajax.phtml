@@ -1,0 +1,209 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<?php
+function formataNome($nome)
+{	
+	$nome = strtolower($nome);
+	$preposicoes = array(" da ", " do ", " de ", " das ", " dos ");
+	$nome = str_replace($preposicoes, " ", $nome);	
+	$exp = explode(" ", $nome);
+	if(count($exp) > 1)
+	{
+		$nome = ucfirst($exp[0]) . " " . (count($exp) >= 2 ? ($exp[1] == "" ? ucfirst($exp[2]) : ucfirst($exp[1])) : ucfirst($exp[1]));	
+	}else
+	{
+		$nome = ucfirst($exp[0]);		
+	}
+	return $nome;
+}
+
+
+?>
+
+
+
+<script>
+  
+	   $(document).ready(function(){
+		
+				
+		$(".btnAceitar").bind("click", function(ui, e)
+		{
+			var id = $(this).attr("id");
+			
+				$.getJSON('/conta/confirmaamigo',
+		
+					{ amigo : id, status : 1}
+				,
+				function (data) 
+				{ 
+					$("#linha"+id).fadeOut();
+					
+					
+					/*window.parent.socket.disconnect();
+					
+				    window.parent.socket =   window.parent.io.connect(window.parent.url, { 'max reconnection attempts': 100, 'auto connect': true });*/
+					
+					
+					 var amigos = window.parent.$.fn.interfaceChat.metodos.amigos();
+					 amigos.success(function (data){					
+							var listaamigos = window.parent.$.fn.interfaceChat.metodos.listaamigos(data);
+					  });
+					
+
+					/*var interfaceChat =  window.parent.$("body").interfaceChat
+					(
+						{
+							url: url,
+							onPegaMeusDados: function (data) {
+								 window.parent.socket.emit('adduser', { usuario: data, namespace: namespace });
+							},
+							onAbreJanela: function (data) {
+								//$.fn.interfaceChat.metodos.registraSessaoChat(data.destinatario);
+							},
+							onDigitandoMensagem: function (data) {
+								 window.parent.socket.emit('digitandomsg', { remetente: data.remetente, destinatario: data.destinatario, sala: data.sala, msg: data.msg });
+							},
+							onDigitandoMensagemLimpa: function (data) {
+								 window.parent.socket.emit('digitandomsglimpa', { remetente: data.remetente, destinatario: data.destinatario, sala: data.sala, msg: data.msg });
+							},
+							onEnviaMensagem: function (data) {
+								socket.emit('sendchat', { remetente: data.remetente, destinatario: data.destinatario, sala: data.sala, msg: data.msg });
+							}
+						}
+					);*/
+							
+					
+					
+					
+					var atual = parseInt(window.parent.$("#contaSolicitacoes").html());
+					var diminui = (atual - 1);	
+					if(diminui > 0)
+					{
+						window.parent.$("#contaSolicitacoes").html(diminui.toString())
+					}else
+					{
+							window.parent.$("#contaSolicitacoes").html("0")
+					}
+					
+					window.parent.parent.$().toastmessage('showToast', {
+						text     :  data.msg,
+						stayTime   : 6000,
+						type     : 'success'
+					});		
+					
+					
+					
+				});	
+		});
+		
+		
+		$(".btnRec").bind("click", function(ui, e)
+		{
+			var id = $(this).attr("id");
+			
+				$.getJSON('/conta/confirmaamigo',
+		
+					{ amigo : id, status : 0}
+				,
+				function (data) 
+				{ 
+					$("#linha"+id).fadeOut();
+					
+					
+					var atual = parseInt(window.parent.$("#contaSolicitacoes").html());
+					var diminui = (atual - 1);	
+					if(diminui > 0)
+					{
+						window.parent.$("#contaSolicitacoes").html(diminui.toString())
+					}else
+					{
+							window.parent.$("#contaSolicitacoes").html("0")
+					}
+					
+					window.parent.parent.$().toastmessage('showToast', {
+						text     :  data.msg,
+						stayTime   : 6000,
+						type     : 'success'
+					});		
+					
+				});	
+		});
+		
+    });
+
+</script>
+
+
+
+<div id="mainconversas">
+
+<h3>Caixa de entrada <a href="/conta/conversas"><img src="/assets/btnRefresh.png" title="Atualizar caixa de entrada" width="16" height="16" border="0" /></a></h3>
+<hr />
+
+
+
+
+
+<div id="mainconversasleft">
+
+<table>
+<?
+$i=1;
+if(count($this->modelo) > 0)
+{
+foreach($this->modelo as $chave => $valor)
+{
+	
+if($i % 2 == 0)
+{
+	$cor = "#FFFFFF";
+}else
+{
+	$cor = "#f9f9f9";	
+}
+?>
+
+
+<tr id="linha<?=$valor->tb_sys_usuario?>" bgcolor="<?=$cor?>">
+	<td width="72" align="left" valign="middle">
+    <a title="<?=formataNome($valor->DESTINARARIO_NOME . " " . $valor->DESTINARARIO_SOBRENOME)?>" href="javascript:$.fn.InterfaceUsuario.metodos.ConversasPegaLog('<?=$valor->DESTINARARIO_ID_USUARIO?>');">
+    <img src="/thumbs/index/w/40/h/40/type/2/file/<?=$valor->DESTINARARIO_ARQUIVO?>" border="0" />
+    </a>
+    </td>
+   	<td width="200" valign="middle">
+    <a title="<?=formataNome($valor->DESTINARARIO_NOME . " " . $valor->DESTINARARIO_SOBRENOME)?>" href="javascript:$.fn.InterfaceUsuario.metodos.ConversasPegaLog('<?=$valor->DESTINARARIO_ID_USUARIO?>')">
+	<?=formataNome($valor->DESTINARARIO_NOME . " " . $valor->DESTINARARIO_SOBRENOME)?>
+    </a>
+    
+    <br />
+    <span style="font-size:9px; font-style:italic;">há <?=My_Sites_Glove::formatar_tempo(My_Sites_Glove::convert_datetime($valor->ULTIMA_MSG));?></span>
+    </td>
+</tr>
+
+
+<?
+$i++;
+}
+}else{
+?>
+<p align="center">nenhuma mensagem na sua caixa de entrada, lembre-se você pode deixar mensagens offline para seus amigos clicando nele no chat à direita. <br /><br /><br /><a onclick="window.parent.location = '/conta/busca';" href="javascript:void(0);"><b>Clique aqui para buscar novas amizades</b></a></p>
+<?php } ?>
+</table>
+
+</div>
+
+<div id="mainconversasright">
+selecione um amigo ao lado para exibir suas conversas.
+</div>
+ 
+
+
+
+</div>
+
+

@@ -1,0 +1,115 @@
+
+<div id="content-table-inner">
+    <table border="0" cellpadding="0" cellspacing="0" id="paging-table" width="">
+              <tr>
+                <td align="center">
+                <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '1', filtro: $('#selectFiltro').val()}, function(data) { $('#grid').html(data); });" class="page-far-left"></a> <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->anterior?>', filtro: $('#selectFiltro').val()}, function(data) { $('#grid').html(data); });" class="page-left"></a>
+                  <div id="page-info">Página <strong><?=$this->pagina?></strong> / <?=$this->total_paginas?></div>
+                  <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->proxima?>', filtro: $('#selectFiltro').val()}, function(data) { $('#grid').html(data); });" class="page-right"></a> <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->ultima?>', filtro: $('#selectFiltro').val()}, function(data) { $('#grid').html(data); });" class="page-far-right"></a></td>
+              </tr>
+      </table>
+  <div class="clear"></div>
+</div>
+
+<form id="mainform" action="">
+  <table width="100%" border="0" align="right" cellpadding="0" cellspacing="0" id="product-table">
+	          <tr>
+	            <th width="3%" class="table-header-check"><a id="toggle-all" ></a></th>
+	            <th width="19%" class="table-header-options line-left"><a href="">Id</a></th>                
+	            <th width="61%" class="table-header-repeat line-left minwidth-1"><a href="">Título</a></th>
+	            <th width="61%" class="table-header-repeat line-left minwidth-1"><a href="">Tipo</a></th>                <th width="17%" class="table-header-options line-left"><a href="">Acoes</a></th>
+              </tr>
+              
+            <?php
+			if($this->total_registros > 0)
+			{
+	        foreach ($this->lista as $chave => $valor){
+	        ?>
+	          <tr>
+	            <td><input  type="checkbox" name="exclui[<?=$valor->ID_CONTEUDO?>]" id="exclui[<?=$valor->ID_CONTEUDO?>]"/></td>
+                <td><?=$valor->ID_CONTEUDO?></td>
+	            <td><?=$valor->TITULO?></td>
+				<td><?=$valor->DESCRICAO_tipoconteudo?></td>                
+                	
+                <td class="options-width">
+ 
+	
+	<?php if($valor->FL_BLOQUEADOEXCLUSAO == 0){?>
+    <input name="btnBlock" type="button" id="btnBlock<?=$valor->ID_CONTEUDO?>" value="bloquear" class="btnBlock"   />
+    <input name="btnDesblock" type="button" id="btnDesBlock<?=$valor->ID_CONTEUDO?>" class="btnDesBlock" value="desbloquear" style="display:none;" />
+    <?php }else{ ?>
+    <input name="btnDesblock" type="button" id="btnDesBlock<?=$valor->ID_CONTEUDO?>" class="btnDesBlock" value="desbloquear" />
+     <input name="btnBlock" type="button" id="btnBlock<?=$valor->ID_CONTEUDO?>" value="bloquear" class="btnBlock"   style="display:none;"/>
+    <?php } ?>
+                    
+                    
+                    
+	            </td>	            
+              </tr>
+	          
+              <?php }
+			  
+			}else{?>
+            
+            <tr>
+	            <td colspan="5" align="center">Nenhum registro cadastrado.</td>	            
+            </tr>
+            
+            <?php } ?>
+              
+	          
+
+            </table>
+	        
+          </form>
+
+	      
+ <div id="content-table-inner">
+    <table border="0" cellpadding="0" cellspacing="0" id="paging-table" width="">
+              <tr>
+                <td align="center">
+                <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '1', filtro: $('#selectFiltro').val()}, function(data) { $('#grid').html(data); });" class="page-far-left"></a> <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->anterior?>', filtro: $('#selectFiltro').val()}, function(data) { $('#grid').html(data); });" class="page-left"></a>
+                  <div id="page-info">Página <strong><?=$this->pagina?></strong> / <?=$this->total_paginas?></div>
+                  <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->proxima?>', filtro: $('#selectFiltro').val()}, function(data) { $('#grid').html(data); });" class="page-right"></a> <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->ultima?>', filtro: $('#selectFiltro').val()}, function(data) { $('#grid').html(data); });" class="page-far-right"></a></td>
+              </tr>
+      </table>
+  <div class="clear"></div>
+</div>
+
+
+<script>
+
+$(document).ready(function () {
+	
+	$('.btnBlock').bind('click', function(ui, e){
+		
+		var id = $(this).attr("id");
+		id = id.replace('btnBlock', '');
+			
+					
+		
+		$.post('/<?=$this->modulo?>/<?=$this->controlador?>/bloquear', { id: id}, function(data) 
+		{ 
+			$("#btnBlock"+id).hide();
+			$("#btnDesBlock"+id).show();						
+		});	
+		
+	})
+	
+	$('.btnDesBlock').bind('click', function(ui, e){
+		
+		var id = $(this).attr("id");
+		id = id.replace('btnDesBlock', '');
+
+		$.post('/<?=$this->modulo?>/<?=$this->controlador?>/desbloquear', { id: id}, function(data) 
+		{
+			$("#btnBlock"+id).show();
+			$("#btnDesBlock"+id).hide();						
+		});	
+		
+	})
+	
+});
+
+
+</script>

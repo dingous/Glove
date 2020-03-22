@@ -1,0 +1,56 @@
+<?
+
+ $profile = new Zend_Session_Namespace('perfil');
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+ 
+ 
+?>
+<div id="PerfilEsquerda">
+	
+    	<div class="fotoarea">
+		
+        <div class="foto">
+        	<img src="/thumbs/index/w/190/h/210/type/2/file/<?=isset($this->perfil->ARQUIVO_fotoperfil) ? $this->perfil->ARQUIVO_fotoperfil : ""?>" border="0" width="190" height="210" />
+        </div>
+       
+        <a href="/<?=$profile->slug?>" title="Voltar a página inicial do meu perfil"><div class="background"></div></a> 
+    </div>
+    
+    <br style="clear:both;" />
+    
+    <div class="informacoes">
+    
+     <?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+     <a href="javascript:void(0);" onclick="Popup('/conta/multmedia', 800, 600);"  title="Alterar foto do perfil"><img src="/assets/portal/default/images/edit_foto.png" width="24" height="24"/></a>
+     <?php } ?>
+     
+     
+     
+    
+	<div class="txtEstadoCivil"><?=isset($this->perfil->DESCRICAO_situacao) ? ucfirst(strtolower($this->perfil->DESCRICAO_situacao)) : ""?></div>
+    <div class="txtCidade"><?=isset($this->perfil->NOME_CIDADE_cidade) ? utf8_encode($this->perfil->NOME_CIDADE_cidade) . ", " . $this->perfil->SGL_ESTADO_estado : ""?></div>
+    
+     <br style="clear:both;" />
+     <br style="clear:both;" />
+    
+    
+    <?php if(!empty($profile->idPerfil)){?>
+    <div class="menu">
+    	<ul>
+         <?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+        	<li><a href="/<?=$profile->slug?>/editar">Editar Perfil</a></li>
+         <?php } ?>
+        	<li><a href="/<?=$profile->slug?>/recados">Mural de recados</a></li>            
+        	<li><a href="/<?=$profile->slug?>/fotos">Fotos</a></li>
+			<li><a href="/<?=$profile->slug?>/videos">Vídeos</a></li>
+			<li><a href="/<?=$profile->slug?>/depoimentos">Depoimentos</a></li>
+            <?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+            <li><a href="/<?=$profile->slug?>/depoimentos">Privacidade</a></li>                         
+		    <?php } ?>                                   
+		</ul>            
+    </div>
+    <?php } ?>
+    
+    </div>
+</div>

@@ -1,0 +1,241 @@
+<?php
+
+$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/uploadify-v2.1.4/uploadify.css');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/swfobject.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/jquery.uploadify.v2.1.4.js');
+
+?>
+
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Destaques</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Locutor</a></li> 
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Preencha o formulário</legend>
+        
+        
+        
+           <?php
+				 if(count($this->aplicacoes) > 0){
+				 ?>  
+				 
+				 <div class="linha">
+				   <div class="elemento">
+						<label>Escolha uma rádio:</label>
+						<select name="tb_sys_aplicacao" id="tb_sys_aplicacao">
+						<?php 
+						$selected = "";
+						foreach($this->aplicacoes as $chave => $valor){
+						if(isset($this->modelo))
+						{
+						$selected = ($this->modelo->tb_sys_aplicacao == $valor->ID_APLICACAO) ? 'selected="selected"' : "";
+						}
+						?>
+						<option value="<?=$valor->ID_APLICACAO?>" <?=$selected?> ><?=$valor->DESCRICAO?></option>
+						<?php } ?>
+						</select>
+				   </div>
+				 </div>
+				 
+				 
+				 <?php }else{ 
+				 ?>
+						
+					   <input type="hidden" name="tb_sys_aplicacao" id="tb_sys_aplicacao" value="<?=$this->aplicacoes->ID_APLICACAO?>">
+						
+				 <?php } ?>   
+            
+        
+        
+          <div class="linha">
+        	
+        
+            
+          <div class="elemento">
+            	<label>Título:</label>
+                <input name="TITULO" type="text" id="TITULO" size="60" value="<?=isset($this->modelo->TITULO) ? $this->modelo->TITULO : NULL?>" />
+          </div>
+            
+          
+            
+        </div>
+        
+        <div class="linha">
+        	
+        
+            
+          <div class="elemento">
+            	<label>Url de destino:</label>
+                <input name="URL" type="text" id="URL" size="60" value="<?=isset($this->modelo->URL) ? $this->modelo->URL : NULL?>" />
+          </div>
+          
+          <div class="elemento">
+            	<label>Url Alvo:</label>
+                <select name="URL_TARGET" id="URL_TARGET">
+                    <option value="_self" <?=isset($this->modelo->URL_TARGET) && $this->modelo->URL_TARGET == "_self" ? ' selected="selected"' : ''?>>Mesma janela</option>                
+                    <option value="_blank"  <?=isset($this->modelo->URL_TARGET) && $this->modelo->URL_TARGET == "_blank" ? ' selected="selected"' : ''?>>Nova janela</option>
+                </select>
+          </div>
+            
+          
+            
+        </div>
+        
+        
+            
+ 		<div class="linha">
+                                 
+                                 
+        <div class="elemento">
+        
+            <label>Foto do destaque:</label>
+          <img src="/thumbs/index/w/0/h/120/type/2/file/<?=$this->modelo->CAMINHO_FOTO?>/autocrop/false" id="iconepqn" /><br />
+              <input id="file_upload" name="file_upload" type="file" value="selecionar arquivos" />
+          <input name="txt_file_uploaded" type="hidden" id="txt_file_uploaded" value="<?=$this->modelo->CAMINHO_FOTO?>" readonly="readonly" />
+        </div>
+        
+        
+        </div>            
+            
+                 
+    	 <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+             <input type="submit" value="Salvar" name="salvar" class="btnSalvar" />
+             <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_DESTAQUE" type="hidden" id="ID_DESTAQUE" value="<?=isset($this->modelo->ID_DESTAQUE) ? $this->modelo->ID_DESTAQUE : ""?>" readonly="readonly" />
+             
+             </div>
+         </div>
+        
+    	    
+    
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+								
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					window.location = '/<?=$this->modulo?>/<?=$this->controlador?>';
+					
+						
+				}else if(data.erro == "valida")
+				{
+				
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+						
+						
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+
+					 });
+					
+					//$("#validacao").css("display", "block");
+					//$("#validacao").html(data.error_html);
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs();
+	 
+	 $("input")[0].focus();
+	 
+	 
+	 
+	 $('#file_upload').uploadify({  
+		'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+		'script'    : '/<?=$this->modulo?>/<?=$this->controlador?>/uploadicone',
+		'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+		'folder'    : '/uploads/radio/artistas/',
+		'multi'     : true,		
+		'auto'      : true,
+		'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+		'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+		'removeCompleted': false,
+		'scriptData'  : {'ID_DESTAQUE': $("#ID_DESTAQUE").val(), 'ARQUIVO' : $("#txt_file_uploaded").val()},
+		onSelectOnce : function(event,data) {
+				  $('#status-message').text(data.filesSelected + ' files have been added to the queue.');
+ 				  $('#file_upload').uploadifySettings('scriptData', {'ID_ARTISTA': $("#ID_ARTISTA").val(), 'ARQUIVO' : $("#txt_file_uploaded").val()});				  
+		},
+		onAllComplete  : function(event,data) {
+		  $('#status-message').text(data.filesUploaded + ' files uploaded, ' + data.errors + ' errors.');
+		},
+		onComplete  : function(event, ID, fileObj, response, data) {
+		
+		
+		  
+		  var json = jQuery.parseJSON(response);
+		  var msg = json.msg;
+		  		  		  
+		  $("#txt_file_uploaded").val(json.file_original);
+		  	
+		  $("#iconepqn").attr("src", "/thumbs/index/w/0/h/120/type/2/autocrop/false/file/"+json.file);
+	      $('#file_upload').uploadifySettings('scriptData', {'ID_ARTISTA': $("#ID_ARTISTA").val(), 'ARQUIVO' : $("#txt_file_uploaded").val()});			
+
+		},
+		onError     : function (event,ID,fileObj,errorObj) {
+		  alert(errorObj.type + ' Error: ' + errorObj.info);
+		}
+	  });
+	
+});
+</script>
+

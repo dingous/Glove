@@ -1,0 +1,58 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Conteúdos do Portal</h1>
+</div>
+
+
+    
+<table width="100%" border="0" cellpadding="0" align="center">
+    <tr>
+    	<td valign="top">
+    	  
+    	  <label for="input_busca2">Filtar por tipo: </label>
+    	  <select name="selectFiltro" id="selectFiltro">
+    	    <option value="">mostrar todos...</option>
+    	    <?php
+			  	foreach($this->tipos as $chave => $valor)
+				{
+					?>
+    	    <option value="<?=$valor->ID_TIPO?>"><?=$valor->DESCRICAO?></option>
+    	    <?php
+				}
+				?>         
+   	      </select>  	  </td>
+    	<td width="28%" valign="top">&nbsp;</td>
+    </tr>
+    <tr>
+    	<td colspan="2" valign="top">
+   	    	<div id="grid"></div>
+        </td>
+    </tr>
+
+</table>
+
+
+<script>
+
+	
+
+
+$(document).ready(function () {
+	$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '1', filtro: ''}, function(data) { $('#grid').html(data); });	
+	
+	
+	$('#selectFiltro').bind('change', function(ui, e){
+		var id = $(this).val();
+		$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '1', filtro: id}, function(data) { $('#grid').html(data); });	
+		
+	})
+	
+	
+	$('.btnBlock').bind('onclick', function(ui, e){
+		alert('aqui');
+		var id = $(this).attr("id");
+		$.post('/<?=$this->modulo?>/<?=$this->controlador?>/bloquear', { id: id}, function(data) { });	
+		
+	})
+	
+});
+</script>

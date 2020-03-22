@@ -1,0 +1,441 @@
+<?php
+/*CKEditor*/
+$this->headScript()->appendFile($this->baseUrl() . '/assets/admin/ckeditor/ckeditor.js');
+?>    
+<?php
+/*uplodify*/
+$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/uploadify-v2.1.4/uploadify.css');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/swfobject.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/jquery.uploadify.v2.1.4.js');
+?>
+
+
+
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Conteúdos</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Conteúdo</a></li> 
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Preencha o formulário</legend>
+        
+              
+              
+         <?php
+		 if(count($this->aplicacoes) > 0){
+		 ?>  
+         
+         <div class="linha">
+           <div class="elemento">
+            	<label>Escolha uma categoria:</label>
+                <select name="tb_sys_aplicacao" id="tb_sys_aplicacao">
+                <?php 
+				foreach($this->aplicacoes as $chave => $valor){
+				$selected = ($this->modelo->tb_sys_aplicacao == $valor->ID_APLICACAO) ? 'selected="selected"' : "";
+				?>
+                <option value="<?=$valor->ID_APLICACAO?>" <?=$selected?> ><?=$valor->DESCRICAO?></option>
+                <?php } ?>
+                </select>
+           </div>
+         </div>
+         
+         
+         <?php }else{ ?>
+         		
+               <input type="hidden" name="tb_sys_aplicacao" id="tb_sys_aplicacao" value="<?=$this->aplicacoes->ID_APLICACAO?>">
+                
+         <?php } ?>         
+        <div class="linha">
+        	
+            
+          <div class="elemento">
+            	<label>Título do conteúdo:</label>
+                <input name="TITULO" type="text" id="TITULO" size="125" value="<?=isset($this->modelo->TITULO) ? $this->modelo->TITULO : NULL?>" />
+          </div>
+            
+          
+            
+        </div>
+        
+        
+        <div class="linha">
+        	
+        
+            
+          <div class="elemento">
+            	<label>Sub-título do conteúdo (opcional):</label>
+                <input name="SUBTITULO" type="text" id="SUBTITULO" size="125" value="<?=isset($this->modelo->SUBTITULO) ? $this->modelo->SUBTITULO : NULL?>" />
+          </div>
+            
+          
+            
+        </div>
+            
+
+
+<div class="linha">
+        	
+        	<label>Selecione o tipo deste conteúdo</label>
+            
+          <div class="elemento">
+			
+			<?php 
+            $tipos = new Tb_cms_tipoconteudo(); $tipos->orderby("DESCRICAO"); $tipos->find(); $tiposs = $tipos->alltoobject();
+			$i=1;
+            foreach($tiposs as $chave => $valor){
+			$checked = ($valor->ID_TIPO == $this->modelo->tb_cms_tipoconteudo) ? "checked=\"checked\"" : "";
+			?>
+            <div style="float:left;">
+            	&nbsp;&nbsp;&nbsp;&nbsp;
+        <?php 
+			$idfield = "tipo".$valor->ID_TIPO; 
+			if($i == count($tiposs))
+			{
+				$idfield = "tb_cms_tipoconteudo";
+			}
+		?>
+        <label for="<?=$idfield?>" style="float:right;"><?=$valor->DESCRICAO?></label>
+        <input class="radioTipos" type="radio" value="<?=$valor->ID_TIPO?>" id="<?=$idfield?>" name="tb_cms_tipoconteudo" <?=$checked?> />
+        
+            </div>
+            <?php $i++; } ?>
+                
+          </div>
+            
+          
+            
+        </div>
+
+
+<?php
+
+function troca_caracteres_editor($s) {
+				
+
+		
+		$s = str_replace("\\", "",$s);
+		return htmlentities($s, ENT_NOQUOTES, 'UTF-8');
+		
+		//return $s;
+		
+		}
+
+?>
+
+
+<div class="linha">
+        	
+
+            
+          <div class="elemento">
+            	<label>Conteúdo:</label>
+				<textarea id="CONTEUDO" name="CONTEUDO"><?=isset($this->modelo->CONTEUDO) ? troca_caracteres_editor($this->modelo->CONTEUDO) : NULL?></textarea>
+          </div>
+            
+          
+            
+        </div>
+                 
+                 
+		<div class="linha" id="linhaFotoCapa">
+                                 
+                                 
+        <div class="elemento">
+        
+            <label>Foto chamada:</label>
+          <img src="/thumbs/index/w/100/h/100/type/3/file/<?=$this->modelo->FOTO_CHAMADA?>" id="iconepqn" /><br />
+              <input id="file_upload" name="file_upload" type="file" value="selecionar arquivos" />
+          <input name="txt_file_uploaded" type="hidden" id="txt_file_uploaded" value="<?=$this->modelo->FOTO_CHAMADA?>" size="50" readonly="readonly" />
+        </div>
+        
+        
+        </div>
+                 
+		
+        
+        <div class="linha">
+                                 
+                                 
+        <div class="elemento">
+        
+            <label>Publicar este conteúdo no site?</label>
+            
+        	
+            <?php 
+
+			
+			$checkedSim = "checked=\"checked\"";
+			$checkedNao = "";			
+			if($this->id != NULL){ 
+            
+				if($this->modelo->FL_PUBLICADO == 1)
+				{
+					$checkedSim = "checked=\"checked\"";
+					$checkedNao = "";	
+				}else
+				{
+					$checkedSim = "";
+					$checkedNao = "checked=\"checked\"";	
+				}
+			
+			} 
+
+			?>
+            
+            <input type="radio" name="FL_PUBLICADO" id="publicar_sim"  value="1" style="float:left;"  <?=$checkedSim?>/><label for="publicar_sim" style="float:left;">Sim</label>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          	<input type="radio" name="FL_PUBLICADO" id="publicar_nao" value="0" style="float:left;" <?=$checkedNao?>/><label for="publicar_nao" style="float:left;" >Não</label>
+            
+            
+            
+        </div>
+        
+        
+        </div>
+        
+        
+        
+   <div class="linha" id="linhaDestacar">
+                                 
+                                 
+        <div class="elemento">
+        
+            <label>Destacar na capa?</label>
+            
+        	
+            <?php 
+
+			
+			$checkedSim = "checked=\"checked\"";
+			$checkedNao = "";			
+			if($this->id != NULL){ 
+            
+				if($this->modelo->FL_DESTACAR == 1)
+				{
+					$checkedSim = "checked=\"checked\"";
+					$checkedNao = "";	
+				}else
+				{
+					$checkedSim = "";
+					$checkedNao = "checked=\"checked\"";	
+				}
+			
+			} 
+
+			?>
+            
+            <input type="radio" name="FL_DESTACAR" id="destacar_sim"  value="1" style="float:left;"  <?=$checkedSim?>/><label for="destacar_sim" style="float:left;">Sim</label>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          	<input type="radio" name="FL_DESTACAR" id="destacar_nao" value="0" style="float:left;" <?=$checkedNao?>/><label for="destacar_nao" style="float:left;" >Não</label>
+            
+            
+            
+        </div>
+        
+        
+        </div>        
+        
+                 
+    	 <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+             <input type="submit" value="Salvar" name="salvar" class="btnSalvar" />
+             <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_CONTEUDO" type="hidden" id="ID_CONTEUDO" value="<?=isset($this->modelo->ID_CONTEUDO) ? $this->modelo->ID_CONTEUDO : NULL?>" readonly="readonly" />
+             
+             </div>
+         </div>
+        
+    	    
+    
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+	  	
+		 var editor_data = CKEDITOR.instances.CONTEUDO.getData();
+		 $("#CONTEUDO").val(editor_data);
+		
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+							
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					window.location = '/<?=$this->modulo?>/<?=$this->controlador?>';
+					
+						
+				}else if(data.erro == "valida")
+				{
+				
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+						
+						
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+
+					 });
+					
+					//$("#validacao").css("display", "block");
+					//$("#validacao").html(data.error_html);
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+var editor = null;
+$(function() {
+
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs();
+	 
+	 $("input")[0].focus();
+	 
+	 
+	 
+	 			   editor = CKEDITOR.replace('CONTEUDO');
+                   editor.config.width = '800';
+                   editor.config.height = '400';
+                   editor.config.resize_maxWidth = '300';
+                   editor.config.resize_enabled = false;
+                   editor.config.autoUpdateElement = true;
+                   editor.config.startupFocus = false;
+                   editor.config.entities_latin = false;
+                   editor.config.entities_greek = false;
+                   editor.config.toolbar =
+                    [
+                        ['Source', 'Bold', 'Italic', 'Underline', 'Link', 'Font', 'FontSize', 'TextColor', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image',   '-', 'Flash', 'YouTube', '-', 'inserthtml', 'PasteText','PasteFromWord', 'Templates', '-', 'fileicon', 'gmap', '-', 'Maximize']
+                    ];
+
+                   editor.config.filebrowserWindowFeatures = 'scrollbars=yes';
+                   editor.config.ImageBrowserWindowWidth = 500;
+                   editor.config.ImageBrowserWindowHeight = 600;
+				   
+			       editor.config.filebrowserBrowseUrl = '/assets/admin/ckeditor/ckfinder/ckfinder.html',
+			       editor.config.filebrowserImageBrowseUrl = '/assets/admin/ckeditor/ckfinder/ckfinder.html?type=Images',
+				   editor.config.filebrowserFlashBrowseUrl = '/assets/admin/ckeditor/ckfinder/ckfinder.html?type=Flash',
+				   editor.config.filebrowserUploadUrl = '/assets/admin/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&amp;type=Files',
+				   editor.config.filebrowserImageUploadUrl = '/assets/admin/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&amp;type=Images',
+				   editor.config.filebrowserFlashUploadUrl = '/assets/admin/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&amp;type=Flash'
+
+                   
+                   editor.config.extraPlugins = "youtube,galeria_dingous,dingous_fotos,inserthtml,syntaxhighlight,gmap,fileicon";
+
+	
+	
+	
+
+ $('#file_upload').uploadify({  
+		'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+		'script'    : '/<?=$this->modulo?>/<?=$this->controlador?>/uploadicone',
+		'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+		'folder'    : '/uploads/cms/foto_chamadas/',
+		'multi'     : true,		
+		'auto'      : true,
+		'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+		'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+		'removeCompleted': true,
+		'scriptData'  : {'ID_CONTEUDO': $("#ID_CONTEUDO").val(), 'ARQUIVO' : $("#txt_file_uploaded").val()},
+		onSelectOnce : function(event,data) {
+		   $('#status-message').text(data.filesSelected + ' files have been added to the queue.');
+		   
+		   $('#file_upload').uploadifySettings('scriptData', {'ID_CONTEUDO': $("#ID_CONTEUDO").val(), 'ARQUIVO' : $("#txt_file_uploaded").val()});
+		},
+		onAllComplete  : function(event,data) {
+		    $('#status-message').text(data.filesUploaded + ' arquivos uploaded, ' + data.errors + ' erros.');
+		},
+		onComplete  : function(event, ID, fileObj, response, data) {
+	  	  
+		  var json = jQuery.parseJSON(response);
+		  var msg = json.msg;
+	  		
+				  		  		  
+		  $("#txt_file_uploaded").val("");
+		  $("#txt_file_uploaded").val(json.file_original);
+		  $("#iconepqn").attr("src", "/thumbs/index/w/100/h/100/type/3/file/"+json.file);
+		  
+		    $('#file_upload').uploadifySettings('scriptData', {'ID_CONTEUDO': $("#ID_CONTEUDO").val(), 'ARQUIVO' : $("#txt_file_uploaded").val()});
+
+		},
+		onError: function (event,ID,fileObj,errorObj) {
+		  alert(errorObj.type + ' Error: ' + errorObj.info);
+		}
+	  });
+
+
+$('.radioTipos').bind("change", function(e, x){
+	var tipo = $(this).val();
+	escondeCampos(tipo);
+	
+});
+
+
+escondeCampos('<?=$this->modelo->tb_cms_tipoconteudo?>');
+	
+});
+
+
+function escondeCampos(tipo)
+{
+	switch(tipo)
+	{
+		//vídeos
+		case "18":
+			$("#linhaFotoCapa").hide();
+			$("#linhaDestacar").show();			
+		break;
+		default:
+			$("#linhaFotoCapa").show();
+			$("#linhaDestacar").hide();
+		break;
+	}
+}
+</script>
+

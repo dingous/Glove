@@ -1,0 +1,416 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+<!--<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery.ui.button.css" rel="stylesheet" />
+<script type="text/javascript" src="/assets/jqueryui/js/jquery-ui-1.8.16.custom.min.js"></script>
+<link rel="Stylesheet" href="/assets/jqueryui/css/ui.selectmenu.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="/assets/portal/defaultOld/css/radio-style.css">
+<script type="text/javascript" src="/assets/portal/defaultOld/scripts/bValidator-0.6/jquery.bvalidator.js"></script>
+<link href="/assets/portal/defaultOld/scripts/bValidator-0.6/bvalidator.css" rel="stylesheet" type="text/css" />
+<link href="/assets/portal/defaultOld/scripts/bValidator-0.6/themes/bvalidator.theme.red.css" rel="stylesheet" type="text/css" />
+-->
+
+
+
+
+
+
+<script>
+   function setupLabel() {
+        if ($('.label_check input').length) {
+            $('.label_check').each(function(){ 
+                $(this).removeClass('c_on');
+            });
+            $('.label_check input:checked').each(function(){ 
+                $(this).parent('label').addClass('c_on');
+            });                
+        };
+        if ($('.label_radio input').length) {
+            $('.label_radio').each(function(){ 
+                $(this).removeClass('r_on');
+            });
+            $('.label_radio input:checked').each(function(){ 
+                $(this).parent('label').addClass('r_on');
+            });
+        };
+    };
+    $(document).ready(function(){
+		
+	
+		
+        $('body').addClass('has-js');
+        $('.label_check, .label_radio').click(function(){
+            setupLabel();
+        });
+        setupLabel(); 
+		
+		var optionsRed = {
+			classNamePrefix: 'bvalidator_red_'
+		};
+		
+		$('#form1').bValidator(optionsRed);
+		
+		EnviaForm();
+		
+		
+		
+		 $( "#tb_sys_cidade2" ).autocomplete({
+
+		 	autoFocus: true,
+			minLength: 2,
+			source: function( request, response ) {
+				$.ajax({
+					url: "/conta/cidadesjson",
+					dataType: "json",
+					data: {
+						featureClass: "P",
+						style: "full",
+						maxRows: 12,
+						name_startsWith: request.term
+					},
+					success: function( data ) {
+						response( $.map( data, function( item ) {
+							return {
+								//label: item.TITULO + (item.TITULO ? ", " + item.TITULO : "") + ", " + item.TITULO,
+								label: item.NOME_CIDADE + ", " + item.SGL_ESTADO,
+								id: item.ID_CIDADE							
+							}
+
+						}));
+					}
+				});
+			},
+
+			select: function( event, ui ) {
+
+				  $("#tb_sys_cidade").val(ui.item.id);
+				  $("#EMAIL").focus();
+				  
+			},
+
+			open: function() {
+
+				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+
+			},
+
+			close: function() {
+
+				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+
+			}
+
+		}).data( "autocomplete" )._renderItem = function( ul, item ) {
+
+		
+				return $( "<li></li>" )
+
+				.data( "item.autocomplete", item )
+
+				.append( "<a>" + item.label + "</a>" )
+
+				.appendTo( ul );
+
+
+		};
+		
+	
+    });
+	
+	
+	
+function checkUsername(username){
+		
+		/*var ret = false;
+		
+		$.ajax({
+			type: 'POST',
+			url: 'index/checausername',
+			async: false,
+			data: {'username':username},
+			success: function(data){
+				if(data == 'ok')
+					ret = true
+			}
+		});
+
+		return ret;
+		*/
+		
+		return true;
+	}
+
+
+function EnviaForm()
+{
+	
+	
+	
+	$("#form1").submit(function () {
+	
+	
+		
+		
+     	$.ajax({
+             type: "POST",
+             url: "/conta/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+			 beforeSend : function (data) 
+			 {
+				 $("#btnCriarConta").val("Aguarde, criando conta...");
+				 $("#btnCriarConta").attr("disabled", "disabled");
+
+			 },
+             success: function (data) 
+             { 
+			 	
+				
+				
+ 
+				if(data.erro == "false")
+				{	
+					$("#btnCriarConta").val("Conta criada com sucesso!");				
+					window.parent.$().toastmessage('showSuccessToast', 'Usuário cadastrado com sucesso<br /> você será redirecionado para a página de login!');
+					
+					setTimeout(function() {
+					  window.location.href = "/";
+					}, 5000);
+					
+						
+				}else if(data.erro == "valida")
+				{
+					
+					
+					 
+
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : 'Por favor, preencha os campos obrigatórios.',
+						stayTime   : 60000,
+						type     : 'notice'
+					});					 
+					
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+					
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+					 });
+					 
+	 				 $("#btnCriarConta").removeAttr("disabled");   
+					 $("#btnCriarConta").val("CRIAR CONTA");
+																
+				}
+				else if(data.erro == "true")
+				{
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : data.msg,
+						stayTime   : 60000,
+						type     : 'warning'
+					});				
+					
+					$("#btnCriarConta").removeAttr("disabled");   					
+					$("#btnCriarConta").val("CRIAR CONTA");
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+</script>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>    
+
+<h2> Clique nas bolinhas e preencha os campos para criar seu perfil Glove Brasil </h2>
+
+<form id="form1" name="form1" method="post">
+
+<div id="criando">
+
+	<div id="left">
+   
+    	<div class="box2">
+        	<div class="titulo">Idade</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->idade as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_idade[<?=$valor->ID_IDADE?>]"><input name="tb_glove_idade" id="tb_glove_idade[<?=$valor->ID_IDADE?>]" value="<?=$valor->ID_IDADE?>" type="radio" checked="checked" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Altura</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->altura as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_altura[<?=$valor->ID_ALTURA?>]"><input name="tb_glove_altura" id="tb_glove_altura[<?=$valor->ID_ALTURA?>]" value="<?=$valor->ID_ALTURA?>" type="radio" checked="checked" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                                 
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Peso</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->peso as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_peso[<?=$valor->ID_PESO?>]"><input name="tb_glove_peso" id="tb_glove_peso[<?=$valor->ID_PESO?>]" value="<?=$valor->ID_PESO?>" type="radio" checked="checked" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                               
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Tipo</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->tipo as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_tipo[<?=$valor->ID_TIPO?>]"><input name="tb_glove_tipo" id="tb_glove_tipo[<?=$valor->ID_TIPO?>]" value="<?=$valor->ID_TIPO?>" type="radio" checked="checked" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                        
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Situação</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->situacao as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_situacao[<?=$valor->ID_SITUACAO?>]"><input name="tb_glove_situacao" id="tb_glove_situacao[<?=$valor->ID_SITUACAO?>]" value="<?=$valor->ID_SITUACAO?>" type="radio" checked="checked" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                                      
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Fumante</div>
+            <div class="opcoes">
+            	<ul>
+                		<?php foreach($this->fumante as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_fumante[<?=$valor->ID_FUMANTE?>]"><input name="tb_glove_fumante" id="tb_glove_fumante[<?=$valor->ID_FUMANTE?>]" value="<?=$valor->ID_FUMANTE?>" type="radio" checked="checked" /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                           
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Buscando</div>
+            <div class="opcoes">
+            	<ul>
+                	
+                	<?php foreach($this->interesse as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_insteresse[<?=$valor->ID_INSTERESSE?>]"><input name="tb_glove_insteresse" id="tb_glove_insteresse[<?=$valor->ID_INSTERESSE?>]" value="<?=$valor->ID_INSTERESSE?>" type="radio" checked="checked" /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                           
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Disponível</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->disponivel as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_disponibilidade[<?=$valor->ID_DISPONIBILIDADE?>]"><input name="tb_glove_disponibilidade" id="tb_glove_disponibilidade[<?=$valor->ID_DISPONIBILIDADE?>]" value="<?=$valor->ID_DISPONIBILIDADE?>" type="radio" checked="checked" /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                                       
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Bebidas</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->bebida as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_bebida[<?=$valor->ID_BEBIDA?>]"><input name="tb_glove_bebidas" id="tb_glove_bebida[<?=$valor->ID_BEBIDA?>]" value="<?=$valor->ID_BEBIDA?>" type="radio" checked="checked" /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                               
+                </ul>
+            </div>
+        </div>
+        
+        <div id="right">
+        <div class="form">
+     	<div class="campo">
+        	<label for="tb_sys_cidade2">Cidade onde reside</label>
+           	<input name="tb_sys_cidade2" type="text" id="tb_sys_cidade2" style="width:535px;" data-bvalidator="required" data-bvalidator-msg="Informe a sua cidade"/>
+          <input name="tb_sys_cidade" type="hidden" id="tb_sys_cidade" style="width:535px;" readonly="readonly" data-bvalidator="required" data-bvalidator-msg="Informe a sua cidade"/>
+     	</div>
+        
+     	<div class="campo">
+        	<label for="EMAIL">Seu e-mail</label>
+           	<input type="text" style="width:535px;" id="EMAIL" name="EMAIL" data-bvalidator="email,required" data-bvalidator-msg="Informe um e-mail válido"/>
+        </div>
+        
+     	<div class="campo">
+        	<label for="NOME">Nome</label>
+           	<input name="NOME" type="text" id="NOME" style="width:535px;" data-bvalidator="required" data-bvalidator-msg="Informe o seu nome"/>
+        </div>
+        
+		<div class="campo">
+        	<label for="SOBRENOME">Sobrenome</label>
+           	<input name="SOBRENOME" type="text" id="SOBRENOME" style="width:535px;" data-bvalidator="required" data-bvalidator-msg="Informe o seu sobrenome"/>
+        </div>
+        
+     	<div class="campo">
+        	<label for="SLUG">Digite um nome de usuário</label>
+           	<input name="SLUG" type="text" id="SLUG" style="width:535px;" data-bvalidator="checkUsername,required" data-bvalidator-msg="Este usuário não é válido ou está em uso."/>
+        </div> 
+        
+		<div class="campo">
+       	  <label for="SENHA1">Digite uma senha</label>
+           	<input name="SENHA1" type="password" id="SENHA1" style="width:535px;"  data-bvalidator-msg="Informe uma senha" />
+        </div> 
+        
+        
+		<div class="campo">
+       	  <label for="SENHA">Confirme a senha digitada</label>
+           	<input name="SENHA" type="password" id="SENHA" style="width:535px;"  data-bvalidator="equalto[SENHA1],required" data-bvalidator-msg="As senhas não conferem"/>
+        </div>                                        
+        
+       	<div class="campo">
+		  <p>&nbsp;	      </p>
+		  <p>
+		    <input type="submit" value="Criar conta" id="btnCriarConta" name="btnCriarConta">
+	      </p>
+        </div>
+        
+     </div>
+        
+        </div>
+        
+    </div>
+    
+	
+    	
+   
+</div>
+
+     <input type="hidden" id="typeChange" name="typeChange" value="changePass"/>
+
+</form>
+
+
+

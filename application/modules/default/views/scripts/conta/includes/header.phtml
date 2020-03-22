@@ -1,0 +1,79 @@
+<?
+ $profile = new Zend_Session_Namespace('perfil');
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+?>
+ 
+  <header id="header">
+            <div id="title">
+             <h1> <?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+    Meu Perfil
+    <?php }else{?>
+    <!--Perfil de -->
+    <?=isset($this->perfil->NOME_usuario) ? ucfirst($this->perfil->NOME_usuario) : ""?> <!--<img src="/assets/portal/defaultOld/images/logoTop.png"  />-->
+    <?php } ?></h1>
+               <div id="subtitle"><a href="/<?=isset($usuario_logado->ID_USUARIO) ? "meuperfil-".$usuario_logado->ID_USUARIO : ""?>" title="Página Inicial do meu perfil" rel="<?=isset($usuario_logado->ID_USUARIO) ? "" : "normal_request"?>"><img src="/assets/portal/defaultOld/images/logoTop.png"  /></a> </div>
+            </div>
+            <div id="myphoto">
+                <figure>
+                <a href="/<?=$profile->slug?>" title="Voltar a página inicial do meu perfil"><img src="/thumbs/index/w/150/h/150/type/2/file/<?=isset($this->perfil->ARQUIVO_fotoperfil) ? $this->perfil->ARQUIVO_fotoperfil : ""?>" border="0" id="<?=!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO ? 'pictureMeuPerfil' : ''?>" /></a>
+                </figure>
+            </div>
+            <nav id="nav-global">
+                <ul id="nav-global-ul">
+                
+                 <?php if(isset($usuario_logado->ID_USUARIO)){?>
+                
+                   
+                     <li class="nav-global-li nav-home"><a href="/<?=isset($usuario_logado->ID_USUARIO) ? "meuperfil-".$usuario_logado->ID_USUARIO : ""?>" title="Atualizações dos amigos" class="nav-global-a">ATIVIDADES</a></li>
+                    
+                
+                	     
+                  <li class="nav-global-li nav-portfolio"><a href="/<?=isset($usuario_logado->ID_USUARIO) ? "meuperfil-".$usuario_logado->ID_USUARIO . "/minhatimeline": ""?>" title="Minha Timeline" class="nav-global-a">MURAL</a></li>
+                    
+                                
+                	
+                     <?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+                    <li class="nav-global-li nav-resume"><a href="/conta/editarperfil" title="Editar meu perfil" class="nav-global-a">PERFIL</a></li>
+                    <?php }else{ ?>
+                    <li class="nav-global-li nav-resume"><a href="/<?=$profile->slug?>/perfil" title="Visualizar perfil" class="nav-global-a">PERFIL</a></li>                    
+                    <?php } ?>
+                    
+                 
+                      
+                    <li class="nav-global-li nav-contact"><a href="/<?=$profile->slug?>/friends" title="Amigos" class="nav-global-a">AMIGOS</a></li>
+                    
+                    
+                     <!--<li class="nav-global-li nav-resume"><a href="/<?=$profile->slug?>" title="RESUME" class="nav-global-a">MURAL</a></li>-->
+                    <li class="nav-global-li nav-fotos"><a href="/<?=$profile->slug?>/fotos" title="Fotos" class="nav-global-a">FOTOS</a></li>
+                    
+                    
+                    <li class="nav-global-li nav-busca"><a href="/conta/busca" title="Busca" class="nav-global-a">ENCONTRE AMIGOS</a></li>                    
+                    <?php }else{ ?>
+                    
+                     <li class="nav-global-li nav-portfolio"><a href="javascript:void(0);" onclick="alerta();" title="Página inicial" class="nav-global-a">MURAL</a></li>
+                    
+                                      
+                    
+                    <li class="nav-global-li nav-contact"><a href="javascript:void(0);" onclick="alerta();" title="Amigos" class="nav-global-a">AMIGOS</a></li>
+                    
+                      <li class="nav-global-li nav-fotos"><a href="javascript:void(0);" onclick="alerta();" title="Fotos" class="nav-global-a">FOTOS</a></li>
+                    
+                    
+                    <li class="nav-global-li nav-busca"><a href="javascript:void(0);" onclick="alerta();" title="Busca" class="nav-global-a">ENCONTRE AMIGOS</a></li>
+                    
+                     <?php } ?>
+                </ul>
+            </nav> 
+        </header>
+<script>
+
+function alerta()
+{
+	window.parent.parent.$().toastmessage('showToast', {
+		text     : "Você deve preencher seus dados para ter acesso às funcionalidades do Glove.",
+		stayTime   : 6000,
+		type     : 'warning'
+	});		
+}
+</script>        

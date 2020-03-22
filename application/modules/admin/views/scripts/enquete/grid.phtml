@@ -1,0 +1,98 @@
+<div id="content-table-inner">
+    <table border="0" cellpadding="0" cellspacing="0" id="paging-table" width="">
+              <tr>
+                <td align="center">
+                     <td align="center">
+               <a href="javascript:void(0);" onclick="javascript:grid(1);" class="page-far-left"></a> <a href="javascript:void(0);" onclick="javascript:grid('<?=$this->anterior?>');" class="page-left"></a>
+                  <div id="page-info">Página <strong><?=$this->pagina?></strong> / <?=$this->total_paginas?></div>
+                  <a href="javascript:void(0);" onclick="javascript:grid('<?=$this->proxima?>');" class="page-right"></a> <a href="javascript:void(0);" onclick="javascript:grid('<?=$this->ultima?>');" class="page-far-right"></a></td>
+              </tr>
+      </table>
+  <div class="clear"></div>
+</div>
+
+<form id="mainform" action="">
+  <table width="100%" border="0" align="right" cellpadding="0" cellspacing="0" id="product-table">
+	          <tr>
+	            <th width="3%" class="table-header-check"><a id="toggle-all" ></a></th>
+	            <th width="19%" class="table-header-options line-left"><a href="">Id</a></th>                
+	            <th width="32%" class="table-header-repeat line-left minwidth-1"><a href="">Pergunta da enquete</a></th>
+                
+            	<th width="32%" class="table-header-repeat line-left minwidth-1"><a href="">Respostas</a></th>
+                
+	            <th width="29%" class="table-header-repeat line-left minwidth-1"><a href="">Publicado</a></th>
+                <th width="17%" class="table-header-options line-left"><a href="">Acoes</a></th>
+              </tr>
+              
+            <?php
+			if($this->total_registros > 0)
+			{
+	        foreach ($this->lista as $chave => $valor){
+	        ?>
+	          <tr>
+	            <td><input  type="checkbox" name="exclui[<?=$valor->ID_ENQUETE?>]" id="exclui[<?=$valor->ID_ENQUETE?>]"/></td>
+                <td><?=$valor->ID_ENQUETE?></td>
+	            <td><?=$valor->PERGUNTA?></td>
+                <td>
+                	
+				<?php 
+                    $respostas = Admin_EnqueteController::pegaRespostasParaoGrid($valor->ID_ENQUETE);
+                 ?>
+                 
+               <table width="95%" border="0" cellpadding="0" cellspacing="0" class="tabelaRespostas">
+				<?php 
+                foreach( $respostas[0] as $chave2 => $valor2){
+                $total_votos = $respostas[1];
+                $percent =  $respostas[1] != 0 ? ($valor2->VOTOS*100) / $total_votos : 0;
+                ?>
+                <tr>
+                <td width="80%">
+                <span class="pergunta"><?=$valor2->RESPOSTA?></span><BR />
+                <div class="divResposta" style="background-color:#09F; width:<?=$percent?>%"><?=number_format($percent, 2)?>%</div>
+                </td>
+                <td width="20%"><?=$valor2->VOTOS?></td>
+                </tr>
+                
+                <?php } ?>
+                
+                </table>
+
+                    
+                </td>
+	            <td align="center"><?=$valor->FL_ATIVA == "1" ? "Sim" : "Não"?></td>
+                	<td class="options-width">
+	            	<a href="javascript:void(0);" onclick="window.location='/<?=$this->modulo?>/<?=$this->controlador?>/editar/id/<?=$valor->ID_ENQUETE?>'" title="Editar" class="icon-1 info-tooltip"></a>
+	            	<a href="javascript:deletar('<?=$valor->ID_ENQUETE?>');" title="Excluir" class="icon-2 info-tooltip"></a>
+	            </td>	            
+              </tr>
+	          
+              <?php }
+			  
+			}else{?>
+            
+            <tr>
+	            <td colspan="6" align="center">Nenhum registro cadastrado.</td>	            
+            </tr>
+            
+            <?php } ?>
+              
+	          
+
+            </table>
+	        
+        </form>
+
+	      
+ <div id="content-table-inner">
+    <table border="0" cellpadding="0" cellspacing="0" id="paging-table" width="">
+              <tr>
+                <td align="center">
+               <td align="center">
+               	   <a href="javascript:void(0);" onclick="javascript:grid(1);" class="page-far-left"></a> <a href="javascript:void(0);" onclick="javascript:grid('<?=$this->anterior?>');" class="page-left"></a>
+                  <div id="page-info">Página <strong><?=$this->pagina?></strong> / <?=$this->total_paginas?></div>
+                  <a href="javascript:void(0);" onclick="javascript:grid('<?=$this->proxima?>');" class="page-right"></a> <a href="javascript:void(0);" onclick="javascript:grid('<?=$this->ultima?>');" class="page-far-right"></a>
+                  </td>
+              </tr>
+      </table>
+  <div class="clear"></div>
+</div>

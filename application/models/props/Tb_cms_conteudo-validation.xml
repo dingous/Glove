@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+	
+	
+	<field name="TITULO">
+	
+        <validator type="requiredString" msg="Informe um título para o conteúdo."/>
+				
+  </field>
+  
+  <field name="tb_cms_tipoconteudo">
+	
+        <validator type="requiredString" msg="Selecione um tipo de conteúdo."/>
+				
+  </field>
+  
+  
+	
+</lumine-validator>
+

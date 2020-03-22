@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+	
+	
+	<field name="PERGUNTA">
+	
+        <validator type="requiredString" msg="Informe a pergunta da enquete."/>
+				
+  </field>
+  
+  
+	
+</lumine-validator>
+

@@ -1,0 +1,67 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+
+<style>
+#conectados
+{
+	right:0;
+	top:0;
+	width:200px;
+	min-height:200px;
+	position:absolute;
+	padding:5px;
+	border:1px solid #cccccc;
+}
+#conectados ul
+{ 
+	padding:0;
+	list-style-type:none;
+}
+</style>
+
+<script>
+
+var cliente = new function() {
+	
+	this.eu = null;
+	
+	this.promptName = function()
+	{	
+		var name = prompt("Seu nome?", name);
+		this.eu = name;
+		return this.eu;
+	}
+
+	this.conectados = function (data)
+	{
+		var ul =  $("#ulConectados");	
+		$("#ulConectados li").remove();
+		$.each(data.data, function(index, value) { 
+			
+			if(this.eu != value.nome)
+			{		
+				var li = $("<li/>");
+				li.html(value.nome);
+				
+				ul.append(li);
+			}
+			
+		});
+	}
+	
+};
+
+
+</script>
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+
+<div id="conectados">
+	<ul id="ulConectados">
+    </ul>
+</div>
+
+

@@ -1,0 +1,96 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+<style>
+body
+{
+	margin: 0px 0px 0px 0px;
+}
+#main {
+	  padding-top: 0;
+}
+</style>
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+<script>
+  
+    $(document).ready(function(){
+		$("#mensagem").click(function(){
+			if($(this).text() == "Escreva alguma coisa...")
+			{
+				$(this).text("");
+			}
+		 });
+		 
+		 
+		 
+		 	$("#form1").submit(function () {
+		
+	
+			$.ajax({
+				 type: "POST",
+				 url: "/conta/reportarabusosalvar",
+				 data: $("#form1").serialize(),
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+				 
+
+				 
+					if(data.erro == "false")
+					{					
+						
+	  				    window.parent.$.fn.InterfaceUsuario.metodos.MensagensPega(1);
+						window.parent.$.fancybox.close();
+						
+						window.parent.parent.$().toastmessage('showToast', {
+							text     : data.msg,
+							stayTime   : 20000,
+							type     : 'success'
+						});
+												
+					}else if(data.erro == "true")
+					{
+						window.parent.parent.$().toastmessage('showErrorToast', data.msg);
+																			
+					}
+					
+				 },
+				 error: function (data) 
+				 {
+	
+					
+				 }
+			 });
+		 
+		 return false;
+	 });
+		 
+    });
+
+
+</script>
+<div style="min-height:200px;">
+<form id="form1" name="form1" method="post">
+<h3>Reportar abuso desta publicação</h3>
+<hr />
+
+<table width="400" cellspacing="5">
+
+<tr>
+<td><textarea name="mensagem" cols="60" rows="5" id="mensagem">Escreva alguma coisa...</textarea></td>
+</tr>
+
+<tr>
+<td>
+<input type="submit" value="Reportar"  id="btnCompartilhar" name="btnCompartilhar" style="border-radius: 8px; min-width:10px; height:33px; font-size:13px; cursor:pointer; background-color:#006190; color:#FFFFFF; border:none;"/>
+<input type="button" value="Cancelar"  id="btnCancelar" name="btnCancelar" style="border-radius: 8px; min-width:10px; height:33px; font-size:13px; cursor:pointer; background-color:#006190; color:#FFFFFF; border:none;" onclick="window.parent.$.fancybox.close();"/> <input type="hidden" name="id" id="id" value="<?=$this->id?>" />
+</td>
+</tr>
+
+</table>
+</form>
+</div>
+
+

@@ -1,0 +1,83 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+
+<script>	
+    $(document).ready(function(){
+      	
+		$('body').attr("class","<?=$this->layout()->pattern == "" ? "pattern3" : $this->layout()->pattern?> <?=$this->layout()->color == "" ? "blue" : $this->layout()->color?>");
+		
+		$(".flexslider .slides > li, .flexslider-detail .slides > li").css("display", "block");
+		
+    });
+</script>
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>    
+
+   
+    
+<h2>Fotos (<?=count($this->fotos)?>) </h2> <a href="javascript:void(0);" onclick="javascript:history.go(-1);">voltar</a>
+
+
+
+<section id="sec-portfolio">
+                <section id="portfolio">
+                    <div class="flexslider">
+                        <ul class="slides">
+                            <li>
+                                <ul class="portfolio-slide">
+                                    
+                                    <?php
+								 if(count($this->fotos) > 0)
+								 {
+								 foreach($this->fotos as $chave => $valor){
+							
+									 ?>
+                                    <li><figure>   <a href="/uploads/perfis/<?=$valor->ARQUIVO?>" rel="grupo"><img src="/thumbs/index/w/100/h/70/type/2/file/<?=$valor->ARQUIVO?>" id="iconepqn" style="border: 1px solid #cccccc;" /></a></li>
+                                    
+                                    
+                                     <?php } 
+									 }else{ ?>
+									 
+									 nenhuma foto adicionada a este álbum.
+									 
+									 <?php } ?>
+                                    
+                                   
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </section>
+
+
+<script>
+
+$(document).ready(function () {
+	
+	$("a[rel=grupo]").fancybox({
+			'transitionIn'		: 'none',
+			'transitionOut'		: 'none',
+			'titlePosition' 	: 'over',
+			centerOnScroll: true,
+			'titleFormat'       : function(title, currentArray, currentIndex, currentOpts) {
+				return '<span id="fancybox-title-over">Imagem ' +  (currentIndex + 1) + ' / ' + currentArray.length + ' ' + title + '</span>';
+			}
+		});
+});
+
+</script>
+
+
+
+
+
+

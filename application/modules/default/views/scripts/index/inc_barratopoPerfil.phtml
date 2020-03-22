@@ -1,0 +1,40 @@
+<?
+
+ $profile = new Zend_Session_Namespace('perfil');
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+
+ 
+?>
+
+<div id="barraTopoMeuPerfil">
+	
+    <div id="leftbarraTopo">
+        
+	<div id="BarrafrasePensamento"><input type="text" value="Digite aqui sua frase ou pensamento..." size="100" /></div>
+	<div id="titulo">
+    <?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+    Meu Perfil
+    <?php }else{?>
+    Perfil de 
+    <?php } ?>
+    </div> 
+	<div id="subtitulo"><?=$this->perfil->NOME_usuario?></div>
+   	<div id="menus">
+    	<ul>
+        	<?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+        	<li><a href="javascript:void(0);" onclick="Popup('/conta/solicitacoes', 430, 600);"  title="Solicitações">Solicit. (0)</a></li>
+            <?php } ?>
+            <li><a href="/<?=$profile->slug?>/recado" title="Recados">Recados (0)</a></li>
+        	<li><a href="/<?=$profile->slug?>/fotos" title="Fotos">Fotos (0)</a></li>            
+        	<li><a href="/<?=$profile->slug?>/videos" title="Vídeos">Vídeos (0)</a></li>                        
+        </ul>
+    </div>
+    
+    </div>
+    
+    <div id="rightbarraTopo">
+    	<div id="txtBusca"><a href="/conta/busca" alt="Busca Avançada" title="Busca Avançada"><img src="/assets/portal/default/images/txtBuscaAvancada.png" width="203" height="62" border="0"/></a></div>
+    </div>
+    
+</div>

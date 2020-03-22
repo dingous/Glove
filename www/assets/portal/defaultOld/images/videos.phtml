@@ -1,0 +1,57 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+
+<script>
+  
+  
+  	function resultado(pagina)
+	{
+		$.get('/conta/buscaresultadoajax?pagina='+pagina,
+		
+			<?=$this->json?>
+		,
+		function (result) 
+		{ 
+			$("#placeholderCarregaResultadoBusca").html(result); 
+		});	
+	}
+	
+    $(document).ready(function(){
+      	
+		resultado(1);
+		
+    });
+
+</script>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<?php $this->placeholder('barraesquerda')->captureStart();?>
+
+	 <?php echo $this->partial('index/inc_barraesquerda.phtml', array("perfil" => $this->perfil)); ?>
+     
+<?php $this->placeholder('barraesquerda')->captureEnd() ?> 
+
+<?php $this->placeholder('barratopo')->captureStart();?>
+
+	 <?php echo $this->partial('index/inc_barratopo.phtml', array("titulo" => "Compartilhe afinidades através de nossa busca", "subtitulo" => "Resultados da Busca Avançada", "help" => "Para acessar qualquer um dos perfis encontrados clique na foto."));?>
+     
+<?php $this->placeholder('barratopo')->captureEnd() ?>    
+
+
+<a href="javascript:history.back(-1);" title="Voltar à página anterior">Voltar</a>
+
+
+<form id="form1" name="form1" method="post" >
+
+
+	<span id="placeholderCarregaResultadoBusca"></span>
+
+
+</form>
+
+
+

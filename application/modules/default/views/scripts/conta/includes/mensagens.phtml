@@ -1,0 +1,308 @@
+<?
+ 
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+?>
+
+<h3 style="margin-left:20px;">Recados recentes</h3>
+<?php
+if(count($this->mensagens) > 0)
+{
+$cont = 0;
+foreach($this->mensagens as $chave => $valor)
+{
+?>
+<div id="mensagens" <?=$cont == 0 ? "style=\"border-top:1px solid #E9E9E9;\"" : ""?>>
+    <div id="left">
+    	<a title="<?=$valor->REMETENTE_NOME?>" href="/<?=$valor->REMETENTE_SLUG?>-<?=$valor->REMETENTE_ID?>"><img src="/thumbs/index/w/50/h/50/type/2/file/<?=$valor->REMETENTE_FOTO?>" border="0" /></a> 
+    </div>
+    
+    <div id="right">
+    	<div id="nome"><a title="<?=$valor->REMETENTE_NOME?>" href="/<?=$valor->REMETENTE_SLUG?>-<?=$valor->REMETENTE_ID?>"><?=$valor->REMETENTE_NOME?></a> <?=Lumine_Util::FormatDateTime($valor->DATA, "%d/%m/%Y %H:%M")?></div>
+    	<div id="msg">
+        
+        <div id="left">
+         <?php
+				
+				 $html = stripslashes($valor->MENSAGEM);
+
+				
+				 $dom = new Zend_Dom_Query($html);
+				 $dom->setEncoding("utf-8");
+				 $results = $dom->query('iframe');
+				 $results2 = $dom->query('object');
+				 $results3 = $dom->query('img');
+				 
+			     if($results->count() > 0)
+				 {	 
+				 
+					 foreach($results as $ifame)
+					 {
+						$ifame->setAttribute("width", 300);
+						$ifame->setAttribute("height", 200);
+						
+						$html = My_Sites_Glove::getInnerHTML($ifame);
+					 }
+					 
+					
+				}else  if($results2->count() > 0)
+				{
+						 foreach($results2 as $object)
+						 {
+							$object->setAttribute("width", 300);
+							$object->setAttribute("height", 200);
+							$object->getElementsByTagName("embed")->item(0)->setAttribute("width", 300);
+							$object->getElementsByTagName("embed")->item(0)->setAttribute("height", 200);
+							$html = My_Sites_Glove::getInnerHTML($object);
+						 }
+						 
+			     }else  if($results3->count() > 0)
+				 {
+						 foreach($results3 as $object)
+						 {
+							$src = $object->getAttribute("src");
+							//$src = str_replace("http://", "", $src);
+							
+							$novosrc = urlencode($src);
+							$novosrc = str_replace("%", "___", $novosrc);
+							
+							
+							$object->setAttribute("src", "/thumbs/index/w/300/h/300/type/url/file/".$novosrc);
+							$object->setAttribute("border", 0);
+							
+							$html = "<a href=\"".$src."\" class=\"box\" title=\"".$valor->REMETENTE_NOME. " " . Lumine_Util::FormatDateTime($valor->DATA, "%d/%m/%Y %H:%M")."\" >".My_Sites_Glove::getInnerHTML($object)."</a>";
+						 }
+			     }else
+				 {
+					 $html =  $valor->MENSAGEM;
+				 }
+					 
+				 echo $html;
+	?>	
+    	 <div class="botoes">
+         <?php
+		 $comentarios = My_Sites_Glove::comentarios($valor->MENSAGEM_CODIGO, 1, 10);
+		 ?>
+    	 <a href="javascript:void(0);">Gostei</a> • <a href="javascript:void(0);">(<span id="totalComentarios<?=$valor->MENSAGEM_CODIGO?>"><?=$comentarios[2]?></span>) comentários</a> • <a href="javascript:void(0);">Compartilhar publicação</a>
+         </div>
+         
+         
+         
+  		 <div class="comentariocampo">
+         
+         <span id="placeHolderComentario<?=$valor->MENSAGEM_CODIGO?>">
+         	
+            <?php 
+			echo $this->partial('/conta/ajax/comentarios.phtml', array('coments' => $comentarios ));
+			?>
+            
+         </span>
+         
+         <div class="linhaComentario">
+         
+         <img src="/thumbs/index/w/30/h/30/type/2/file/<?=$usuario_logado->ARQUIVO_foto?>" border="0" />        
+         <input type="text" id="addcomentario<?=$valor->MENSAGEM_CODIGO?>" name="addcomentario" class="addcomentariofield" style="width:300px; height:15px; font-family:Verdana, Geneva, sans-serif; font-size:10px;" value="Escreva um comentário..." />
+         </div>
+         
+         </div>
+         
+         </div>
+         
+         
+         <div id="right">
+         	<img src="/assets/portal/default/images/tools.png" class="btnOption" id="btnOption<?=$valor->MENSAGEM_CODIGO?>" />
+            <div class="options" id="option<?=$valor->MENSAGEM_CODIGO?>" style="display:none;">
+            </div>
+         </div>
+             
+        </div>        
+    </div>
+</div>
+
+<?php
+$cont++;
+} ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+.table_paginacao a
+{
+	text-decoration:none;
+	color:#000000;
+	padding:4px;
+}
+
+.table_paginacao td
+{
+padding-left: 5px;
+padding-right: 5px;
+text-decoration:none;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+color:#CCCCCC;
+font-size:10px;
+border: 1px #999999 solid;
+padding:2px;
+}
+
+.table_paginacao td:hover
+{
+background-color:#ffffff;
+
+}
+</style>
+
+
+<div style="width:100%; min-height:1px; overflow:hidden; padding-top:30px;">
+
+<?php 
+
+
+
+$pags = $this->total_paginas;
+
+
+if($pags > 1):
+$pgmod = 1;
+$mod_atual = 1;
+?>
+
+
+<table border="1" class="table_paginacao">
+      <tr>
+   
+<?php
+
+
+
+$p = isset($this->pagina_atual) ? $this->pagina_atual : 1;
+
+if(isset($p)) {
+	$p = $p;
+} else {
+	$p = 1;
+}
+
+$qnt = 8;
+$inicio = ($p*$qnt) - $qnt;
+$max_links = 8;
+
+echo "<td><a href=\"javascript:pegaMensagens(1)\" title=\"Ir à primeira página\"> << </a> </td>";
+
+for($i = $p-$max_links; $i <= $p-1; $i++) {
+if($i <=0) {
+} else {
+echo "<td><a href=\"javascript:pegaMensagens(".$i.")\">".$i."</a></td> ";
+}
+}
+	echo "<td bgcolor=\"#006190\" style=\"padding:4px;\">".$p."</td>";
+	for($i = $p+1; $i <= $p+$max_links; $i++) {
+	if($i > $pags)
+	{
+	
+	}
+	else
+	{
+		echo "<td><a href=\"javascript:pegaMensagens(".$i.")\">".$i."</a></td> ";
+	}
+	}
+	echo "<td class=\"classe_td_no_border\"><a href=\"javascript:pegaMensagens(".$pags.")\" title=\"Ir à última página\"> >> </a></td> ";
+	?>
+</tr>
+    </table>
+ <?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?
+
+}else{
+?>
+<p>nenhuma mensagem adicionada.</p>
+<?php } ?>
+
+<script>
+
+$(document).ready(function() {
+	
+	var InterfaceUsuario = $("body").InterfaceUsuario
+	(
+		{
+			onAddComentario : function(data)
+			{
+				$.fn.InterfaceUsuario.metodos.getComentarios(1, data.post, "#placeHolderComentario"+data.post, "#totalComentarios"+data.post);
+			}
+		}
+	);
+	
+	
+    $(".box").fancybox({
+          helpers: {
+              title : {
+                  type : 'float'
+              }
+          }
+      });
+	  
+	  $(".addcomentariofield").bind("click", function(){  
+		  if($(this).val() == "Escreva um comentário...")
+		  {
+			   $(this).val("");
+		  }
+	  });
+	  
+	  $(".addcomentariofield").bind("blur", function(){
+		  if($(this).val() == "")
+		  {
+			  $(this).val("Escreva um comentário...");
+		  }
+	  });
+	  
+	  $(".addcomentariofield").bind("keyup", function(event)
+		{
+			if ( event.which == 13 ) {
+				
+				$.fn.InterfaceUsuario.metodos.addComentario($(this).attr("id"), $(this).val());
+				$(this).val("");
+			}
+		});
+});
+</script>

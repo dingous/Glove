@@ -1,0 +1,87 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+    <script type="text/javascript" src="/assets/jquery.timer.js"></script> 
+    
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+          
+
+<div id="PaginaLogin">
+
+
+
+<div id="LoginForms">
+<a href="/" title="Glove Brasil"><img src="/assets/portal/defaultOld/images/logoLogin.png" border="0" /></a>
+
+<form action="/conta/logar" name="formLogin" id="formLogin" method="post">
+Seu E-mail<br /><input name="EMAIL" type="text" id="EMAIL" style="background-color:#FFFFFF; border-radius: 8px;	border:none; height:28px; font-family:Verdana, Geneva, sans-serif; font-size:20px;color:#006190;" size="30" />
+<br />Sua Senha<br /><input name="SENHA" type="password" id="SENHA" size="30"  />
+<input type="submit" name="" value="Entrar" id="button1" style="border-radius: 8px; min-width:10px; height:33px; font-size:13px; cursor:pointer; background-color:#006190; color:#FFFFFF; border:none;"/>
+<br />
+<span style="color:red;"><?=$this->msg?></span>
+</form>
+
+<br />
+<a href="javascript:void(0);" onclick="Popup('/conta/precuperarsenha', 350, 300);" title="Esqueci minha senha!">Esqueci minha senha</a>
+<br />
+<a href="/conta" title="Criar uma conta no Glove Brasil">Ainda não tenho cadastro</a>
+<br /><br />
+
+</div>
+
+<div id="loginBot">
+	<img src="/assets/portal/defaultOld/images/loginBot.png" />
+</div>
+
+</div>
+
+
+
+<script>
+    $(document).ready(function(){
+		
+		
+		
+		$("body").fadeIn();
+		$("#EMAIL").focus();
+		$("#left").remove();
+		$("#logo").remove();
+		$("#desconectar").remove();		
+		
+		
+		
+		$("body").css("background-image", "url(/assets/portal/defaultOld/images/background1.jpg)");
+		
+		
+		var indice = 1;
+		timer = $.timer(function() {
+				
+			if(indice == 1)
+			{
+				indice = 2;
+			}else
+			{
+				indice = 1;
+			}
+			
+			//$("body").delay(3000 * 1).fadeIn(3000).fadeOut();
+			$("body").css("background-image", "url(/assets/portal/defaultOld/images/background"+indice+".jpg)");		
+			
+		});
+		
+		timer.set({ time : 30000, autostart : true }); 
+		
+		
+		//setTimeout(function(){bkgFadeOut();}, 2000);
+		//setTimeout(function(){bkgFadeIn();}, 5000);​	
+		
+	});
+	
+function bkgFadeOut(){
+    $('body').fadeOut();
+}
+
+function bkgFadeIn(){
+     $('body').fadeIn();
+}
+
+</script>

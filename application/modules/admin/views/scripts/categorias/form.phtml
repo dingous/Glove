@@ -1,0 +1,61 @@
+
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        	<legend>Preencha o formulário</legend>
+    	 	
+              <div class="linha">
+           <div class="elemento">   
+           <label for="id">Cód. categoria</label><br />
+           <input id="id" name="id" type="text" readonly="readonly" value="<?=$this->modelo->id?>" />
+           </div>
+           </div>
+            
+           <div class="linha">
+           <div class="elemento">   
+           <label for="file_upload">Ícone pequeno</label><br />
+           <img src="/thumbs/index/w/0/h/17/type/1/autocrop/false/file/<?=$this->modelo->icone_pequeno?>" id="iconepqn" /><br />
+           <input id="file_upload" name="file_upload" type="file" value="selecionar arquivos" />
+           </div>
+           </div>
+           
+           <div class="linha">
+           <div class="elemento">    
+           <label for="file_upload">Ícone grande</label><br />
+           <img src="/thumbs/index/w/0/h/76/autocrop/false/file/<?=$this->modelo->icone_grande?>/type/1" id="iconegr"  /><br /><br />
+           <input id="file_upload2" name="file_upload2" type="file" value="selecionar arquivos" />
+        
+            
+           <input type="hidden" readonly="readonly" id="id_categoria" name="id_categoria" value="<?=$this->id_categoria?>" /> 
+           
+           </div>
+           </div>
+           <?php if($this->modelo->parent_id == 2){ ?>
+           <div class="linha">
+           	<div class="elemento">
+            	<input type="checkbox" name="FL_DESTACAR" id="FL_DESTACAR" <?=$this->modelo->FL_DESTACAR == "1" ? 'checked="checked"' : ""?> value="1"  /> Destacar esta categoria?
+            </div>
+           </div>
+           <?php } ?>
+           <div class="linha">
+           <div class="elemento">         		
+           <input type="submit" name="salvar" id="salvar" value="Salvar" />
+		   <input type="button" name="salvar2" id="salvar2" value="Cancelar" />
+           </div>
+           </div>
+           
+          
+       </fieldset>
+	</div>
+  	</div>
+    
+    
+
+
+ 
+ 

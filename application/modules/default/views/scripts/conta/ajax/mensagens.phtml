@@ -1,0 +1,746 @@
+<?
+ 
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+
+/* echo "<pre>";
+ print_r($usuario_logado);
+ echo "</pre>";
+ die();
+ echo "<pre>";
+ print_r($_SESSION["Zend_Auth"]["storage"]);
+ echo "</pre>";
+*/
+?>
+
+<?php
+function formataNome($nome)
+{	
+	$nome = strtolower($nome);
+	$preposicoes = array(" da ", " do ", " de ", " das ", " dos ");
+	$nome = str_replace($preposicoes, " ", $nome);	
+	$exp = explode(" ", $nome);
+	if(count($exp) > 1)
+	{
+		$nome = ucfirst($exp[0]) . " " . (count($exp) >= 2 ? ($exp[1] == "" ? ucfirst($exp[2]) : ucfirst($exp[1])) : ucfirst($exp[1]));	
+	}else
+	{
+		$nome = ucfirst($exp[0]);		
+	}
+	return $nome;
+}
+?>
+
+
+<?php  if($this->showtitulo == true) {?>
+	<h3 style="margin-left:20px;">Recados recentes <a href="javascript:void(0);" onclick="javascript:$.fn.InterfaceUsuario.metodos.MensagensPega(1);" title="Atualizar mensagens" style="cursor:pointer;"><img src="/assets/btnRefresh.png" width="16" height="16" /></a></h3>
+<? }else{?>
+	<a href="/conta/atualizacoes"> < voltar</a>
+<?php } ?>
+
+
+
+
+<?php
+if(count($this->mensagens) > 0)
+{
+
+
+
+$cont = 0;
+foreach($this->mensagens as $chave => $valor)
+{
+
+
+if(($valor->FL_PRIVADA == 0 && $valor->FL_COMPARTILHAMENTO == 0) || ($valor->FL_PRIVADA == 1 && $valor->FL_COMPARTILHAMENTO == 0))
+{	
+
+?>
+<div class="mensagens" id="msg<?=$valor->MENSAGEM_CODIGO?>" <?=$cont == 0 ? "style=\"border-top:1px solid #E9E9E9;\"" : ""?>>
+    <div id="left">
+    	<div style="width:50px; height:50px;">
+    	<a title="<?=formataNome($valor->REMETENTE_NOME . " " . $valor->REMETENTE_SOBRENOME)?>" href="/<?=$valor->REMETENTE_SLUG?>-<?=$valor->REMETENTE_ID?>" class="linkCallPerfil"><img src="/thumbs/index/w/50/h/50/type/2/file/<?=$valor->REMETENTE_FOTO?>" border="0" /></a> 
+        </div>
+    </div>
+    
+    <div id="right">
+    	<div id="nome"><a title="<?=formataNome($valor->REMETENTE_NOME . " " . $valor->REMETENTE_SOBRENOME)?>" href="/<?=$valor->REMETENTE_SLUG?>-<?=$valor->REMETENTE_ID?>" class="linkCallPerfil"><b><?=formataNome($valor->REMETENTE_NOME . " " . $valor->REMETENTE_SOBRENOME)?></b></a> atualizou há  <?=My_Sites_Glove::formatar_tempo(My_Sites_Glove::convert_datetime($valor->DATA));?></div>
+    	<div id="msg">
+        
+        <div id="left">
+        
+               <?php
+				
+				if($valor->ID_TIPOPUBLICACAO == 3)
+				{	
+					
+					$fotosgaleria = My_Sites_Glove::fotosgaleria($valor->ID_ALBUM);
+				
+					if(count($fotosgaleria) > 0)
+					{
+				?>
+                   
+                   
+                   
+                    <?=$valor->MENSAGEM?>
+                  
+                        <div class="flexslider">
+                            <ul class="slides" style="list-style-type:none; margin:0; padding:0; overflow:hidden;">
+                                <li>
+                                    <ul class="portfolio-slide"  style="list-style-type:none; margin:0;  padding:0;">
+                                        
+                                      <?php
+                                     if(count($fotosgaleria) > 0)
+                                     {
+                                     foreach($fotosgaleria as $chavefotos => $valorfotos){
+                                
+                                         ?>
+                                        <li style="float:left; padding:4px;"><figure>   <a href="/uploads/perfis/<?=$valorfotos->ARQUIVO?>" rel="grupo"><img src="/thumbs/index/w/70/h/50/type/2/file/<?=$valorfotos->ARQUIVO?>" id="iconepqn" title="clique para ampliar" style="border: 1px solid #cccccc;" /></a></li>
+                                        
+                                        
+                                     <?php } 
+										 
+									 }else{ ?>
+									 
+									 nenhuma foto adicionada a este álbum.
+									 
+									 <?php } ?>
+                                        
+                                       
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                
+                   
+                   
+                   
+                   
+
+				<?php
+				
+					}
+				
+				}else if($valor->ID_TIPOPUBLICACAO == 5)
+				{	
+				$foto = My_Sites_Glove::foto($valor->ID_FOTO);
+				?>
+
+				
+                
+                  <?=utf8_decode($valor->MENSAGEM)?>
+                  
+                        <div class="flexslider">
+                            <ul class="slides" style="list-style-type:none; margin:0; padding:0; overflow:hidden;">
+                                <li>
+                                    <ul class="portfolio-slide"  style="list-style-type:none; margin:0;  padding:0;">
+                                        
+                                     <li style="float:left; padding:4px;"><figure>   <a href="/uploads/perfis/<?=$foto->ARQUIVO?>" rel="grupo"><img  title="clique para ampliar" src="/thumbs/index/w/100/h/70/type/2/file/<?=$foto->ARQUIVO?>" id="iconepqn" style="border: 1px solid #cccccc;" /></a></li>                                       
+                                       
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                
+                
+				
+				<?
+				 
+                }else{
+				
+				$html = stripslashes($valor->MENSAGEM);
+
+
+				if($html != "")
+				{
+				 $dom = new Zend_Dom_Query($html);
+				 $dom->setEncoding("utf-8");
+				 $results = $dom->query('iframe');
+				 $results2 = $dom->query('object');
+				 $results3 = $dom->query('img');
+				 
+				 
+				 
+				 
+				 
+			     if($results->count() > 0)
+				 {	 
+				 	
+					 
+					 foreach($results as $ifame)
+					 {
+						$ifame->setAttribute("width", 300);
+						$ifame->setAttribute("height", 200);
+						
+						$html = My_Sites_Glove::getInnerHTML($ifame);
+					 }
+					 
+					 
+					
+					
+				}else  if($results2->count() > 0)
+				{
+					
+						 foreach($results2 as $object)
+						 {
+							$object->setAttribute("width", 300);
+							$object->setAttribute("height", 200);
+							$object->getElementsByTagName("embed")->item(0)->setAttribute("width", 300);
+							$object->getElementsByTagName("embed")->item(0)->setAttribute("height", 200);
+							$html = My_Sites_Glove::getInnerHTML($object);
+						 }
+						 
+			     }else  if($results3->count() > 0)
+				 {
+					 
+						 foreach($results3 as $object)
+						 {
+							/*$src = $object->getAttribute("src");						
+							$novosrc = urlencode($src);
+							$novosrc = str_replace("%", "___", $novosrc);
+							
+							
+							$object->setAttribute("src", "/thumbs/index/w/300/h/300/type/url/file/".$novosrc);
+							$object->setAttribute("border", 0);
+							
+							$html = "<a href=\"".$src."\" class=\"box\" title=\"".$valor->REMETENTE_NOME. " " . Lumine_Util::FormatDateTime($valor->DATA, "%d/%m/%Y %H:%M")."\" >".My_Sites_Glove::getInnerHTML($object)."</a>";*/
+							
+						  $html = stripslashes($html);
+							
+						 }
+			     }else
+				 {
+					
+					 $html =  $valor->MENSAGEM;
+				 }
+					 
+				 echo stripslashes($html);
+				}
+				}
+	?>	
+    	 <div class="botoes">
+         <?php
+		 $comentarios = My_Sites_Glove::comentarios($valor->MENSAGEM_CODIGO, 1, 10, $usuario_logado->ID_USUARIO);
+		 ?>
+         
+		 <?php if($valor->QUEM_CURTIU != NULL || $valor->CURTIDAS > 0){ ?>
+    	  
+         <?php if($valor->QUEM_CURTIU != NULL ){?>
+    	 • <span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>">Você e mais <?=$valor->CURTIDAS > 0 ? $valor->CURTIDAS -1 : $valor->CURTIDAS?> pessoa(s) gostaram disto!</span>
+           <span id="btnDesgostar<?=$valor->MENSAGEM_CODIGO?>"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensDesgostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"> (Desfazer) </a> </span>
+         <?php }else{ ?>
+    	 • <span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>"><?=$valor->CURTIDAS?> pessoa(s) gostaram disto!</span>    
+           <span id="btnGostei<?=$valor->MENSAGEM_CODIGO?>">• <a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensGostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"><span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>">Gostei</span></a>  </span>            
+           <span id="btnDesgostar<?=$valor->MENSAGEM_CODIGO?>" style="display:none;"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensDesgostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"> (Desfazer) </a> </span>           
+         <?php }?>         
+         
+
+         <span id="btnGostei<?=$valor->MENSAGEM_CODIGO?>" style="display:none;">• <a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensGostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"><span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>">Gostei</span></a>  </span>         
+
+         <?php }else{ ?>
+          
+          • <span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>"></span>
+                 
+         <span id="btnDesgostar<?=$valor->MENSAGEM_CODIGO?>"  style="display:none;"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensDesgostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"> (Desfazer) </a> </span>
+         <span id="btnGostei<?=$valor->MENSAGEM_CODIGO?>"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensGostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"><span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>">Gostei</span></a>  </span>         
+
+         
+         <?php } ?>
+         
+         
+         
+         &nbsp;&nbsp;&nbsp;• <a href="javascript:void(0);" onclick="javascript:window.parent.$.fn.InterfaceUsuario.metodos.ComentariosPega(1, '<?=$valor->MENSAGEM_CODIGO?>', '#placeHolderComentario<?=$valor->MENSAGEM_CODIGO?>', '#totalComentarios<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID ?>');">(<span id="totalComentarios<?=$valor->MENSAGEM_CODIGO?>"><?=$comentarios[2]?></span>) comentários</a> &nbsp;&nbsp;&nbsp;• <a href="javascript:void(0);" onClick="window.parent.Popup('/conta/compartilhar/id/<?=$valor->MENSAGEM_CODIGO?>_<?=$valor->REMETENTE_ID?>_<?=$valor->DESTINATARIO_ID?>_<?=$valor->ID_RECADO_PRIMEIRA_ORIGEM?>_<?=$valor->ID_TIPOPUBLICACAO?>_<?=$valor->ID_ALBUM?>_<?=$valor->ID_FOTO?>', 430, 600);"  title="Compartilhar publicação">Compartilhar publicação</a>
+         
+         
+         <span class="botoesFaceBook">
+         <div class="fb-like" data-href="http://www.glovebrasil.com.br/index/msg/<?=$valor->MENSAGEM_CODIGO?>/<?=$usuario_logado->ID_USUARIO?>" data-send="true" data-width="450" data-show-faces="true"></div>
+         <!--<div class="fb-like" data-href="http://www.glovebrasil.com.br/" data-send="true" data-width="450" data-show-faces="true"></div>-->
+         
+         </span>
+         
+         
+         
+         
+         
+         </div>
+         
+         
+         
+  		 <div class="comentariocampo">
+         
+         <span id="placeHolderComentario<?=$valor->MENSAGEM_CODIGO?>">
+         	
+            <?php 
+			echo $this->partial('/conta/ajax/comentarios.phtml', 
+			array(
+				'coments' => $comentarios,
+				'ID_REMETENTE_MSG' => $valor->REMETENTE_ID  
+				 ));
+			?>
+            
+         </span>
+         
+         <div class="linhaComentario">
+         
+         <img src="/thumbs/index/w/30/h/30/type/2/file/<?=$usuario_logado->ARQUIVO_foto?>" border="0" />        
+         <input type="text" id="addcomentario<?=$valor->MENSAGEM_CODIGO?>_<?=$valor->REMETENTE_ID?>" name="addcomentario" class="addcomentariofield" style="width:350px; height:30px; font-family:Verdana, Geneva, sans-serif; font-size:10px;" value="Escreva um comentário..." />
+    	
+       
+        	     
+	         
+         </div>
+         
+
+         
+         </div>
+         
+         </div>
+         
+         
+         <div id="right">
+              <img class="botaoOption" alt='Ações' src="/assets/portal/default/images/tools.png" style='cursor:pointer;' title='Ações' id="btn<?=$valor->MENSAGEM_CODIGO?>" />
+              
+         	
+            <div class="options" id="option<?=$valor->MENSAGEM_CODIGO?>" style="display:none;">
+            </div>
+         </div>
+             
+        </div>        
+    </div>
+</div>
+
+
+<?php }else { ?>
+
+
+
+<div class="mensagens" id="msg<?=$valor->MENSAGEM_CODIGO?>" <?=$cont == 0 ? "style=\"border-top:1px solid #E9E9E9;\"" : ""?>>
+    <div id="left">
+    	<div style="width:50px; height:50px;">
+    	<a title="<?=$valor->DESTINATARIOCOMPART_NOME?>" href="/<?=$valor->DESTINATARIOCOMPART_SLUG?>-<?=$valor->DESTINATARIOCOMPART_ID?>" class="linkCallPerfil"><img src="/thumbs/index/w/50/h/50/type/2/file/<?=$valor->DESTINATARIOCOMPART_FOTO?>" border="0" /></a> 
+        </div>
+    </div>
+    
+    <div id="right">
+    	<div id="nome">
+        
+        <a title="<?=$valor->DESTINATARIOCOMPART_NOME?>" href="/<?=$valor->DESTINATARIOCOMPART_SLUG?>-<?=$valor->DESTINATARIOCOMPART_ID?>" class="linkCallPerfil">
+        
+		<?php if($valor->DESTINATARIOCOMPART_ID == $valor->DESTINATARIO_ID){?>
+        <b><?=$valor->DESTINATARIOCOMPART_NOME?></b></a> compartilhou sua própria publicação 
+		<?php }else{ ?>
+		<b><?=$valor->DESTINATARIOCOMPART_NOME?></b></a> compartilhou uma publicação de 
+        <a title="<?=$valor->DESTINATARIO_NOME?>" href="/<?=$valor->DESTINATARIO_SLUG?>-<?=$valor->DESTINATARIO_ID?>" class="linkCallPerfil"><b><?=$valor->DESTINATARIO_NOME?></b></a>         
+  		<?php }?>
+        há <?=My_Sites_Glove::formatar_tempo(My_Sites_Glove::convert_datetime($valor->DT_COMPARTILHAMENTO));?>
+        
+        </div>
+    	<div id="msg">
+        
+        <div id="left">
+        
+               <?php
+				
+				if($valor->ID_TIPOPUBLICACAO == 3)
+				{	
+				
+			
+						
+				$fotosgaleria = My_Sites_Glove::fotosgaleria($valor->ID_ALBUM);
+				
+				
+				
+				if(count($fotosgaleria) > 0)
+				{
+				?>
+                   
+                   
+                   
+                   
+                       <div class="flexslider">
+                            <ul class="slides" style="list-style-type:none; margin:0; padding:0; overflow:hidden;">
+                                <li>
+                                    <ul class="portfolio-slide"  style="list-style-type:none; margin:0;  padding:0;">
+                                        
+                                      <?php
+                                     if(count($fotosgaleria) > 0)
+                                     {
+                                     foreach($fotosgaleria as $chavefotos => $valorfotos){
+                                
+                                         ?>
+                                        <li style="float:left; padding:5px;"><figure>   <a href="/uploads/perfis/<?=$valorfotos->ARQUIVO?>" rel="grupo"><img  title="clique para ampliar" src="/thumbs/index/w/70/h/50/type/2/file/<?=$valorfotos->ARQUIVO?>" id="iconepqn" style="border: 1px solid #cccccc;" /></a></li>
+                                        
+                                        
+                                     <?php } 
+										 
+									 }else{ ?>
+									 
+									 nenhuma foto adicionada a este álbum.
+									 
+									 <?php } ?>
+                                        
+                                       
+                                    </ul>
+                                </li>
+                            </ul>
+          </div>
+                   
+                   
+                   
+                   
+
+				<?php
+				}
+				
+				}else if($valor->ID_TIPOPUBLICACAO == 5)
+				{	
+				$foto = My_Sites_Glove::foto($valor->ID_FOTO);
+				?>
+
+				
+                
+                  <?=$valor->MENSAGEM?>
+                  
+                        <div class="flexslider">
+                            <ul class="slides" style="list-style-type:none; margin:0; padding:0; overflow:hidden;">
+                                <li>
+                                    <ul class="portfolio-slide"  style="list-style-type:none; margin:0;  padding:0;">
+                                        
+                                     <li style="float:left; padding:4px;"><figure>   <a href="/uploads/perfis/<?=$foto->ARQUIVO?>" rel="grupo"><img  title="clique para ampliar" src="/thumbs/index/w/100/h/70/type/2/file/<?=$foto->ARQUIVO?>" id="iconepqn" style="border: 1px solid #cccccc;" /></a></li>                                       
+                                       
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                
+                
+				
+				<?
+                }else{
+				
+				$html = stripslashes($valor->MS2);
+				if($html != "")
+				{
+				
+				 $dom = new Zend_Dom_Query($html);
+				 $dom->setEncoding("utf-8");
+				 $results = $dom->query('iframe');
+				 $results2 = $dom->query('object');
+				 $results3 = $dom->query('img');
+				 
+			     if($results->count() > 0)
+				 {	 
+				 
+					 foreach($results as $ifame)
+					 {
+						$ifame->setAttribute("width", 300);
+						$ifame->setAttribute("height", 200);
+						
+						$html = My_Sites_Glove::getInnerHTML($ifame);
+					 }
+					 
+					
+				}else  if($results2->count() > 0)
+				{
+						 foreach($results2 as $object)
+						 {
+							$object->setAttribute("width", 300);
+							$object->setAttribute("height", 200);
+							$object->getElementsByTagName("embed")->item(0)->setAttribute("width", 300);
+							$object->getElementsByTagName("embed")->item(0)->setAttribute("height", 200);
+							$html = My_Sites_Glove::getInnerHTML($object);
+						 }
+						 
+			     }else  if($results3->count() > 0)
+				 {
+						 foreach($results3 as $object)
+						 {
+							/*$src = $object->getAttribute("src");
+							
+							
+							$novosrc = urlencode($src);
+							$novosrc = str_replace("%", "___", $novosrc);
+							
+							
+							$object->setAttribute("src", "/thumbs/index/w/300/h/300/type/url/file/".$novosrc);
+							$object->setAttribute("border", 0);
+							
+							$html = "<a href=\"".$src."\" class=\"box\" title=\"".$valor->REMETENTE_NOME. " " . Lumine_Util::FormatDateTime($valor->DATA, "%d/%m/%Y %H:%M")."\" >".My_Sites_Glove::getInnerHTML($object)."</a>";*/
+							
+							$html = stripslashes($html);
+						 }
+			     }else
+				 {
+					 $html =  $valor->MS2;
+				 }
+				 
+				 echo "<p>".$valor->msgcompart."</p>";
+			
+				 echo stripslashes($html);
+	      }
+				}
+	?>	
+    	 <div class="botoes">
+         <?php
+		 $comentarios = My_Sites_Glove::comentarios($valor->MENSAGEM_CODIGO, 1, 10, $usuario_logado->ID_USUARIO);
+		 ?>
+         
+		 <?php if($valor->QUEM_CURTIU != NULL  || $valor->CURTIDAS > 0){ ?>
+         
+         <?php if($valor->QUEM_CURTIU != NULL ){?>
+    	 • <span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>">Você e mais <?=$valor->CURTIDAS > 0 ? $valor->CURTIDAS -1 : $valor->CURTIDAS?> pessoa(s) gostaram disto!</span>
+          <span id="btnDesgostar<?=$valor->MENSAGEM_CODIGO?>"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensDesgostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"> (Desfazer) </a> </span>
+         <?php }else{ ?>
+    	 • <span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>"><?=$valor->CURTIDAS?> pessoa(s) gostaram disto!</span>    
+           <span id="btnGostei<?=$valor->MENSAGEM_CODIGO?>">• <a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensGostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"><span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>">Gostei</span></a>  </span>       
+		   <span id="btnDesgostar<?=$valor->MENSAGEM_CODIGO?>" style="display:none;"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensDesgostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"> (Desfazer) </a> </span>                    
+         <?php }?>         
+         
+         
+         <span id="btnGostei<?=$valor->MENSAGEM_CODIGO?>" style="display:none;">• <a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensGostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"><span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>">Gostei</span></a>  </span>         
+
+         <?php }else{ ?>
+          
+          • <span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>"></span>
+                 
+         <span id="btnDesgostar<?=$valor->MENSAGEM_CODIGO?>"  style="display:none;"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensDesgostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"> (Desfazer) </a> </span>
+         <span id="btnGostei<?=$valor->MENSAGEM_CODIGO?>"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.MensagensGostei('<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID?>');"><span id="txtGostei<?=$valor->MENSAGEM_CODIGO?>">Gostei</span></a>  </span>         
+
+         
+         <?php } ?>
+         
+        
+         
+         &nbsp;&nbsp;&nbsp;• <a href="javascript:void(0);" onclick="javascript:window.parent.$.fn.InterfaceUsuario.metodos.ComentariosPega(1, '<?=$valor->MENSAGEM_CODIGO?>', '#placeHolderComentario<?=$valor->MENSAGEM_CODIGO?>', '#totalComentarios<?=$valor->MENSAGEM_CODIGO?>', '<?=$valor->REMETENTE_ID ?>');">(<span id="totalComentarios<?=$valor->MENSAGEM_CODIGO?>"><?=$comentarios[2]?></span>) comentários</a> &nbsp;&nbsp;&nbsp;• <a href="javascript:void(0);" onClick="window.parent.Popup('/conta/compartilhar/id/<?=$valor->MENSAGEM_CODIGO?>_<?=$valor->REMETENTE_ID?>_<?=$valor->DESTINATARIO_ID?>_<?=$valor->ID_RECADO_PRIMEIRA_ORIGEM?>_<?=$valor->ID_TIPOPUBLICACAO?>_<?=$valor->ID_ALBUM?>_<?=$valor->ID_FOTO?>', 430, 600);"  title="Compartilhar publicação">Compartilhar publicação</a>
+         
+          <span class="botoesFaceBook">
+          <div class="fb-like" data-href="http://www.glovebrasil.com.br/index/msg/<?=$valor->MENSAGEM_CODIGO?>/<?=$usuario_logado->ID_USUARIO?>" data-send="true" data-width="450" data-show-faces="true"></div>
+         <!--<div class="fb-like" data-href="http://www.glovebrasil.com.br/" data-send="true" data-width="450" data-show-faces="true"></div>-->
+         </span>
+         
+         </div>
+         
+         
+         
+  		 <div class="comentariocampo">
+         
+         <span id="placeHolderComentario<?=$valor->MENSAGEM_CODIGO?>">
+         	
+            <?php 
+			echo $this->partial('/conta/ajax/comentarios.phtml', 
+			array(
+				'coments' => $comentarios,
+				'ID_REMETENTE_MSG' => $valor->REMETENTE_ID  
+				 ));
+			?>
+            
+         </span>
+         
+         <div class="linhaComentario">
+         
+         <img src="/thumbs/index/w/30/h/30/type/2/file/<?=$usuario_logado->ARQUIVO_foto?>" border="0" />        
+         <input type="text" id="addcomentario<?=$valor->MENSAGEM_CODIGO?>_<?=$valor->REMETENTE_ID?>" name="addcomentario" class="addcomentariofield" style="width:350px; height:30px; font-family:Verdana, Geneva, sans-serif; font-size:10px;" value="Escreva um comentário..." />
+    	
+       
+        	     
+	         
+         </div>
+         
+
+         
+         </div>
+         
+         </div>
+         
+         
+         <div id="right">
+              <img class="botaoOption" alt='Ações' src="/assets/portal/default/images/tools.png" style='cursor:pointer;' title='Ações' id="btn<?=$valor->MENSAGEM_CODIGO?>" />
+              
+         	
+            <div class="options" id="option<?=$valor->MENSAGEM_CODIGO?>" style="display:none;">
+            </div>
+         </div>
+             
+        </div>        
+    </div>
+</div>
+
+
+
+
+
+
+
+<?php } ?>
+
+<?php
+$cont++;
+} ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+.table_paginacao a
+{
+	text-decoration:none;
+	color:#000000;
+	padding:4px;
+}
+
+.table_paginacao td
+{
+padding-left: 5px;
+padding-right: 5px;
+text-decoration:none;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+color:#CCCCCC;
+font-size:10px;
+border: 1px #999999 solid;
+padding:2px;
+}
+
+.table_paginacao td:hover
+{
+background-color:#ffffff;
+
+}
+</style>
+
+<?php
+if($this->pagina != "")
+{
+?>
+<div style="width:100%; min-height:1px; overflow:hidden; padding-top:30px;">
+
+<?php 
+
+
+
+$pags = $this->total_paginas;
+
+
+if($pags > 1):
+$pgmod = 1;
+$mod_atual = 1;
+?>
+
+
+<table border="0" class="table_paginacao">
+      <tr>
+   
+<?php
+
+
+
+$p = isset($this->pagina_atual) ? $this->pagina_atual : 1;
+
+if(isset($p)) {
+	$p = $p;
+} else {
+	$p = 1;
+}
+
+$qnt = 8;
+$inicio = ($p*$qnt) - $qnt;
+$max_links = 8;
+
+echo "<td><a href=\"javascript:void(0);\" onclick=\"javascript:$.fn.InterfaceUsuario.metodos.MensagensPega(1)\" title=\"Ir à primeira página\"> << </a> </td>";
+
+for($i = $p-$max_links; $i <= $p-1; $i++) {
+if($i <=0) {
+} else {
+echo "<td><a href=\"javascript:void(0);\" onclick=\"javascript:$.fn.InterfaceUsuario.metodos.MensagensPega(".$i.")\">".$i."</a></td> ";
+}
+}
+	echo "<td class=\"ativa\" style=\"padding:4px;\">".$p."</td>";
+	for($i = $p+1; $i <= $p+$max_links; $i++) {
+	if($i > $pags)
+	{
+	
+	}
+	else
+	{
+		echo "<td><a href=\"javascript:void(0);\" onclick=\"javascript:$.fn.InterfaceUsuario.metodos.MensagensPega(".$i.")\">".$i."</a></td> ";
+	}
+	}
+	echo "<td class=\"classe_td_no_border\"><a href=\"javascript:void(0);\" onclick=\"javascript:$.fn.InterfaceUsuario.metodos.MensagensPega(".$pags.")\" title=\"Ir à última página\"> >> </a></td> ";
+	?>
+</tr>
+</table>
+ <?php endif; ?>
+
+</div>
+<?php
+}
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?
+
+}else{
+?>
+<p>nenhuma mensagem adicionada.</p>
+<?php } ?>
+
+<script>
+
+$(document).ready(function() {
+	
+	
+	$("a[rel=grupo]").fancybox({
+		'transitionIn'		: 'none',
+		'transitionOut'		: 'none',
+		'titlePosition' 	: 'over',
+		centerOnScroll: true,
+		'titleFormat'       : function(title, currentArray, currentIndex, currentOpts) {
+			return '<span id="fancybox-title-over">Imagem ' +  (currentIndex + 1) + ' / ' + currentArray.length + ' ' + title + '</span>';
+		}
+	});
+	
+	
+	$(".flexslider .slides > li, .flexslider-detail .slides > li").css("display", "block");
+	
+	
+	
+	
+});
+
+</script>
+

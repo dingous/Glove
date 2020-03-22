@@ -1,0 +1,487 @@
+<?
+$profile = new Zend_Session_Namespace('perfil');
+$auth = Zend_Auth::getInstance();
+$usuario_logado = $auth->getStorage()->read();
+?>
+
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="pt-BR" xmlns:fb="http://ogp.me/ns/fb#" class="no-js oldie ie6 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="pt-BR" xmlns:fb="http://ogp.me/ns/fb#" class="no-js oldie ie7 lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="pt-BR" xmlns:fb="http://ogp.me/ns/fb#" class="no-js oldie ie8 lt-ie9"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="pt-BR" xmlns:fb="http://ogp.me/ns/fb#" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="pt-BR" xmlns:fb="http://ogp.me/ns/fb#" class="no-js" ><!--<![endif]-->
+<head>
+<meta charset="utf-8" />
+<title>Glove Brasil</title>
+<meta name="description" content="Glove Brasil..." />
+<meta name="author" content="Invento Novo" />
+<meta name="robots" content="index,follow" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+<!-- Meta Facebook -->
+<meta property="og:title" content="Glove Brasil"/>
+<meta property="og:description" content="Glove Brasil..."/>
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="images/favicon.ico" />
+
+<!-- Style -->
+<link rel="stylesheet" href="/assets/portal/default/css/default.css" media="screen" />
+<link rel="stylesheet" href="/assets/portal/default/css/style.css" media="screen" />
+
+
+<script src="/assets/portal/default/js/jquery-1.7.2.min.js"></script>
+<script src="/assets/admin/ckeditor/ckeditor.js"></script>
+
+<script src="/assets/jquery.lazyload.js"></script>
+
+
+<!-- Google Fonts -->
+<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700' rel='stylesheet' type='text/css'>
+<!-- Respond JS -->
+<script src="/assets/portal/default/js/respond.min.js"></script>
+<!-- Modernizr JS -->
+<script src="/assets/portal/default/js/modernizr-2.5.3.min.js"></script>
+<!-- Flexslider JS -->
+<link rel="stylesheet" href="/assets/portal/default/js/flexslider/flexslider.css" type="text/css" media="screen" />
+<script src="/assets/portal/default/js/flexslider/jquery.flexslider-min.js"></script>
+<!-- JS DEFAUL FOOTER -->
+    <!-- jQuery file -->
+    <!-- Flexslider -->
+    <!-- Easytabs -->
+    <script src="/assets/portal/default/js/jquery.hashchange.min.js"></script>
+    <!--<script src="/assets/portal/default/js/jquery.easytabs.min.js"></script>-->
+    <!-- jQuery validate -->
+    <script src="/assets/portal/default/js/jquery.validate.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/toastmessage/jquery.toastmessage.css"/>
+	<script type="text/javascript" src="/assets/toastmessage/jquery.toastmessage.js"></script>	
+    <!-- Fancybox -->
+    <script type="text/javascript" src="/assets/portal/default/js/fancybox/jquery.mousewheel-3.0.4.pack.js"></script>
+    <!--script type="text/javascript" src="/assets/portal/default/js/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/portal/default/js/fancybox/jquery.fancybox-1.3.4.css" media="screen" />
+    -->
+	<script type="text/javascript" src="/assets/fancybox2/jquery.fancybox.js?v=2.0.6"></script>
+	<link rel="stylesheet" type="text/css" href="/assets/fancybox2/jquery.fancybox.css?v=2.0.6" media="screen" />
+    <!-- Custom.JS file -->
+    <script src="/assets/portal/default/js/custom.js"></script>
+    <script src="/assets/core.js"></script>
+
+	<!-- Chat -->
+    <?php 
+	if(strpos($_SERVER['HTTP_HOST'], "com") == true )
+	{?>
+    <script src="http://www.glovebrasil.com.br:9090/socket.io/socket.io.js"></script>
+    <?php }else{ ?>
+    <script src="http://localhost:9090/socket.io/socket.io.js"></script>
+    <?php } ?>
+    <script src="/assets/chCliente.js"></script>
+    <script src="/assets/chClienteSocket.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/portal/default/css/chat.css"/>
+    <!-- End Chat -->
+	<script type="text/javascript" src="/assets/InterfaceUsuario.js"></script> 	
+	<script type="text/javascript" src="/assets/soundmanager/script/soundmanager2.js"></script>
+    <script type="text/javascript" src="/assets/jquery.slimScroll.js"></script>
+    <script type="text/javascript" src="/assets/jquery.timer.js"></script> 
+<!-- END JS DEFAUL FOOTER -->
+
+
+	<!-- Loading -->
+    <link rel="stylesheet" type="text/css" href="/assets/facebook_loading/css/style.css"/>
+	<!--<script src="/assets/facebook_loading/js/prefixfree.min.js"></script>-->
+    <!-- -->
+    
+<script type="text/javascript" src="/assets/jquery.tinysort.min.js"></script>
+<script src='/assets/jquerycontextmenu/jquery.contextmenu.js' type='text/javascript'></script>
+<link href='/assets/jquerycontextmenu/jquery.contextmenu.css' rel='stylesheet' type='text/css' />
+
+
+<script src="/assets/admin/jquery.alerts-1.1/jquery.alerts.js" type="text/javascript"></script> 
+<link href="/assets/admin/jquery.alerts-1.1/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />     
+
+
+<!-- -->
+<!--<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery.ui.button.css" rel="stylesheet" />
+<script type="text/javascript" src="/assets/jqueryui/js/jquery-ui-1.10.2.custom.min.js"></script>
+<link rel="Stylesheet" href="/assets/jqueryui/css/ui.selectmenu.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="/assets/portal/defaultOld/css/radio-style.css">
+<script type="text/javascript" src="/assets/portal/defaultOld/scripts/bValidator-0.6/jquery.bvalidator.js"></script>
+<link href="/assets/portal/defaultOld/scripts/bValidator-0.6/bvalidator.css" rel="stylesheet" type="text/css" />
+<link href="/assets/portal/defaultOld/scripts/bValidator-0.6/themes/bvalidator.theme.red.css" rel="stylesheet" type="text/css" />    -->
+
+<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="/assets/jqueryui/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="/assets/portal/defaultOld/scripts/bValidator-0.6/jquery.bvalidator.js"></script>
+<link href="/assets/portal/defaultOld/scripts/bValidator-0.6/bvalidator.css" rel="stylesheet" type="text/css" />
+<link href="/assets/portal/defaultOld/scripts/bValidator-0.6/themes/bvalidator.theme.red.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="/assets/portal/defaultOld/css/radio-style.css">
+<!-- -->
+    
+<!-- uploadfy -->
+<link href="/assets/uploadify-v2.1.4/uploadify.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/assets/uploadify-v2.1.4/swfobject.js"></script>
+<script type="text/javascript" src="/assets/uploadify-v2.1.4/jquery.uploadify.v2.1.4.js"></script>
+<!--<script type="text/javascript" src="/assets/jquery.timer.js"></script>-->
+<!-- fim uploadfy -->    
+  
+  
+<script>
+
+jQuery.fbInit = function() {
+    window.fbAsyncInit = function() {
+			// init the FB JS SDK
+			FB.init({
+			  appId      : '519836588052109',                        // App ID from the app dashboard
+			  channelUrl : 'http://www.glovebrasil.com.br/index/msg', // Channel file for x-domain comms
+			  status     : true,                                 // Check Facebook Login status
+			  xfbml      : true                                  // Look for social plugins on the page
+			});
+		
+			// Additional initialization code such as adding Event Listeners goes here
+		  };
+		  
+		  
+			(function(d){
+				var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+				js = d.createElement('script'); js.id = id; js.async = true;
+				js.src = "//connect.facebook.net/pt_BR/all.js";
+				d.getElementsByTagName('head')[0].appendChild(js);
+			}(document));
+		
+			$('<div />').attr('id','fb-root').appendTo('body');
+};
+
+</script>
+
+    
+<script>
+	
+	
+	
+// flash version URL switch (for this demo page)
+	var winLoc = window.location.toString();
+
+	soundManager.setup({
+	  preferFlash: (winLoc.match(/usehtml5audio=1/i) ? false : true)
+	});
+	
+	if (winLoc.match(/flash9/i)) {
+	
+	  soundManager.setup({
+		flashVersion: 9
+	  });
+	
+	  if (winLoc.match(/highperformance/i)) {
+		soundManager.setup({
+		  useHighPerformance: true
+		});
+	
+	  }
+	
+	} else if (winLoc.match(/flash8/i)) {
+	
+	  soundManager.setup({
+		flashVersion: 8
+	  });
+	
+	}
+
+	soundManager.setup({
+	  useFlashBlock: false,
+	  url: '/assets/soundmanager/swf/', // path to SoundManager2 SWF files (note trailing slash)
+	  debugMode: false,
+	  consoleOnly: false
+	});
+
+	soundManager.onready(function(oStatus) {
+  if (!oStatus.success) {
+    return false;	
+  }
+  // soundManager is initialised, ready to use. Create a sound for this demo page.
+
+  if (soundManager.flashVersion > 8) {
+    t = window.setInterval(checkRAM,500);
+    document.getElementById('flash-ram-use').style.display = 'inline';
+    checkRAM();
+  }
+ 
+  <?php if(isset($this->layout()->verificaOpcoes->FL_HABILITASOMCHAT) && $this->layout()->verificaOpcoes->FL_HABILITASOMCHAT == "1"){?>
+ 
+  soundManager.createSound({
+    id: 'chatbeep',
+    url: '/assets/chatbeep.mp3',
+	autoPlay: false
+  });
+  <?php } ?>
+ 
+  
+})
+
+$(document).ready(function(){
+
+     (function(d){
+		var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+		js = d.createElement('script'); js.id = id; js.async = true;
+		js.src = "//connect.facebook.net/pt_BR/all.js";
+		d.getElementsByTagName('head')[0].appendChild(js);
+	}(document));
+
+	$('<div />').attr('id','fb-root').appendTo('body');
+
+	
+	$("body").ajaxStart(function() {
+		$('.loader').show();
+	}).ajaxStop(function() {
+		$('.loader').hide();
+		chamasAjax();
+	});
+	
+	
+	   $("#buscaListaChat").click(function(ui, e){
+                $(this).val("");
+             });
+
+             $("#buscaListaChat").blur(function(ui, e){
+                if($(this).val() == "")
+                {
+                    $(this).val("Buscar...");
+                }
+             });
+
+               $("#buscaListaChat").keyup(function (event) {
+
+                var search_text = $('#buscaListaChat').val();
+                var rg = new RegExp(search_text, 'i');
+
+                $('#amigos .conectado, #amigos .naoconectado').each(function () {
+                    if ($.trim($(this).html()).search(rg) == -1) {
+                        $(this).css('display', 'none');
+                        $(this).css('display', 'none');
+                        $(this).next().css('display', 'none');
+                        $(this).next().next().css('display', 'none');
+                    }
+                    else {
+                        $(this).css('display', '');
+                        $(this).css('display', '');
+                        $(this).next().css('display', '');
+                        $(this).next().next().css('display', '');
+                    }
+                });
+            });
+	
+	
+	
+	$(".btnOptionChatMenu").bind("click", function(ui, e)
+	{
+		
+		if($("#contextMenuChat").hasClass("visivel"))
+		{
+	
+			$("#contextMenuChat").removeClass("visivel");
+			$("#contextMenuChat").addClass("invisivel");
+		}else
+		{
+			$("#contextMenuChat").removeClass("invisivel");
+			$("#contextMenuChat").addClass("visivel");			
+		}
+
+	});
+	
+	
+	$("#soundChat").bind("change", function(ui, e)
+	{
+		var checked = 0;
+		if($(this).attr("checked") == "checked")
+		{
+			checked = 1;
+		}else
+		{
+			checked = 0;
+		}
+		
+		$.ajax({
+				 type: "POST",
+				 url: "/conta/chatsom",
+				 data: { cheched : checked},
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+	
+					 if(data.msg == "0")
+					 {
+						 	
+					 		soundManager.destroySound('chatbeep');
+					 }else
+					 {
+						   soundManager.createSound({
+							id: 'chatbeep',
+							url: '/assets/chatbeep.mp3',
+							autoPlay: false
+						  });
+
+					 }
+				 }
+			});
+		
+	});
+
+});
+
+	
+</script>
+
+
+<?php echo $this->headScript() ?>
+
+<?php echo $this->headStyle() ?>
+
+<?php echo $this->headLink() ?>
+
+ <!--Criado com intuito de adicionar várias referências de js e css-->
+<?php echo  $this->placeholder('multiscripts') ?>
+
+</head>
+
+<?php 
+$pattern = empty($this->layout()->pattern) ? "pattern3" : $this->layout()->pattern; 
+$color = empty($this->layout()->color) ? "blue" : $this->layout()->color; 
+?>
+
+<body class="<?=$pattern?> <?=$color?> home">
+
+
+
+<div class="loader" style="display:none;">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+</div>
+
+
+
+<div id="barra">
+	<div id="tools">
+	
+    <a href="javascript:void(0);" onClick="Popup('/conta/conversas', 620, 400);"  title="Caixa de entrada"><img src="/assets/portal/default/images/letter.png" alt="Caixa de entrada" border="0"><span id="contaSolicitacoes"><?=$this->layout()->contaSolicitacoes?></span></a>    
+    <a href="javascript:void(0);" onClick="Popup('/conta/solicitacoes', 500, 600);"  title="Solicitações de amizade"><img src="/assets/portal/default/images/add.png" width="16" height="16" alt="Solicitações de amizade" border="0"><span id="contaSolicitacoes"><?=$this->layout()->contaSolicitacoes?></span></a>    
+    <a href="javascript:void(0);" onClick="Popup('/conta/atualizacoes', 800, 0);"  title="Atualizações recentes"><img src="/assets/portal/default/images/globo.png" width="16" height="16" alt="Atualizações recentes" border="0"><span id="contaAtualizacoes"><?=$this->layout()->contaAtualizacoes?></span></a>    
+    <a href="/conta/logoff" rel="normal_request" title="Sair do Glove"><img src="/assets/portal/default/images/exit.png" width="16" height="16" alt="Sair do Glove" border="0"></a>   
+    
+    </div>
+</div>
+
+<div id="all" class="center">
+
+	<div id="main" class="center">
+    
+   
+    
+      <!-- BEGIN STYLE CHANGER -->
+        <div id="change-color">
+            Cor
+              <ul>
+                <li><a class="color-blue" href="blue" rel="normal_request">Blue</a></li>
+                <li><a class="color-orange" href="orange" rel="normal_request">Orange</a></li>
+                <li><a class="color-red" href="red" rel="normal_request">Red</a></li>
+                <li><a class="color-green" href="green" rel="normal_request">Green</a></li>
+				<li><a class="color-pink" href="pink" rel="normal_request">Pink</a></li>                
+            </ul>
+        </div>
+        <div id="change-pattern">
+            Fundo
+              <ul>
+                <li><a href="pattern1" rel="normal_request"><img src="/assets/portal/default/images/pattern1-thumb.jpg" alt="Pattern1 Thumb" width="20" height="20"></a></li>
+                <li><a href="pattern2" rel="normal_request"><img src="/assets/portal/default/images/pattern2-thumb.jpg" alt="Pattern2 Thumb" width="20" height="20"></a></li>
+                <li><a href="pattern3" rel="normal_request"><img src="/assets/portal/default/images/pattern3-thumb.jpg" alt="Pattern3 Thumb" width="20" height="20"></a></li>
+                <li><a href="pattern4" rel="normal_request"><img src="/assets/portal/default/images/pattern4-thumb.jpg" alt="pattern4 Thumb" width="20" height="20"></a></li>
+            </ul>
+        </div>
+        <!-- END STYLE CHANGER -->
+        <!-- BEGIN HEADER -->
+	     <?php echo $this->placeholder('header') ?>
+        <!-- END HEADER -->
+        <!-- BEGIN CONTENT -->
+    	<section id="content">
+           <?php echo $this->layout()->content; ?>
+        </section>
+     
+        
+        
+        
+    <!-- END CONTENT -->	
+    <!-- BEGIN FOOTER -->
+          <footer id="footer">
+          <div>
+              <section id="download-vcard">
+                    <a rel="normal_request" target="_blank" href="http://www.inventonovo.com.br" title="Invento Novo">
+                   <img src="/assets/logoinvento.png" alt="Invento Novo"></a>
+                </section>
+                <section id="social">
+                    <ul>
+                        <li class="social-rss"><a href="#" title="RSS">RSS</a></li>
+                        <li class="social-twitter"><a href="#" title="Twitter">Twitter</a></li>
+                        <li class="social-googleplus"><a href="#" title="Google Plus">Google Plus</a></li>
+                        <li class="social-facebook"><a href="#" title="Facebook">Facebook</a></li>
+                        <li class="social-linkedin"><a href="#" title="Linkedin">Linkedin</a></li>
+                    </ul>
+                </section>
+            </div>
+            <section id="copyright">
+               @ COPYRIGHT  2012-<?=date("Y")?>, <a href= "http://www.inventonovo.com.br" target="_blank" rel="normal_request" >INVENTO NOVO - TALENTOS E IDEIAS</a>
+            </section>
+        </fotter>
+    <!-- END FOOTER -->
+    </div>
+</div>
+
+			
+           <div id="likeBox">
+<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FGlove-Brasil%2F286336624832723%3Ffref%3Dts&amp;width=240&amp;height=255&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;border_color&amp;header=true" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:240px; height:234px; background-color:#FFF;" allowTransparency="true"></iframe>
+           </div> 
+            
+   		
+          <?php
+			if($this->logado){
+		  ?>
+        
+          <div id="Areachat">
+          
+          	
+             <!-- Right Click Menu -->
+              <div class='contextMenuChat invisivel' id='contextMenuChat'>
+                  <a href="javascript:void(0);"><input type="checkbox" name="soundChat" id="soundChat" style="float:left;" <?=$this->layout()->verificaOpcoes->FL_HABILITASOMCHAT == "0" ? "" : "checked" ?> > &nbsp;&nbsp;<label for="soundChat" style="margin-left:5px; padding-bottom:3px;">Sons do bate papo</label></a>
+              </div>
+            
+            
+          	<h2>Chat Glove <!--(<span id="qtdUsuariosOnline"></span>)-->  
+            <a href="javascript:void(0);" onClick="Popup('/conta/conversas', 620, 400);"  title="Caixa de entrada"><img src="/assets/portal/default/images/letter.png" alt="Caixa de entrada" border="0"></a><span id="contaSolicitacoes">
+            <span class="btns">
+          	  <input type="hidden" id="PageLoaded" name="PageLoaded" value="false"  />
+          	</span></h2>
+            <div id="blocoPersons">
+        	<ul id="amigos">
+           
+       
+            </ul>
+            </div>
+            <div id="opcoes"> 
+            	<!--<div class="btns"><a href="javascript:void(0);"><img src="/assets/portal/default/images/btnChatMinimize.png" width="20" height="20" class="btnOptionChatMenu"></a></div>-->
+              	<div class="btns"><a href="javascript:void(0);"><img src="/assets/portal/default/images/btnChatConfig.png" width="20" height="20" class="btnOptionChatMenu" title="Opções do Chat"></a>
+                
+                <input type="text" id="buscaListaChat" name="buscaListaChat" value="Buscar..." />
+                </div>
+            </div>
+        </div>
+        
+        <div id="chatWindows">
+        	
+        </div>
+        
+        <?php
+			}
+		?>	
+
+</body>
+</html>

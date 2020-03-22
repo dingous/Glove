@@ -1,0 +1,13 @@
+<?php
+foreach($this->albuns as $chave => $valor)
+{
+?>
+
+<div id="album">
+<a href="javascript:void(0);" onclick="editAlbum('<?=$valor->ID_ALBUM?>');" title="Editar este álbum" class="edit_album"><img src="/thumbs/index/w/150/h/100/type/2/file/<?=My_Sites_Glove::fotoAlbum($valor->ID_ALBUM)?>" id="iconepqn" style="border: 1px solid #cccccc;" /></a> <?=$valor->DESCRICAO?><br /><a  href="javascript:void(0);" onclick="editAlbum('<?=$valor->ID_ALBUM?>');" title="Editar este álbum">• Gerenciar álbum</a></div>                      
+<?php } ?>
+<script>
+$(document).ready(function(){
+	$("#quantAlbuns").html("<?=count($this->albuns)?>");
+});
+</script>

@@ -1,0 +1,156 @@
+<?
+
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+ 
+
+?>
+
+
+
+<?php
+if(count($this->coments[0]) > 0)
+{
+$cont = 0;
+foreach($this->coments[0] as $chave => $valor)
+{
+?>
+
+
+	<div class="linhaComentario" <?=$cont == 0 ? 'style="border-top:1px solid #E9E9E9;"' : ''?> id="comentario<?=$valor['ID_COMENTARIO']?>">
+    <div style="width:30px; height:30px; float:left;">
+    <a title="<?=$valor['NOME']?>" href="/<?=$valor['SLUG']?>-<?=$valor['tb_glove_perfil']?>" class="linkCallPerfil"><img src="/thumbs/index/w/30/h/30/type/2/file/<?=$valor['ARQUIVO']?>" border="0" /></a> 
+    </div>
+    
+    <div style="width:360px; min-height:30px; float:right;">
+	<a title="<?=$valor['NOME']?>" href="/<?=$valor['SLUG']?>-<?=$valor['tb_glove_perfil']?>" class="linkCallPerfil"><?=$valor['NOME']?></a> - <?=$valor['COMENTARIO']?> - 
+	<span style="font-size:9px;">
+	    há <?=My_Sites_Glove::formatar_tempo(My_Sites_Glove::convert_datetime($valor['DT_CADASTRO']));?> <br>
+    </span>
+    
+    
+     <?php if($valor['QUEM_CURTIU'] != NULL){ ?>
+    	 • <span id="txtGosteiComentario<?=$valor['ID_COMENTARIO']?>">Você e mais <?=$valor['CURTIDAS'] > 0 ? $valor['CURTIDAS'] -1 : $valor['CURTIDAS']?> pessoa(s) gostaram disto!</span>
+         
+         <span id="btnDesgostarComentario<?=$valor['ID_COMENTARIO']?>"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.ComentariosDesgostei('<?=$valor['ID_COMENTARIO']?>');"> (Desfazer) </a> </span>
+         <span id="btnGosteiComentario<?=$valor['ID_COMENTARIO']?>" style="display:none;">• <a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.ComentariosGostei('<?=$valor['ID_COMENTARIO']?>');"><span id="txtGosteiComentario<?=$valor['ID_COMENTARIO']?>">Gostei</span></a>  </span>         
+
+         <?php }else{ ?>
+          
+          • <span id="txtGosteiComentario<?=$valor['ID_COMENTARIO']?>"></span>
+                 
+         <span id="btnDesgostarComentario<?=$valor['ID_COMENTARIO']?>"  style="display:none;"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.ComentariosDesgostei('<?=$valor['ID_COMENTARIO']?>');"> (Desfazer) </a> </span>
+         <span id="btnGosteiComentario<?=$valor['ID_COMENTARIO']?>"><a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.ComentariosGostei('<?=$valor['ID_COMENTARIO']?>');"><span id="txtGosteiComentario<?=$valor['ID_COMENTARIO']?>">Gostei</span></a>  </span>         
+
+         
+         <?php } ?>
+    
+    
+    <?php 
+	
+	if(($usuario_logado->ID_USUARIO == $valor['tb_glove_perfil']) || ($usuario_logado->ID_USUARIO == $this->ID_REMETENTE_MSG)){?>
+    <a href="javascript:void(0);" onclick="window.parent.$.fn.InterfaceUsuario.metodos.ComentariosDeletar('<?=$valor['ID_COMENTARIO']?>', '<?=$valor['ID_RECADO']?>');" title="Excluir comentário" style="margin-left:10px;">• Excluir comentário</a>
+    <?php } ?>
+    
+    </div>
+    
+    
+    </div>
+
+
+<?php
+$cont++;
+} ?>
+
+
+
+<style>
+.table_paginacao_coments a
+{
+	text-decoration:none;
+	color:#000000;
+}
+
+.table_paginacao_coments td
+{
+text-decoration:none;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+color:#CCCCCC;
+font-size:8px;
+padding-left:5px;
+padding-right:5px;
+
+}
+
+.table_paginacao_coments td:hover
+{
+	
+}
+</style>
+
+
+
+<?php 
+
+
+
+$pags = $this->coments[1];
+
+
+if($pags > 1):
+$pgmod = 1;
+$mod_atual = 1;
+?>
+
+
+<table border="0" class="table_paginacao_coments">
+      <tr>
+   
+<?php
+
+
+
+$p = isset($this->coments[3]) ? $this->coments[3] : 1;
+
+if(isset($p)) {
+	$p = $p;
+} else {
+	$p = 1;
+}
+
+$qnt = 8;
+$inicio = ($p*$qnt) - $qnt;
+$max_links = 8;
+
+echo "<td><a href='javascript:void(0);' onclick=\"javascript:$.fn.InterfaceUsuario.metodos.ComentariosPega(1, '".$this->coments[0][0]['ID_RECADO']."', '#placeHolderComentario".$this->coments[0][0]['ID_RECADO']."', '#totalComentarios".$this->coments[0][0]['ID_RECADO']."', '".$this->ID_REMETENTE_MSG."');\" title=\"Ir à primeira página\"> << </a> </td>";
+
+for($i = $p-$max_links; $i <= $p-1; $i++) {
+if($i <=0) {
+} else {
+echo "<td><a href='javascript:void(0);' onclick=\"javascript:$.fn.InterfaceUsuario.metodos.ComentariosPega('".$i."', '".$this->coments[0][0]['ID_RECADO']."', '#placeHolderComentario".$this->coments[0][0]['ID_RECADO']."', '#totalComentarios".$this->coments[0][0]['ID_RECADO']."', '".$this->ID_REMETENTE_MSG."');\">".$i."</a></td> ";
+}
+}
+	echo "<td>".$p."</td>";
+	for($i = $p+1; $i <= $p+$max_links; $i++) {
+	if($i > $pags)
+	{
+	
+	}
+	else
+	{
+		echo "<td><a href='javascript:void(0);' onclick=\"javascript:window.parent.$.fn.InterfaceUsuario.metodos.ComentariosPega('".$i."', '".$this->coments[0][0]['ID_RECADO']."', '#placeHolderComentario".$this->coments[0][0]['ID_RECADO']."', '#totalComentarios".$this->coments[0][0]['ID_RECADO']."', '".$this->ID_REMETENTE_MSG."');\">".$i."</a></td> ";
+	}
+	}
+	echo "<td><a href='javascript:void(0);' onclick=\"javascript:window.parent.$.fn.InterfaceUsuario.metodos.ComentariosPega('".$pags."', '".$this->coments[0][0]['ID_RECADO']."', '#placeHolderComentario".$this->coments[0][0]['ID_RECADO']."', '#totalComentarios".$this->coments[0][0]['ID_RECADO']."', '".$this->ID_REMETENTE_MSG."');\" title=\"Ir à última página\"> >> </a></td> ";
+	?>
+</tr>
+    </table>
+ <?php endif; ?>
+
+<?
+
+}else{
+?>
+<div class="linhaComentario" style="border-top:1px solid #E9E9E9;">nenhum comentário</div>
+<?php } ?>
+

@@ -1,0 +1,123 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+<script src="/assets/core.js"></script>
+
+<style>
+
+
+#chatWindows .window .corpo .linhaMsg
+{
+    border-bottom: 1px solid #eeeeee;
+    width: 280px;
+    overflow: hidden;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    margin-right: 14px;
+    word-wrap: break-word;
+}
+
+#chatWindows .window .corpo .linhaMsg .avatar
+{
+    width: 40px;
+    height: 40px;
+    float: left;
+}
+
+#chatWindows .window .corpo .linhaMsg .msg
+{
+    float: right;
+    width: 225px;
+    word-wrap: break-word;
+    margin-right: 8px;
+    color: #5a5a5a;
+}
+
+
+#chatWindows .window .corpo .linhaMsg .msg b
+{
+    font-size: 10px;
+}
+
+#chatWindows .window .inputfieldchat
+{
+    height: 40px;
+}
+
+#chatWindows .window .inputfieldchat .chatmsg
+{
+    width: 238px;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+}
+
+body
+{
+	margin: 0px 0px 0px 0px;
+}
+#mainconversas {
+  padding-top: 0;
+  overflow: hidden;
+}
+
+#mainconversasleft
+{
+	width:250px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	visibility: visible;
+	font-size:10px;
+	height:330px;
+	float:left;
+}
+
+
+#mainconversasright
+{
+	float:left;
+	width:350px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	padding-left: 5px;
+	visibility: visible;
+	font-size:10px;
+	height:330px;
+}
+</style>
+
+
+</style>
+
+
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<div id="carregaHtml" style="min-height:400px;"></div>
+<script>
+function chamaUrl(url)
+{
+	window.parent.location = url;
+}
+
+</script>
+
+<script>
+  
+	   $(document).ready(function(){
+	        
+			$("body").InterfaceUsuario();
+			
+				
+			var x =  $.fn.InterfaceUsuario.metodos.ConversasPega();
+			x.success(function (data) {
+
+				$("#carregaHtml").html(data.html);
+  	 			$("body").InterfaceUsuario();
+			});
+		});			
+			
+</script>
+

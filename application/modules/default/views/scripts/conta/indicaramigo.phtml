@@ -1,0 +1,114 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+<style>
+
+body
+{
+	margin: 0px 0px 0px 0px;
+}
+#main {
+	  padding-top: 0;
+}
+
+</style>
+<script>
+function FormLogin()
+{
+
+$("#formLogin").submit(function () {
+		
+	
+     	$.ajax({
+             type: "POST",
+             url: "/conta/indicar",
+             data: $("#formLogin").serialize(),
+             dataType: "json",
+             //ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 
+			 	
+			 
+				if(data.erro == "false")
+				{					
+
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : data.msg,
+						stayTime   : 20000,
+						type     : 'success'
+					});
+											
+				}else if(data.erro == "true")
+				{
+				    window.parent.parent.$().toastmessage('showErrorToast', data.msg);
+																		
+				}
+				
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+$(document).ready(function () {
+
+	FormLogin();
+	$("#EMAIL").focus();
+	
+});
+
+</script>
+
+
+</script>
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+<div>
+<div id="inline1" style="width:300px;height:300px; overflow: hidden;">             
+
+<form action="" name="formLogin" id="formLogin" method="post">
+<br />
+<div class="box_lg">	
+			 <div class="lgtit">
+			 <h1> Convide seus amigos para participar do Glove </h1>
+	    <div class="lginfo"></div></div>
+			
+           
+        <div class="bxcam">
+              	<div class="form">	
+                	<div class="titfr"></div>
+                    
+                    
+                    
+                                       
+                     <div class="camps">
+    					<div class="campse">Nome do seu amigo<br /><input name="NOME" type="text" id="NOME" size="35" /></div>
+                    </div>
+                                      
+                     <div class="camps">
+    					<div class="campse">E-mail do seu amigo<br /><input name="EMAIL" type="text" id="EMAIL" size="35" /></div>
+                    </div>
+                     
+                     
+                     
+                    <div class="camps">
+      					<div class="rgt"><br />
+				    <input type="submit" name="" value="Enviar" id="button1" /></div>	
+   	  					<div class="rgt3">
+                   </div>      
+    				</div>
+                    <div class="titfr"></div>
+                </div>
+			</div>
+</div>
+
+</form>
+</div>
+</div>

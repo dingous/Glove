@@ -1,0 +1,440 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+<!--<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery.ui.button.css" rel="stylesheet" />
+<script type="text/javascript" src="/assets/jqueryui/js/jquery-ui-1.8.16.custom.min.js"></script>
+<link rel="Stylesheet" href="/assets/jqueryui/css/ui.selectmenu.css" type="text/css" />-->
+
+<script>
+   function setupLabel() {
+        if ($('.label_check input').length) {
+            $('.label_check').each(function(){ 
+                $(this).removeClass('c_on');
+            });
+            $('.label_check input:checked').each(function(){ 
+                $(this).parent('label').addClass('c_on');
+            });                
+        };
+        if ($('.label_radio input').length) {
+            $('.label_radio').each(function(){ 
+                $(this).removeClass('r_on');
+            });
+            $('.label_radio input:checked').each(function(){ 
+                $(this).parent('label').addClass('r_on');
+            });
+        };
+    };
+    $(document).ready(function(){
+		
+		
+		$('body').attr("class","<?=$this->layout()->pattern == "" ? "pattern3" : $this->layout()->pattern?> <?=$this->layout()->color == "" ? "blue" : $this->layout()->color?>");
+		
+		
+        $('body').addClass('has-js');
+        $('.label_check, .label_radio').click(function(){
+            setupLabel();
+        });
+        setupLabel(); 
+		
+		var optionsRed = {
+			classNamePrefix: 'bvalidator_red_'
+		};
+		
+		$('#form1').bValidator(optionsRed);
+		
+		EnviaForm();
+		
+		
+		
+		 $( "#tb_sys_cidade2" ).autocomplete({
+
+		 	autoFocus: true,
+			minLength: 2,
+			source: function( request, response ) {
+				$.ajax({
+					url: "/conta/cidadesjson",
+					dataType: "json",
+					data: {
+						featureClass: "P",
+						style: "full",
+						maxRows: 12,
+						name_startsWith: request.term
+					},
+					success: function( data ) {
+						response( $.map( data, function( item ) {
+							return {
+								//label: item.TITULO + (item.TITULO ? ", " + item.TITULO : "") + ", " + item.TITULO,
+								label: item.NOME_CIDADE + ", " + item.SGL_ESTADO,
+								id: item.ID_CIDADE							
+							}
+
+						}));
+					}
+				});
+			},
+			 
+			focus: function (event, ui) {
+			
+			},
+			select: function( event, ui ) {
+				  
+				 
+				  $("#tb_sys_cidade").val(ui.item.id);
+				  $("#EMAIL").focus();
+			
+				  
+			},
+
+			open: function() {
+
+				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+
+			},
+
+			close: function() {
+
+				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+
+			}
+
+		}).data( "autocomplete" )._renderItem = function( ul, item ) {
+
+		
+				return $( "<li></li>" )
+
+				.data( "item.autocomplete", item )
+
+				.append( "<a>" + item.label + "</a>" )
+
+				.appendTo( ul );
+
+
+		};
+		
+		
+		
+		
+		 $( "#NOME" ).autocomplete({
+
+		 	autoFocus: true,
+			minLength: 2,
+			source: function( request, response ) {
+				$.ajax({
+					url: "/conta/nomesjson",
+					dataType: "json",
+					data: {
+						featureClass: "P",
+						style: "full",
+						maxRows: 12,
+						name_startsWith: request.term
+					},
+					success: function( data ) {
+						response( $.map( data, function( item ) {
+							return {
+								label: item.NOME ,
+								nome2: item.SOBRENOME ,
+								id: item.ID_USUARIO,						
+								slug: item.SLUG,
+								foto: item.ARQUIVO
+							}
+
+						}));
+					}
+				});
+			},
+
+			select: function( event, ui ) {
+
+				  //window.location = '/'+ui.item.slug+"-"+ui.item.id;
+				  chamasAjaxUrl('/'+ui.item.slug+"-"+ui.item.id);
+				  
+			},
+
+			open: function() {
+
+				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+
+			},
+
+			close: function() {
+
+				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+
+			}
+
+		}).data( "autocomplete" )._renderItem = function( ul, item ) {
+
+		
+				/*return $( "<li></li>" )
+
+				.data( "item.autocomplete", item )
+
+				.append( "<a>" + item.label + "</a>" )
+
+				.appendTo( ul );*/
+				
+				return $( "<li></li>" )
+
+				.data( "item.autocomplete", item )
+
+				.append("<a><div style='overflow:hidden; padding:10px;'><div style='float:left;'><img border='0' src='/thumbs/index/w/50/h/50/type/2/file/"+item.foto+"'></div><div style='float:left; padding-left:10px; padding-top:20px;'>" + item.label +  " " + item.nome2 + "</div></div></a>")
+
+				.appendTo( ul );
+
+
+		};
+		
+		
+		
+		$("#btnLimpar").bind("click", function(ui, e){
+			
+				$('.r_on').each(function(){ 
+					$(this).removeClass('r_on');
+				});
+			
+			$('input[type="radio"]').prop('checked', false);
+			
+							
+		});
+	
+    });
+	
+
+
+function EnviaForm()
+{
+	
+	
+	
+	$("#form1").submit(function () {
+	
+	
+		
+		
+     	$.ajax({
+             type: "POST",
+             url: "/conta/buscaresultado",
+             data: $("#form1").serialize(),
+			 cache : false,
+			 beforeSend: function (data) 
+			 {
+				$('.loader').show();
+			 },
+             success: function (html) 
+             { 
+			 
+			
+				var browser_type=navigator.appName;
+				if (browser_type != "Microsoft Internet Explorer")
+				{
+					window.history.pushState({url: "/conta/buscaresultado"}, "Busca amigos" , "/conta/buscaresultado");
+					window.history.replaceState({ path: "/conta/buscaresultado" }, '');
+				}
+			
+			 
+			 	
+				$('.loader').hide();
+			 	
+				var header1 = $('header#header:first');
+				header1.hide();
+			
+				
+				window.parent.$("#content").html(html);
+				
+				
+				var header2 = window.parent.$('header#header:last', window.parent.$("#content"));
+				
+				header1.replaceWith(header2);
+				header1.show();
+				
+				chamasAjax();
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+</script>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>  
+
+
+<form id="form1" name="form1" method="post" action="/conta/buscaresultado">
+
+
+<h2><b>Busca Avançada</b>:  clique nas bolinhas ou preencha os campos para encontrar novos amigos</h2>
+
+<div id="criando">
+
+	<div id="left">
+   		
+        <div class="form" style="overflow:hidden;">
+     	<div class="campo" style="float:left;">
+        	<label for="tb_sys_cidade2" style="width:100px;">Busca por cidade </label>
+           	<input name="tb_sys_cidade2" type="text" id="tb_sys_cidade2" style="width:250px;"/>
+          <input name="tb_sys_cidade" type="hidden" id="tb_sys_cidade"  readonly="readonly"/>
+          
+          
+          
+     	</div>
+        
+     	
+     	<div class="campo" style="float:right; margin-right:40px;">
+        	<label for="NOME" style="width:300px;">Busca por nome de usuário</label>
+           	<input name="NOME" type="text" id="NOME" style="width:250px;" />
+            
+		    <input type="submit" value="Procurar">       
+		    <input type="reset" value="Limpar Busca" id="btnLimpar"/>
+
+            
+        </div>
+        
+                              
+      
+        
+    </div>
+        <br  style="clear:both;"/>
+    	<div class="box2">
+        	<div class="titulo">Idade</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->idade as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_idade[<?=$valor->ID_IDADE?>]"><input name="tb_glove_idade" id="tb_glove_idade[<?=$valor->ID_IDADE?>]" value="<?=$valor->ID_IDADE?>" type="radio" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Altura</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->altura as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_altura[<?=$valor->ID_ALTURA?>]"><input name="tb_glove_altura" id="tb_glove_altura[<?=$valor->ID_ALTURA?>]" value="<?=$valor->ID_ALTURA?>" type="radio" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                                 
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Peso</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->peso as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_peso[<?=$valor->ID_PESO?>]"><input name="tb_glove_peso" id="tb_glove_peso[<?=$valor->ID_PESO?>]" value="<?=$valor->ID_PESO?>" type="radio" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                               
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Tipo</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->tipo as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_tipo[<?=$valor->ID_TIPO?>]"><input name="tb_glove_tipo" id="tb_glove_tipo[<?=$valor->ID_TIPO?>]" value="<?=$valor->ID_TIPO?>" type="radio"  /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                        
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Situação</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->situacao as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_situacao[<?=$valor->ID_SITUACAO?>]"><input name="tb_glove_situacao" id="tb_glove_situacao[<?=$valor->ID_SITUACAO?>]" value="<?=$valor->ID_SITUACAO?>" type="radio" /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                                      
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Fumante</div>
+            <div class="opcoes">
+            	<ul>
+                		<?php foreach($this->fumante as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_fumante[<?=$valor->ID_FUMANTE?>]"><input name="tb_glove_fumante" id="tb_glove_fumante[<?=$valor->ID_FUMANTE?>]" value="<?=$valor->ID_FUMANTE?>" type="radio" /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                           
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Buscando</div>
+            <div class="opcoes">
+            	<ul>
+                	
+                	<?php foreach($this->interesse as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_insteresse[<?=$valor->ID_INSTERESSE?>]"><input name="tb_glove_insteresse" id="tb_glove_insteresse[<?=$valor->ID_INSTERESSE?>]" value="<?=$valor->ID_INSTERESSE?>" type="radio"  /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                           
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Disponível</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->disponivel as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_disponibilidade[<?=$valor->ID_DISPONIBILIDADE?>]"><input name="tb_glove_disponibilidade" id="tb_glove_disponibilidade[<?=$valor->ID_DISPONIBILIDADE?>]" value="<?=$valor->ID_DISPONIBILIDADE?>" type="radio" /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                                       
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Bebidas</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->bebida as $chave => $valor){?>
+                	<li><label class="label_radio" for="tb_glove_bebida[<?=$valor->ID_BEBIDA?>]"><input name="tb_glove_bebidas" id="tb_glove_bebida[<?=$valor->ID_BEBIDA?>]" value="<?=$valor->ID_BEBIDA?>" type="radio" /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                               
+                </ul>
+            </div>
+        </div>
+        
+        
+           <div class="boxBuscaBannerInstitucional">
+           </div>
+           
+          
+      
+        
+    
+	
+    </div>    
+	
+   <!--<div id="right"></div>-->
+      
+   
+	
+    
+    
+</div>
+
+</form>
+
+
+

@@ -1,0 +1,15 @@
+<?
+
+ $profile = new Zend_Session_Namespace('perfil');
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+
+ 
+?>
+
+<div id="barraTopo">
+<div id="breadCrumb"><img src="/assets/portal/default/images/marca.png" /> <?=$this->titulo?></div>
+<div id="titulo"><?=$this->perfil->NOME_usuario?></div>
+<div id="linha"></div>
+<div id="subtitulo"><?=$this->help?></div>
+</div>

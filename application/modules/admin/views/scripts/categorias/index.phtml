@@ -1,0 +1,721 @@
+    <?php
+	
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_lib/jquery.cookie.js");
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_lib/jquery.hotkeys.js");
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/jquery.jstree.js");
+		$this->headLink()->appendStylesheet('/path/to/page-styles.css');
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_docs/syntax/!script.js");		
+		
+		
+		$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/uploadify-v2.1.4/uploadify.css');
+		$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/swfobject.js');
+		$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/jquery.uploadify.v2.1.4.js');
+	?>
+
+	<style>
+	input
+	{
+		color:#333;
+		border: 1px solid #999;
+		background-color:#E5E5E5;
+		padding:5px;
+		margin-left:3px;
+	}
+	</style>
+    
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Gerenciar Categorias do Guia Cool</h1>
+</div>
+
+
+    
+<table width="100%" border="0" cellpadding="0" align="center">
+    <tr>
+   	  <td height="70" colspan="3" valign="top" id="mmenu">
+
+ 		
+        <p>
+	     
+          <input type="button"  id="add_folder" value="adicionar nova categoria" style="display:block; float:left;"/>
+          <!--<input type="button" id="add_default" value="add arquivo" style="display:block; float:left;"/>-->
+          <input type="button" id="rename" value="renomear" style="display:block; float:left;"/>
+          <input type="button" id="remove" value="excluir" style="display:block; float:left;"/>
+          
+           <input type="button"  id="ordenar_destaques" value="Ordenar destaques de categorias" style="display:block; float:left;" onclick="window.location = '/admin/categorias/gridordena';"/>
+           
+            <!--<input type="button"  value="reconstruir" onclick="$.get('/admin/categorias/index?reconstruct', function () { $('#demo').jstree('refresh',-1); });"   />-->
+        </p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>
+          <!--<input type="button" id="cut" value="recortar" style="display:block; float:left;"/>
+        <input type="button" id="copy" value="copiar" style="display:block; float:left;"/>
+        <input type="button" id="paste" value="colar" style="display:block; float:left;"/>
+       
+        <input type="button"  id="analyze" value="analizar" onclick="$('#alog').load('/admin/categorias/index?analyze');" />
+        <input type="button"  value="recarregar" onclick="$('#demo').jstree('refresh',-1);" />-->
+          <br />
+          <input type="text" id="text" value="" style="display:block; float:left;" />
+          <input type="button" id="search" value="buscar" style="display:block; float:left;"/>
+          <input type="button" id="clear_search" value="limpar busca" style="display:block; float:left;"/>
+        </p>
+        
+        <!--<input name="lixo" type="button" id="lixo"   value="lixo" />-->
+      </div></td>
+  </tr>
+    <tr>
+    	<td width="40%" valign="top">
+        <div id="description">
+
+<!-- the tree container (notice NOT an UL node) -->
+
+<div id="demo" class="demo" style="height:600px;width:400px; border: 1px solid #cccccc; overflow:auto;"></div>
+
+
+
+
+
+<div id='alog' style="border:1px solid gray; padding:5px; height:100px; margin-top:15px; overflow:auto; display:none; font-family:Monospace;"></div>
+
+<!-- JavaScript neccessary for the tree -->
+
+<script type="text/javascript" class="source below">
+
+$(function () {
+
+$( "#tabs" ).tabs({});
+
+
+
+
+
+
+
+$("#demo")
+
+	.bind("before.jstree", function (e, data) {
+
+		$("#alog").append(data.func + "<br />");
+
+	})
+
+	.jstree({ 
+
+		// List of active plugins
+
+		"plugins" : [ 
+
+			"themes","json_data","ui","crrm","cookies","dnd","search","types","hotkeys"//, "sort" ,"checkbox"
+
+		],
+
+
+
+		// I usually configure the plugin that handles the data first
+
+		// This example uses JSON as it is most common
+
+		"json_data" : { 
+
+			// This tree is ajax enabled - as this is most common, and maybe a bit more complex
+
+			// All the options are almost the same as jQuery's AJAX (read the docs)
+
+			"ajax" : {
+
+				// the URL to fetch the data
+
+				"url" : "/admin/categorias/index",
+
+				// the `data` function is executed in the instance's scope
+
+				// the parameter is the node being loaded 
+
+				// (may be -1, 0, or undefined when loading the root nodes)
+
+				"data" : function (n) { 
+
+					// the result is fed to the AJAX request `data` option
+
+					return { 
+
+						"operation" : "get_children", 
+
+						"id" : n.attr ? n.attr("id").replace("node_","") : 1 
+
+					}; 
+
+				}
+
+			}
+
+		},
+
+		// Configuring the search plugin
+
+		"search" : {
+
+			// As this has been a common question - async search
+
+			// Same as above - the `ajax` config option is actually jQuery's AJAX object
+
+			"ajax" : {
+
+				"url" : "/admin/categorias/index",
+
+				// You get the search string as a parameter
+
+				"data" : function (str) {
+
+					return { 
+
+						"operation" : "search", 
+
+						"search_str" : str 
+
+					}; 
+
+				}
+
+			}
+
+		},
+
+		// Using types - most of the time this is an overkill
+
+		// read the docs carefully to decide whether you need types
+
+		"types" : {
+
+			// I set both options to -2, as I do not need depth and children count checking
+
+			// Those two checks may slow jstree a lot, so use only when needed
+
+			"max_depth" : -2,
+
+			"max_children" : -2,
+
+			// I want only `drive` nodes to be root nodes 
+
+			// This will prevent moving or creating any other type as a root node
+
+			"valid_children" : [ "drive" ],
+
+			"types" : {
+
+				// The default type
+
+				"default" : {
+
+					// I want this type to have no children (so only leaf nodes)
+
+					// In my case - those are files
+
+					"valid_children" : "none",
+
+					// If we specify an icon for the default type it WILL OVERRIDE the theme icons
+
+					"icon" : {
+
+						"image" : "/assets/admin/jstree_pre1.0_fix_1/_demo/file.png"
+
+					}
+
+				},
+
+				// The `folder` type
+
+				"folder" : {
+
+					// can have files and other folders inside of it, but NOT `drive` nodes
+
+					"valid_children" : [ "default", "folder" ],
+
+					"icon" : {
+
+						"image" : "/assets/admin/jstree_pre1.0_fix_1/_demo/folder.png"
+
+					}
+
+				},
+
+				// The `drive` nodes 
+
+				"drive" : {
+
+					// can have files and folders inside, but NOT other `drive` nodes
+
+					"valid_children" : [ "default", "folder" ],
+
+					"icon" : {
+
+						"image" : "/assets/admin/jstree_pre1.0_fix_1/_demo/root.png"
+
+					},
+
+					// those prevent the functions with the same name to be used on `drive` nodes
+
+					// internally the `before` event is used
+
+					"start_drag" : false,
+
+					"move_node" : false,
+
+					"delete_node" : false,
+
+					"remove" : false
+
+				}
+
+			}
+
+		},
+
+		// UI & core - the nodes to initially select and open will be overwritten by the cookie plugin
+
+
+
+		// the UI plugin - it handles selecting/deselecting/hovering nodes
+
+		"ui" : {
+
+			// this makes the node with ID node_4 selected onload
+
+			"initially_select" : [ "node_4" ]
+
+		},
+
+		// the core plugin - not many options here
+
+		"core" : { 
+
+			// just open those two nodes up
+
+			// as this is an AJAX enabled tree, both will be downloaded from the server
+
+			"initially_open" : [ "node_2" , "node_3" ],
+			 strings: { loading: "carregando...", new_node: "Novo" }
+
+		},
+
+		    "themes":
+            {
+                theme: "apple"
+            }
+
+	})
+
+	.bind("create.jstree", function (e, data) {
+
+		$.post(
+
+			"/admin/categorias/index", 
+
+			{ 
+
+				"operation" : "create_node", 
+
+				"id" : data.rslt.parent.attr("id").replace("node_",""), 
+
+				"position" : data.rslt.position,
+
+				"title" : data.rslt.name,
+
+				"type" : data.rslt.obj.attr("rel")
+
+			}, 
+
+			function (r) {
+			
+				if(r.status) {
+					
+					
+					
+					$(data.rslt.obj).attr("id", "node_" + r.id);
+					
+					
+					
+					$(data.rslt.obj).click(function () {
+
+		                    //carregaDadosEdit(id);
+							//alert('ID CRIADO: ' + r.id);
+		                   
+		                });
+
+				}
+
+				else {
+
+					$.jstree.rollback(data.rlbk);
+
+				}
+
+			}
+
+		);
+
+	})
+
+	.bind("remove.jstree", function (e, data) {
+
+		data.rslt.obj.each(function () {
+
+			$.ajax({
+
+				async : false,
+
+				type: 'POST',
+
+				url: "/admin/categorias/index",
+
+				data : { 
+
+					"operation" : "remove_node", 
+
+					"id" : this.id.replace("node_","")
+
+				}, 
+
+				success : function (r) {
+
+					if(!r.status) {
+
+						data.inst.refresh();
+
+					}
+
+				}
+
+			});
+
+		});
+
+	})
+
+	.bind("rename.jstree", function (e, data) {
+
+		$.post(
+
+			"/admin/categorias/index", 
+
+			{ 
+
+				"operation" : "rename_node", 
+
+				"id" : data.rslt.obj.attr("id").replace("node_",""),
+
+				"title" : data.rslt.new_name
+
+			}, 
+
+			function (r) {
+
+				if(!r.status) {
+
+					$.jstree.rollback(data.rlbk);
+
+				}
+
+			}
+
+		);
+
+	})
+
+	.bind("move_node.jstree", function (e, data) {
+
+		data.rslt.o.each(function (i) {
+
+			$.ajax({
+
+				async : false,
+
+				type: 'POST',
+
+				url: "/admin/categorias/index",
+
+				data : { 
+
+					"operation" : "move_node", 
+
+					"id" : $(this).attr("id").replace("node_",""), 
+
+					"ref" : data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
+
+					"position" : data.rslt.cp + i,
+
+					"title" : data.rslt.name,
+
+					"copy" : data.rslt.cy ? 1 : 0
+
+				},
+
+				success : function (r) {
+
+					if(!r.status) {
+
+						$.jstree.rollback(data.rlbk);
+
+					}
+
+					else {
+
+						$(data.rslt.oc).attr("id", "node_" + r.id);
+
+						if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {
+
+							data.inst.refresh(data.inst._get_parent(data.rslt.oc));
+
+						}
+
+					}
+
+					$("#analyze").click();
+
+				}
+
+			});
+
+		});
+
+	}).bind("select_node.jstree", function (e, data) { 
+		
+		 var id = data.rslt.obj[0].id.replace("node_", "");
+		 carregaForm(id);
+		
+	});
+
+});
+
+</script>
+
+<script type="text/javascript" class="source below">
+
+// Code for the menu buttons
+
+$(function () { 
+
+	$("#mmenu input").click(function () {
+
+		switch(this.id) {
+
+			case "add_default":
+
+			case "add_folder":
+				
+				$("#demo").jstree("create", null, "last", { "attr" : { "rel" : this.id.toString().replace("add_", "") } });
+
+				break;
+
+			case "search":
+
+				$("#demo").jstree("search", document.getElementById("text").value);
+
+				break;
+
+			case "text": break;
+
+			default:
+
+				$("#demo").jstree(this.id);
+
+				break;
+
+		}
+
+	});
+
+});
+
+  carregaForm = function (id) {
+
+        //se o menu clicado não for o "MENUS DO PORTAL"
+        if (id != 2) {
+			//alert('aqui');
+			$.ajax({
+                type: 'POST',
+                url: "/admin/categorias/editar",
+				data: "id="+id,
+                //contentType: "application/x-www-form-urlencoded",
+                //dataType: "html",
+                success: function (r) {
+	
+					$("#form").html(r);
+
+					 $('#file_upload').uploadify({  
+						'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+						'script'    : '/admin/categorias/uploadicone',
+						'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+						'folder'    : '/uploads/admin/icones/',
+						'multi'     : true,		
+						'auto'      : true,
+						'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+						'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+						'removeCompleted': false,
+						'scriptData'  : {'id_categoria': $("#id_categoria").val()},
+						onSelectOnce : function(event,data) {
+								  $('#status-message').text(data.filesSelected + ' files have been added to the queue.');
+						},
+						onAllComplete  : function(event,data) {
+						  $('#status-message').text(data.filesUploaded + ' files uploaded, ' + data.errors + ' errors.');
+						},
+						onComplete  : function(event, ID, fileObj, response, data) {
+						  var json = jQuery.parseJSON(response);
+						  var msg = json.msg;
+						  $("#iconepqn").attr("src", "/thumbs/index/w/0/h/17/type/1/autocrop/false/file/"+json.file);
+						},
+						onError     : function (event,ID,fileObj,errorObj) {
+						  alert(errorObj.type + ' Error: ' + errorObj.info);
+						}
+					  });
+					  
+					  
+					  $('#file_upload2').uploadify({  
+						'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+						'script'    : '/admin/categorias/uploadiconegr',
+						'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+						'folder'    : '/uploads/admin/icones/',
+						'multi'     : true,		
+						'auto'      : true,
+						'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+						'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+						'removeCompleted': false,
+						'scriptData'  : {'id_categoria': $("#id_categoria").val()},
+						onSelectOnce : function(event,data) {
+								  $('#status-message').text(data.filesSelected + ' files have been added to the queue.');
+						},
+						onAllComplete  : function(event,data) {
+						  $('#status-message').text(data.filesUploaded + ' files uploaded, ' + data.errors + ' errors.');
+						},
+						onComplete  : function(event, ID, fileObj, response, data) {
+							
+						  var json = jQuery.parseJSON(response);
+						  var msg = json.msg;
+						 $("#iconegr").attr("src", "/thumbs/index/w/0/h/76/type/1/autocrop/false/file/"+json.file);
+						},
+						onError     : function (event,ID,fileObj,errorObj) {
+						  alert(errorObj.type + ' Error: ' + errorObj.info);
+						}
+					  });
+					
+				}
+			});
+		}
+  };
+
+</script>
+
+</div>
+
+
+
+</div>
+
+        
+        
+  </td>
+      <td width="2%">&nbsp;</td>
+        <td width="60%" valign="top">
+        
+        <form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+        
+        <div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Dados da categoria</a></li> 
+                </ul> 
+                <div id="tabs-1"> 
+                    <div id="form"></div>
+                </div>                 
+          </div> 
+        </form>
+        </td>
+    </tr>
+
+</table>
+
+<script>
+$(document).ready(function()
+{
+	//$.post('/admin/categorias/form', function(data) { $('#form').html(data); } );
+	
+	
+	$("#lixo").click(function(){
+		
+				//$("#demo").jstree('rename_node', 'node_8' , 'teste' );
+				//$('#demo').jstree('refresh', 'node_8');
+				var aaa = $('#demo').jstree('close_all', -1, true);
+
+				alert(aaa);
+				var bbb = "";
+		});
+});
+</script>
+
+<script>
+
+
+function EnviaForm()
+{
+	
+	
+	
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+				
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					
+						
+				}else if(data.erro == "valida")
+				{
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+						
+						
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+
+					 });
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 
+});
+
+</script>
+  	

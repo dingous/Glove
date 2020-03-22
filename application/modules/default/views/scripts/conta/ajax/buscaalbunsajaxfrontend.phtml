@@ -1,0 +1,36 @@
+<?
+ $profile = new Zend_Session_Namespace('perfil');
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+?>
+<section id="sec-portfolio">
+                <section id="portfolio">
+                    <div class="flexslider">
+                        <ul class="slides">
+                            <li>
+                                <ul class="portfolio-slide">
+                                    
+                                    <?php
+								 if(count($this->albuns) > 0)
+								 {
+								 foreach($this->albuns as $chave => $valor){
+							
+									 ?>
+                                    <li><figure>  <a href="/<?=$this->perfil->SLUG_usuario?>-<?=$this->perfil->tb_sys_usuario?>/fotos/<?=$valor->ID_ALBUM?>" title="Visualizar este álbum" class="edit_album"><img src="/thumbs/index/w/150/h/100/type/2/file/<?=My_Sites_Glove::fotoAlbum($valor->ID_ALBUM)?>" id="iconepqn" style="border: 1px solid #cccccc;" /></a> <?=$valor->DESCRICAO == "" ? " - " : $valor->DESCRICAO?></li>
+                                    
+                                    
+                                     <?php } 
+									 }else{ ?>
+									 
+									 nenhum álbum adicionado pelo usuário.
+									 
+									 <?php } ?>
+                                    
+                                   
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </section>
+<h2>Álbuns (<?=count($this->albuns)?>)</h2> 

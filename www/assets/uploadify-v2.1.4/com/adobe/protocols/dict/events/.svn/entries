@@ -1,0 +1,98 @@
+10
+
+dir
+0
+https://subversion.assembla.com:443/svn/gcool/www/assets/uploadify-v2.1.4/com/adobe/protocols/dict/events
+https://subversion.assembla.com:443/svn/gcool
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+d83b8a9f-cc6c-47ad-b7fc-fe536a07d6b6
+
+DictionaryServerEvent.as
+file
+
+
+
+add
+
+MatchEvent.as
+file
+
+
+
+add
+
+DefinitionHeaderEvent.as
+file
+
+
+
+add
+
+ConnectedEvent.as
+file
+
+
+
+add
+
+DisconnectedEvent.as
+file
+
+
+
+add
+
+DatabaseEvent.as
+file
+
+
+
+add
+
+MatchStrategiesEvent.as
+file
+
+
+
+add
+
+DefinitionEvent.as
+file
+
+
+
+add
+
+ErrorEvent.as
+file
+
+
+
+add
+
+NoMatchEvent.as
+file
+
+
+
+add
+

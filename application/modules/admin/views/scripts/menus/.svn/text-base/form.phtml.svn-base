@@ -1,0 +1,152 @@
+<script>
+$(function () {
+
+	$( "#tabs" ).tabs({});
+
+	$("#btnEnviar").bind("click", function(e){ 
+
+		$("#form1").DingousSubmit({
+			url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+			post: 
+			{
+				form: $("#form1").serializeArray(),
+				id_menu: $("#id_menu").val()
+			},
+			onCompletado: function(e) 
+			{	
+
+			}
+		});
+
+		return false;
+		
+	});
+	
+	
+	function carregaAction(id_modulo, id_action)
+	{
+		$.ajax({
+             type: "POST",
+             url: '/<?=$this->modulo?>/<?=$this->controlador?>/getactions/idModulo/'+id_modulo,
+             data: null,
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+				$('#tb_sys_aliasaction')
+					 .find('option')
+					 .remove()
+					 .end()
+					 .append('<option value="">selecione...</option>');
+				
+				$.each(data, function(index, value) { 
+						  
+				  $("#tb_sys_aliasaction").append("<option value='"+value.ACAO+"_"+value.CONTROLADOR +  "'>"+value.ACAO + "</option>");
+
+				});
+				
+				if(id_action != "")
+				{
+					$("#tb_sys_aliasaction").val(id_action);
+				}
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+	}
+	
+	 $("#tb_sys_modulo").bind("change", function(e)
+	 {
+		carregaAction($(this).val(), null);
+		
+	 });
+	 
+	 carregaAction("<?=$this->modelo[0]->ID_MODULO?>", "<?=$this->modelo[0]->ACAO?>_<?=$this->modelo[0]->CONTROLADOR?>");
+	
+});
+</script>
+
+		<form id="form1" name="form1">
+  		<div id="tabs">
+  				
+  				 <div class="form l300" style="width:3oopx;">
+  				 
+                <ul> 
+                    <li><a href="#tabs-1">Dados da categoria</a></li> 
+                </ul> 
+                <div id="tabs-1"> 
+                		
+                	    <div class="linha">
+        					
+        					<div class="elemento">
+				            	<label>ID do Menu:</label>
+				                <input name="id_menu" type="text" disabled="disabled" id="id_menu" value="<?=$this->modelo[0]->id?>" size="5" readonly="readonly" />
+				            </div>
+        					
+				            <div class="elemento">
+				            	<label>Menu:</label>
+				                <input name="title_" type="text" disabled="disabled" id="title_" value="<?=utf8_encode($this->modelo[0]->title)?>" readonly="readonly" />
+				            </div>
+ 
+            			</div>
+                        
+                            <div class="linha">
+        					
+        					<div class="elemento">
+                          
+				            	<label>Módulo:</label>
+                                <select name="tb_sys_modulo" id="tb_sys_modulo">
+	                          	<option value="">selecione...</option>
+                                 <?php
+									echo Lumine_Util::buildOptions($this->modulos, "ID_MODULO", "DESCRICAO_MODULO", $this->modelo[0]->ID_MODULO);
+								 ?> 
+                                 </select>  
+				            </div>
+        					
+				            <div class="elemento">
+                           
+				            	<label>Ação:</label>
+				                <select name="tb_sys_aliasaction" id="tb_sys_aliasaction">
+                                    <option value="">selecione...</option>
+                                </select>
+				            </div>
+                            
+                            
+                            
+                            
+
+            			</div>
+            			
+                         <div class="linha">
+                         
+                         
+                            <div class="elemento">
+                           
+				            	<label>Ícone:</label>
+				                  <img src="/thumbs/index/w/30/h/30/type/1/file/<?=$this->modelo[0]->ICONE?>" id="iconepqn" /><br />
+   							      <input id="file_upload" name="file_upload" type="file" value="selecionar arquivos" />
+				            </div>
+                         
+                         
+                         </div>
+                        
+            			 <div class="linha">
+        	
+				            <div class="elemento">
+				            	<label></label>
+				               <input type="submit" id="btnEnviar" name="btnEnviar" value="Salvar" />
+			                  <!--<input type="button" value="Pegar Html" onclick="javascript:alert($.fn.DingousSubmit.metodos.pegaHtml());"/>
+				               <input type="button" value="Pegar Modelo" onclick="javascript:alert($.fn.DingousSubmit.metodos.pegaModelo());"/>
+                               -->
+				            </div>
+
+            			</div>
+                   
+                </div>                 
+          </div>
+       </div>
+          
+       </form> 

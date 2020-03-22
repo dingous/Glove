@@ -1,0 +1,94 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Aplicações</h1>
+</div>
+
+
+    
+<table width="100%" border="0" cellpadding="0" align="center">
+    <tr>
+    	<td width="49%" valign="top">
+    	<input type="button" value="Cadastrar" class="botaoadd" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/cadastrar'">
+    	<input type="button" value="Excluir" class="botaoexc" onclick="deletar_selecionados();" /></td>
+    	<td width="22%" valign="top">&nbsp;</td>
+    	<td width="27%" valign="top">
+        <label for="input_busca">Buscar: </label>
+   	    <input name="input_busca" type="text" class="inp-form" id="input_busca" /></td>
+    </tr>
+    <tr>
+    	<td colspan="3" valign="top">
+   	    	<div id="grid"></div>
+        </td>
+    </tr>
+
+</table>
+
+
+<script>
+
+	function deletar_selecionados()
+	{	
+		jConfirm('Confirmar exclusão?', 'Confirmar ação', function(r) {
+			if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluirselecionados",
+				 data: $("#mainform").serialize(),
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+					if(data.erro == "false")
+					{					
+						$.jGrowl(data.msg, { theme: 'ok'});	
+						$.post('/admin/modulos/grid', { pagina: '1'},  function(data) { $('#grid').html(data); });
+						
+					}
+					else if(data.erro == "true")
+					{
+						 $.jGrowl(data.msg, { theme: 'alerta'});
+					}
+					
+				 }
+			 }); 
+		 };
+		});
+	}
+	
+	
+	function deletar(id)
+	{	
+		jConfirm('Confirmar exclusão?', 'Confirmar ação', function(r) {
+			if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluir/id/",
+				 data: { id: id},
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+					if(data.erro == "false")
+					{					
+						$.jGrowl(data.msg, { theme: 'ok'});	
+						$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '1'},  function(data) { $('#grid').html(data); });
+						
+					}
+					else if(data.erro == "erro")
+					{
+						 $.jGrowl(data.msg, { theme: 'alerta'});
+					}
+					
+				 }
+			 }); 
+		 };
+		});
+	}
+	
+	
+	
+
+
+$(document).ready(function () {
+	$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '1'}, function(data) { $('#grid').html(data); });	
+});
+</script>

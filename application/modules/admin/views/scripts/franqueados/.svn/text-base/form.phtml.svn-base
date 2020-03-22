@@ -1,0 +1,256 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Franqueados</h1>
+</div>
+
+<?php
+
+		echo "<pre>";
+    	print_r($this->modelo);
+    	echo "</pre>";
+
+?>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/insert" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Dados do franqueado</a></li> 
+                    <li><a href="#tabs-2">Plano</a></li>
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Dados do franqueado</legend>
+        <div class="linha">
+        	
+            <div class="elemento">
+            	<label>Tipo pessoa:</label>
+                <select id="TIPOPESSOA" name="TIPOPESSOA" >
+                	<option value="">selecione...</option>
+                    <option value="F">Física</option>
+                    <option value="J">Jurídica</option>                    
+                </select>
+            </div>
+            
+             <div class="elemento">
+            	<label>CPF/CNPJ:</label>
+               <input type="text" id="CPF_CNPJ" name="CPF_CNPJ" value="<?=isset($this->modelo[0]->CPF_CNPJ) ? $this->modelo[0]->CPF_CNPJ : NULL?>" size="20" />
+            </div>
+            
+              <div class="elemento">
+            	<label>Nome:</label>
+               <input name="NOME" type="text" id="NOME" value="<?=isset($this->modelo[0]->NOME_FRANQUEADO) ? $this->modelo[0]->NOME_FRANQUEADO : NULL?>" size="40" />
+            </div>
+            
+            <div class="elemento">
+            	<label>Nome fantasia:</label>
+               <input name="NOME_FANTASIA" type="text" id="NOME_FANTASIA" value="<?=isset($this->modelo[0]->NOME_FANTASIA) ? $this->modelo[0]->NOME_FANTASIA : NULL?>" size="38" />
+            </div>
+            
+            <div class="elemento">
+            	<label>Razão Social:</label>
+               <input name="RAZAO_SOCIAL" type="text" id="RAZAO_SOCIAL" value="<?=isset($this->modelo[0]->RAZAO_SOCIAL) ? $this->modelo[0]->RAZAO_SOCIAL : NULL?>" size="50" />
+            </div>
+            
+              <div class="elemento">
+            	<label>E-mail:</label>
+               <input name="EMAIL" type="text" id="EMAIL" value="<?=isset($this->modelo[0]->EMAIL) ? $this->modelo[0]->EMAIL : NULL?>" size="50" />
+            </div>
+            
+        </div>
+     
+        
+          <div class="linha">
+         	 <div class="elemento">
+           	   <label>Estado:</label>
+                <select id="tb_sys_estado" name="tb_sys_estado" >
+                <option value="">selecione...</option>
+                <?php
+				echo Lumine_Util::buildOptions($this->estados, "ID_ESTADO", "SGL_ESTADO", null);
+				?>             
+                </select>
+            </div>
+            
+             <div class="elemento">
+           	   <label>Cidade:</label>
+                <select id="tb_sys_cidade" name="tb_sys_cidade" >
+                	<option value="">selecione...</option>                 
+                </select>
+            </div>
+            
+            <div class="elemento">
+           	   <label>Slug:</label>
+                <input type="text" name="SLUG_FRANQUIA" id="SLUG_FRANQUIA" value="<?=isset($this->modelo[0]->SLUG_FRANQUIA) ? $this->modelo[0]->SLUG_FRANQUIA : NULL?>" /> 
+                ex.: <b>nomedacidade</b>.guiacool.com
+            </div>
+         </div>
+         
+         
+             <div class="linha">
+         	  <div class="elemento">
+            	<label>Ativo?</label>
+               <input name="ATIVO" type="radio" value="1" size="50" />Sim
+	           <input name="ATIVO" type="radio" value="0" size="50" />Não
+            </div>
+         </div>
+         
+        
+         
+         </fieldset>
+         
+         <br style="clear:both;" />
+         
+        <fieldset>
+        <legend>Endereço e contato</legend>
+        	
+            <div class="linha">
+        	
+                <div class="elemento">
+                  <label>Tipo pessoa:</label>
+                    <select id="a" name="a" >
+                        <option value="">selecione...</option>
+                        <option value="F">Física</option>
+                        <option value="J">Jurídica</option>                    
+                    </select>
+                </div>
+            
+            </div>
+            
+        </fieldset>
+         
+          </div>
+         
+         <div id="tabs-2">
+          
+         
+         </div>
+	
+    	   <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+             <input type="submit" value="Salvar" name="salvar" class="btnSalvar" />
+             <input type="button" value="Voltar" name="salvar" onclick="window.location = '/admin/franqueados/'; " />           
+             
+             
+             <input type="text" name="ID_USUARIO" id="ID_USUARIO" value="<?=isset($this->modelo[0]->ID_USUARIO) ? $this->modelo[0]->ID_USUARIO : NULL?>" />
+             
+             </div>
+         </div>
+        
+    	    
+    </div>
+
+    </div>
+
+</form>
+
+<script>
+
+
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/admin/franqueados/insert",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+				 $('#form1').validationEngine('hideAll');
+				
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});	
+					
+						
+				}else if(data.erro == "valida")
+				{
+					$.each(data.campos_erros, function(index, value) { 
+						//$('#'+index).validationEngine('showPrompt', value, 'load');
+						//$('#'+index).validationEngine('showPrompt', value);
+					 });
+					
+					$("#validacao").css("display", "block");
+					$("#validacao").html(data.error_html);
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs();
+	 
+	 
+	 $("#tb_sys_estado").bind("change", function(e)
+	 {
+		
+		$.ajax({
+             type: "POST",
+             url: '/admin/franqueados/getcidades/idCidade/'+$(this).val(),
+             data: null,
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+				$('#tb_sys_cidade')
+					 .find('option')
+					 .remove()
+					 .end()
+					 .append('<option value="">selecione...</option>');
+				
+				$.each(data, function(index, value) { 
+						  
+				  $("#tb_sys_cidade").append("<option value='"+value.ID_CIDADE+"'>"+value.NOME_CIDADE+"</option>");
+
+				});			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+	 });
+	
+	 
+	 //$('#TIPOPESSOA').validationEngine('showPrompt', 'This a custom msg', 'load');
+	 //$('#NOME').validationEngine('showPrompt', 'This a custom msg', 'load');
+
+});
+</script>
+

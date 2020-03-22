@@ -1,0 +1,67 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+
+
+<script>
+  
+  
+  	function resultado(pagina)
+	{
+		$.get('/conta/buscaresultadoajax?pagina='+pagina,
+		
+			<?=$this->json?>
+		,
+		function (result) 
+		{ 
+			$("#placeholderCarregaResultadoBusca").html(result); 
+			
+			$(".flexslider .slides > li, .flexslider-detail .slides > li").css("display", "block");
+			
+			chamasAjax();
+			
+			
+		
+		});	
+	}
+	
+    $(document).ready(function(){
+      	
+		$('body').attr("class","<?=$this->layout()->pattern == "" ? "pattern3" : $this->layout()->pattern?> <?=$this->layout()->color == "" ? "blue" : $this->layout()->color?>");
+		
+		resultado(1);
+		
+		
+		
+    });
+
+
+
+
+</script>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>  
+  
+
+
+<a href="/conta/busca" title="Voltar à página anterior">Voltar</a>
+
+
+
+	<div id="placeholderCarregaResultadoBusca"></div>
+
+
+
+
+
+
+
+

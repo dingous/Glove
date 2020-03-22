@@ -1,0 +1,38 @@
+  <table width="100%" border="0" align="right" cellpadding="0" cellspacing="0" id="product-table">
+	          <tr>
+	            <th width="1%" class="table-header-options line-left"><a href="">Id</a></th>                
+	            <th width="27%" class="table-header-repeat line-left minwidth-1"><a href="">Alias</a></th>
+	            <th width="66%" class="table-header-repeat line-left minwidth-1"><a href="">Descrição</a></th>  
+                <th width="5%" class="table-header-options line-left"><a href="">Acoes</a></th>
+              </tr>
+              
+            <?php
+			if(count($this->modelo) > 0)
+			{
+	        foreach ($this->modelo as $chave => $valor){
+				
+	        ?>
+	          <tr>
+                <td width="1%"><?=$valor->ID_ACAO?><input readonly="readonly" type="hidden" name="ID_ACAO[]" value="<?=$valor->ID_ACAO?>" /></td>
+	            <td><?=$valor->NOME_ALIAS?><input readonly="readonly" type="hidden" name="ALIAS[]" value="<?=$valor->NOME_ALIAS?>" /></td>
+	            <td><?=($valor->DESCRICAO_ALIAS)?><input readonly="readonly" type="hidden" name="DESCRICAO[]" value="<?=($valor->DESCRICAO_ALIAS)?>" /></td>
+                <td align="center" class="options-width">
+                <a href="javascript:void(0);" id="<?=$valor->ID_ACAO?>" title="Excluir" class="icon-2 info-tooltip btnExcluir"></a>
+            </td>	            
+              </tr>
+	          
+              <?php }
+			  
+			}else{?>
+            
+            <tr>
+	            <td colspan="5" align="center">Nenhum registro cadastrado.</td>	            
+            </tr>
+            
+            <?php } ?>
+              
+	          
+
+            </table>
+
+	      

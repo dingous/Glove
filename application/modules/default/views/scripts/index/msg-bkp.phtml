@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"  dir="ltr">
+<head>	
+<title>Glove Brasil Atividades</title>
+<meta name="description" content="Facebook's Open Graph protocol allows for web developers to turn their websites into Facebook &quot;graph&quot; objects, allowing a certain level of customization over how information is carried over from a non-Facebook website to Facebook when a page is &quot;recommended&quot;, &quot;liked&quot;, or just generally shared." />
+<!--<meta name="description" content="<?=$this->txt?>"/>-->
+<!-- Facebook Meta Tags -->
+<meta property="og:title" content="Glove Brasil Atividades"/>
+<meta property="og:image" content="http://www.glovebrasil.com.br/assets/portal/login/images/logo.png"/>
+<meta property="og:site_name" content="Glove Brasil"/>
+<meta property="og:description" content="Facebook's Open Graph protocol allows for web developers to turn their websites into Facebook "graph" objects, allowing a certain level of customization over how information is carried over from a non-Facebook website to Facebook when a page is 'recommended', 'liked', or just generally shared."/>
+<!--<meta property="og:description" content="<?=$this->txt?>"/>-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+<p>Glove Brasil</p>
+
+<?php if($this->logado == true){ ?>
+<p>Abrindo post...</p>
+<script>
+window.location = '/meuperfil-<?=$this->usuario->ID_USUARIO?>/post/<?=$this->cod?>';
+</script>
+
+<?php
+}else
+{
+?>
+
+<p>É necessário efetuar o login do <b>Glove Brasil</b> para visualizar este post, aguarde você será redirecionado para a tela de login...</p>
+
+<script>
+var t=setTimeout(function(){ window.location = '/'; },5000)
+</script>
+
+<?php
+}
+?>
+
+</body>
+</html>

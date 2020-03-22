@@ -1,0 +1,213 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Cidades</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Cidade</a></li> 
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Preencha o formulário</legend>
+        
+        <div class="linha">
+        	
+            
+          <div class="elemento">
+              	<label for="tb_sys_pais">País:</label>
+            	<select name="tb_sys_pais" id="tb_sys_pais">
+                <option value="">selecione...</option>
+				<?php echo Lumine_Util::buildOptions($this->paises, "ID_PAIS", "NOME_PAIS", isset($this->modelo->tb_sys_pais) ? $this->modelo->tb_sys_pais : NULL, NULL); ?>
+                </select>
+
+          </div> 
+          
+          
+          <div class="elemento">
+	        <label for="tb_sys_estado">Estado:</label>
+            <select name="tb_sys_estado" id="tb_sys_estado">
+    		<option value="">selecione...</option>
+	     	</select>
+          
+          </div>
+          
+        
+        </div>
+        
+        <div class="linha">
+        
+            
+          <div class="elemento">
+            	<label for="NOME_CIDADE">Nome da cidade:</label>
+                <input name="NOME_CIDADE" type="text" id="NOME_CIDADE" size="60" value="<?=isset($this->modelo->NOME_CIDADE) ? utf8_encode($this->modelo->NOME_CIDADE) : NULL?>" />
+          </div>
+            
+          
+            
+        </div>
+        
+        
+ 		<div class="linha">
+        
+            
+          <div class="elemento">
+            	<label for="SLUG_CIDADE">Slug da cidade:</label>
+                <input name="SLUG_CIDADE" type="text" id="SLUG_CIDADE" size="60" value="<?=isset($this->modelo->SLUG_CIDADE) ? $this->modelo->SLUG_CIDADE : NULL?>" />
+          </div>
+            
+          
+            
+        </div>        
+            
+                 
+    	 <br style="clear:both" />
+         
+         <div class="linha">
+       	   <div class="elemento">
+             <input type="submit" value="Salvar" name="salvar" class="btnSalvar" />
+             <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_CIDADE" type="hidden" id="ID_CIDADE" value="<?=isset($this->modelo->ID_CIDADE) ? $this->modelo->ID_CIDADE : NULL?>" readonly="readonly" />
+             
+             </div>
+         </div>
+        
+    	    
+    
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	
+	
+	
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+			
+				
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					window.location = '/<?=$this->modulo?>/<?=$this->controlador?>';
+					
+						
+				}else if(data.erro == "valida")
+				{
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+						
+						
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+
+					 });
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs();
+	 
+	 $("input")[0].focus();
+	 
+	 carregaEstados();
+	 
+	 $("#tb_sys_pais").bind("change", function(e)
+	 {
+		 carregaEstados();
+	 });
+	
+});
+
+
+function carregaEstados()
+{
+	var pais = $("#tb_sys_pais").val();
+	var estado = "<?=isset($this->modelo->tb_sys_estado) ? $this->modelo->tb_sys_estado : NULL?>";
+	
+	
+
+	if(pais != "")
+	{
+		$.ajax({
+				 type: "POST",
+				 url: '/<?=$this->modulo?>/<?=$this->controlador?>/getestado/idPais/'+pais,
+				 data: null,
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+					$('#tb_sys_estado')
+						 .find('option')
+						 .remove()
+						 .end()
+						 .append('<option value="">mostrar todos...</option>');
+					
+					$.each(data, function(index, value) { 
+							  
+					  $("#tb_sys_estado").append("<option value='"+value.ID_ESTADO+"'>"+value.SGL_ESTADO + " - " + value.NOME_ESTADO+"</option>");
+	
+					});
+					
+					if(estado != "")
+					{
+						$("#tb_sys_estado").val(estado);
+					}
+					
+					
+				 },
+				 error: function (data) 
+				 {
+	
+					
+				 }
+			 });
+	}
+}
+</script>
+

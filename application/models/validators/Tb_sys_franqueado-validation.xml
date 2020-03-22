@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+
+	
+	<field name="TIPOPESSOA">
+	
+        <validator type="requiredString" msg="Selecione se o franqueado é uma pessoa Física ou Jurídica."/>
+				
+  </field>
+	
+	<field name="NOME">
+	
+        <validator type="requiredString" msg="Informe o nome do franqueado."/>
+				
+    </field>
+	
+	
+	<field name="tb_sys_estado">
+	
+        <validator type="requiredString" msg="Selecione um estado."/>
+				
+    </field>
+	
+	<field name="tb_sys_cidade">
+	
+        <validator type="requiredString" msg="Selecione uma cidade."/>
+				
+    </field>
+	
+
+	
+</lumine-validator>
+

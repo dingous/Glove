@@ -1,0 +1,272 @@
+<div id="page-heading">
+  <h1><img src="/assets/admin/icones/icon1.png"> Cadastro de usuários </h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/grupo/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Dados do usuário</a></li> 
+                    <li><a href="#tabs-2" onclick="">Endereço e contato</a></li>
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Dados do grupo</legend>
+        
+        <div class="linha">
+        
+
+            
+            <div class="elemento">
+            <label>Empresa que o usuário pertence:</label>
+            <select name="tb_sys_empresa" id="tb_sys_empresa">
+              <option value="">selecione...</option>
+              <?php echo Lumine_Util::buildOptions("dao.Tb_sys_empresa", "ID_EMPRESA", "NOME_FANTASIA", isset($this->modelos->tb_sys_empresa) ? $this->modelos->tb_sys_empresa : NULL, NULL); ?>
+            </select>
+            
+            </div>
+            
+            
+            
+          <div class="elemento">
+            	<label>Nome do usuário:</label>
+                <input name="NOME" type="text" id="NOME" size="50" value="<?=isset($this->modelos->NOME) ? $this->modelos->NOME : NULL?>" />
+                <input type="hidden" id="ID_USUARIO" name="ID_USUARIO" value="<?=$this->ID_USUARIO?>" />
+            </div>
+            
+       
+            
+            
+            
+        </div>
+        
+        
+          
+         <div class="linha">
+        
+            
+          <div class="elemento">
+           	<label>Grupo deste usuário:</label>
+            	 <select id="tb_sys_grupos" name="tb_sys_grupos" >
+                <option value="">selecione...</option>
+                <?php
+				echo Lumine_Util::buildOptions("dao.Tb_sys_grupos", "ID_GRUPO", "DESCRICAO", $this->modelos->tb_sys_grupos);
+				?>             
+                </select>
+          </div>
+          
+          
+          <div class="elemento">
+           	<label>Tipo deste usuário:</label>
+            	 <select id="tb_sys_tipousuario" name="tb_sys_tipousuario" >
+                <option value="">selecione...</option>
+                <?php
+				echo utf8_encode(Lumine_Util::buildOptions("dao.Tb_sys_tipousuario", "ID_TIPOUSUARIO", "DESCRICAO", $this->modelos->tb_sys_tipousuario));
+				?>             
+                </select>
+          </div>
+          
+          </div>
+        
+         <div class="linha">
+        
+            
+            <div class="elemento">
+       	<label>Login E-mail:</label>
+                <input name="EMAIL" type="text" id="EMAIL" size="60" value="<?=isset($this->modelos->EMAIL) ? $this->modelos->EMAIL : NULL?>" />
+            </div>
+            
+           <div class="elemento">
+       	  <label>Senha:</label>
+                <input name="SENHA" type="password" id="SENHA" size="60" value="<?=isset($this->modelos->SENHA) ? $this->modelos->SENHA : NULL?>" />
+            </div>
+            
+            
+            
+        </div>
+        
+        
+         <div class="linha">
+         	 <div class="elemento">
+           	   <label>Estado:</label>
+                <select id="tb_sys_estado" name="tb_sys_estado" >
+                <option value="">selecione...</option>
+                <?php
+				echo Lumine_Util::buildOptions($this->estados, "ID_ESTADO", "SGL_ESTADO", null);
+				?>             
+                </select>
+            </div>
+            
+             <div class="elemento">
+           	   <label>Cidade:</label>
+                <select id="tb_sys_cidade" name="tb_sys_cidade" >
+                	<option value="">selecione...</option>                 
+                </select>
+            </div>
+            
+            
+             <div class="elemento">
+           	   <label>Status:</label>
+                <select id="FL_ATIVO" name="FL_ATIVO" >
+                	<option value="1">ATIVO</option>                 
+                	<option value="0">INATIVO</option>                                     
+                </select>
+            </div>
+            
+            
+              <div class="elemento">
+           	   <label>Primeiro Acesso:</label>
+                <select id="FL_PRIMEIROACESSO" name="FL_PRIMEIROACESSO" >
+                	<option value="1">SIM</option>                 
+                	<option value="0">NÃO</option>                                     
+                </select>
+            </div>
+            
+         </div>
+            
+         
+          
+           
+           </fieldset>        
+             	    
+	    </div>
+		
+        
+        
+		<div id="tabs-2">
+			<fieldset>
+	        <legend>Contato e Endereço</legend></fieldset>    
+		</div>
+	
+    
+    	   <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+         	   <input type="submit" id="btnSalvar" name="btnSalvar" value="Salvar" />
+         	   <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_USUARIO" type="hidden" id="ID_USUARIO" value="<?=isset($this->modelos->ID_USUARIO) ? $this->modelos->ID_USUARIO : NULL?>" readonly="readonly" />
+             
+             <input name="ACEITOUTERMOS" type="hidden" id="ACEITOUTERMOS" value="1" readonly="readonly" />
+       	   </div>
+         </div>
+    
+    </div>
+
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+		
+		
+     $("#form1").DingousSubmit({
+			url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+			post: 
+			{
+				form: $("#form1").serializeArray(),
+				ID_USUARIO: $("#ID_USUARIO").val()
+			},
+			onCompletado: function(e) 
+			{	
+				window.location = '/admin/usuarios';
+			}
+		});
+
+		return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();
+	 $( "#tabs" ).tabs()
+	 
+	 $("#FL_ATIVO").val("<?=$this->modelos->FL_ATIVO?>");
+	 $("#FL_PRIMEIROACESSO").val("<?=$this->modelos->FL_PRIMEIROACESSO?>");
+	 
+	  $("#tb_sys_estado").bind("change", function(e)
+	 {
+		
+	
+		
+		$.ajax({
+             type: "POST",
+             url: '/<?=$this->modulo?>/<?=$this->controlador?>/getcidades/idCidade/'+$(this).val(),
+             data: null,
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+				$('#tb_sys_cidade')
+					 .find('option')
+					 .remove()
+					 .end()
+					 .append('<option value="">selecione...</option>');
+				
+				$.each(data, function(index, value) { 
+						  
+				  $("#tb_sys_cidade").append("<option value='"+value.ID_CIDADE+"'>"+value.NOME_CIDADE+"</option>");
+
+				});			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+	 });
+	 
+	 
+	 
+	 <?php if($this->modelos->ID_USUARIO != NULL && $this->modelos->tb_sys_estado != NULL){ ?>
+	 
+	 $.ajax({
+             type: "POST",
+             url: '/<?=$this->modulo?>/<?=$this->controlador?>/getcidades/idCidade/'+<?=$this->modelos->tb_sys_estado?>,
+             data: null,
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+				$('#tb_sys_cidade')
+					 .find('option')
+					 .remove()
+					 .end()
+					 .append('<option value="">selecione...</option>');
+				
+				$.each(data, function(index, value) { 
+						  
+				  $("#tb_sys_cidade").append("<option value='"+value.ID_CIDADE+"'>"+value.NOME_CIDADE+"</option>");
+
+				});			
+				
+				$("#tb_sys_estado").val('<?=$this->modelos->tb_sys_estado?>');
+				$("#tb_sys_cidade").val('<?=$this->modelos->tb_sys_cidade?>');
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+		 <?php } ?>
+	 
+});
+</script>
+

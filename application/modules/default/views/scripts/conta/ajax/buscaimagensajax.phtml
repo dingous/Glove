@@ -1,0 +1,25 @@
+                        <div id="fotos">
+						<?php
+						if(count($this->fotos) > 0)
+						{
+                        foreach($this->fotos as $chave => $valor)
+                        {
+                        ?>
+                        <div id="foto<?=$valor->ID_FOTO?>" class="foto" style="width:100px;	text-align:center;float:left;margin-right:10px;	margin-bottom:10px;">
+                      <a href="javascript:void(0);"><img src="/thumbs/index/w/100/h/70/type/2/file/<?=$valor->ARQUIVO?>" id="iconepqn" style="border: 1px solid #cccccc;" /></a>
+                      <br />
+                      	<input type="checkbox" name="chkdel[]" id="chkdel[]"  value="<?=$valor->ID_FOTO?>" class="checkboxFotos" />
+                      	</div>
+                        <?php 
+						}
+						}else{ ?>
+                        nenhuma foto adicionada.
+						<?php } ?>
+                        
+                        </div>
+
+<script>
+	$(document).ready(function(){
+		$("#total_fotos").html("<?=count($this->fotos)?>");
+	});
+</script>

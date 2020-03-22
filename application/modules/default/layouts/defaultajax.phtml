@@ -1,0 +1,20 @@
+<?
+$profile = new Zend_Session_Namespace('perfil');
+$auth = Zend_Auth::getInstance();
+$usuario_logado = $auth->getStorage()->read();
+?>
+
+
+<?php echo $this->headScript() ?>
+
+<?php echo $this->headStyle() ?>
+
+<?php echo $this->headLink() ?>
+
+ <!--Criado com intuito de adicionar várias referências de js e css-->
+<?php echo  $this->placeholder('multiscripts') ?>
+
+
+ <?php echo $this->placeholder('header') ?>
+
+ <?php echo $this->layout()->content; ?>

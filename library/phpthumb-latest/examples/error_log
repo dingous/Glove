@@ -1,0 +1,5 @@
+[28-Aug-2012 01:06:56 UTC] PHP Fatal error:  Uncaught exception 'Exception' with message 'You must have either the GD or iMagick extension loaded to use this library' in /home/glovebra/public_html/library/phpthumb-latest/ThumbLib.inc.php:139
+Stack trace:
+#0 /home/glovebra/public_html/library/phpthumb-latest/examples/save_differentformat.php(28): PhpThumbFactory::create('test.jpg')
+#1 {main}
+  thrown in /home/glovebra/public_html/library/phpthumb-latest/ThumbLib.inc.php on line 139

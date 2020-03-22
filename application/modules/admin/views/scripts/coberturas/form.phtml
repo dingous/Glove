@@ -1,0 +1,380 @@
+<style>
+html, body {
+    height: 100%;
+}
+body {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #393939;
+    font-family: Arial;
+    font-size: 0;
+	color: #444;
+	font-size: 12px;
+}
+</style>
+
+<?php
+
+$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/uploadify-v2.1.4/uploadify.css');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/swfobject.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/jquery.uploadify.v2.1.4.js');
+
+
+
+/*menu de contexto*/
+$this->headScript()->appendFile($this->baseUrl() . '/assets/contextMenu/jquery.contextmenu.r2.js');
+?>
+
+
+
+
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Coberturas</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Cobertura</a></li> 
+                    <li><a href="#tabs-2">Fotos</a></li> 
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Preencha o formulário</legend>
+        
+        
+         		<?php
+				 if(count($this->aplicacoes) > 0){
+				 ?>  
+				 
+				 <div class="linha">
+				   <div class="elemento">
+						<label>Escolha uma rádio:</label>
+						<select name="tb_sys_aplicacao" id="tb_sys_aplicacao">
+						<?php 
+						$selected = "";
+						foreach($this->aplicacoes as $chave => $valor){
+						if(isset($this->modelo))
+						{
+						$selected = ($this->modelo->tb_sys_aplicacao == $valor->ID_APLICACAO) ? 'selected="selected"' : "";
+						}
+						?>
+						<option value="<?=$valor->ID_APLICACAO?>" <?=$selected?> ><?=$valor->DESCRICAO?></option>
+						<?php } ?>
+						</select>
+				   </div>
+				 </div>
+				 
+				 
+				 <?php }else{ ?>
+						
+					   <input type="hidden" name="tb_sys_aplicacao" id="tb_sys_aplicacao" value="<?=$this->aplicacoes->ID_APLICACAO?>">
+						
+				 <?php } ?>   
+        
+        
+        <div class="linha">
+        	
+        
+            
+          <div class="elemento">
+            	<label>Descrição da cobertura:</label>
+                <input name="DESCRICAO" type="text" id="DESCRICAO" size="60" value="<?=isset($this->modelo->DESCRICAO) ? $this->modelo->DESCRICAO : NULL?>" />
+          </div>
+            
+          
+            
+        </div>
+           
+		</div>            
+
+        
+        <div id="tabs-2"> 
+        	
+            
+        <fieldset>
+        <legend>Imagens da cobertura</legend>
+        
+        <div class="linha">
+        	
+  
+            
+          <div class="elemento">
+            	<label>Adicionar nova imagem à cobertura:</label>
+                <input id="file_upload" name="file_upload" type="file" value="selecionar arquivos" />
+          * Clique com o botão direito na foto para mais opções.</div>
+            
+          
+            
+        </div>
+        <!--Documentação menu contexto: http://www.trendskitchens.co.nz/jquery/contextmenu/-->
+        
+        <div id="carregaImagens"></div>
+        
+        <!-- Opções do menu no botão direito -->
+
+        </fieldset>
+        
+        </div>
+                 
+    	 <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+             <input type="submit" value="Salvar" name="salvar" class="btnSalvar" />
+             <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_COBERTURA" type="hidden" id="ID_COBERTURA" value="<?=isset($this->modelo->ID_COBERTURA) ? $this->modelo->ID_COBERTURA : NULL?>" readonly="readonly" />
+             
+             </div>
+         </div>
+        
+    	    
+    
+</form>
+
+
+
+<div class="contextMenu" id="myMenu1">
+
+      <ul>
+
+        <!--<li id="open"> Visualizar</li>-->
+
+        <li id="delete"> Excluir</li>
+
+        <li id="capa"> Definir como foto capa</li>
+
+      </ul>
+
+    </div>
+ 
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+			
+				
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					if(data.tipo_acao == "insert")
+					{
+						window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/editar/id/'+data.modelo.ID_COBERTURA;
+					}else
+					{
+						window.location = '/<?=$this->modulo?>/<?=$this->controlador?>';
+					}
+					
+						
+				}else if(data.erro == "valida")
+				{
+					
+					$(".msg_validacao_input").remove();
+					
+					$.each(data.campos_erros, function(index, value) {
+						 
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+
+					 });
+					
+														 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+	
+		
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs();
+	 
+	 <? if(isset($this->modelo->ID_COBERTURA)){?>
+	 $( "#tabs" ).tabs("select", 1);
+	 chamaGridFotos();
+	 <? }else{ ?>
+ 	 $( "#tabs" ).tabs("select", 0);
+	 <? } ?>
+	 
+	 
+	 $("input")[0].focus();
+	 
+	 
+	  $('#file_upload').uploadify({  
+			'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+			'script'    : '/<?=$this->modulo?>/<?=$this->controlador?>/upload',
+			'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+			'folder'    : '/uploads/cms/coberturas/',
+			'multi'     : true,		
+			'auto'      : true,
+			'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+			'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+			'removeCompleted': true,
+			'scriptData'  : {'ID_COBERTURA': $("#ID_COBERTURA").val()},
+			onSelectOnce : function(event,data) {
+				$('#status-message').text(data.filesSelected + ' files have been added to the queue.'); 			
+			},
+			onAllComplete  : function(event,data) {
+				
+			 $('#status-message').text(data.filesUploaded + ' arquivos uploaded, ' + data.errors + ' erros.');
+			 chamaGridFotos();
+			 
+			},
+			onComplete  : function(event, ID, fileObj, response, data) {			
+			  //var json = jQuery.parseJSON(response);
+			  //var msg = json.msg;
+			},
+			onError: function (event,ID,fileObj,errorObj) {
+			  alert(errorObj.type + ' Error: ' + errorObj.info);
+			}
+	  });
+	  
+	  	
+	
+	
+	$( "#tabs" ).bind( "tabsselect", function(event, ui) {
+		
+		if(ui.index == 1)
+		{
+			chamaGridFotos();
+			
+			
+		}
+		
+	});
+		
+		
+
+
+
+
+	
+
+
+
+
+		
+		
+});
+
+
+function chamaGridFotos()
+{
+	$.post('/<?=$this->modulo?>/<?=$this->controlador?>/gridfotos', { pagina: '1', id: $("#ID_COBERTURA").val()}, function(data) { 
+	
+	$('#carregaImagens').html(data); 
+		
+			menuContexto();
+			
+			
+	
+	});	
+}
+
+
+function menuContexto()
+{
+	 $('.fotos').contextMenu('myMenu1', {
+
+      bindings: {
+
+        'open': function(t) {
+
+           var div = $(t);
+
+        },
+       
+        'delete': function(t) {
+         		  
+		  var div = $(t);
+		  var id = div.attr("id").replace("foto", "");
+		  $.post('/<?=$this->modulo?>/<?=$this->controlador?>/excluifoto', { id: id}, function(data) {  });	
+ 		  div.remove();
+			
+        },
+		'capa': function(t) {
+
+          var div = $(t);
+		  var id = div.attr("id").replace("foto", "");
+		  $.post('/<?=$this->modulo?>/<?=$this->controlador?>/fotocapa', { id: id}, function(data) {$.jGrowl('Foto capa alterada com sucesso!', { theme: 'ok'}); });	
+		  
+        },
+		
+	   menuStyle: {
+
+        border: '2px solid #000'
+
+      },
+
+      itemStyle: {
+
+        fontFamily : 'verdana',
+
+        backgroundColor : '#666',
+
+        color: 'black',
+
+        border: 'none',
+
+        padding: '1px'
+
+      },
+
+      itemHoverStyle: {
+
+        color: '#fff',
+
+        backgroundColor: '#0f0',
+
+        border: 'none'
+
+      }
+
+      }
+
+    });	
+}
+</script>
+

@@ -1,0 +1,294 @@
+10
+
+dir
+0
+https://subversion.assembla.com:443/svn/gcool/library/lumine/lib
+https://subversion.assembla.com:443/svn/gcool
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+d83b8a9f-cc6c-47ad-b7fc-fe536a07d6b6
+
+ConnectionManager.php
+file
+
+
+
+add
+
+Parser.php
+file
+
+
+
+add
+
+IEventListener.php
+file
+
+
+
+add
+
+Updater.php
+file
+
+
+
+add
+
+Templates
+dir
+
+
+
+add
+
+Base.php
+file
+
+
+
+add
+
+Utils
+dir
+
+
+
+add
+
+Form
+dir
+
+
+
+add
+
+DataDict.php
+file
+
+
+
+add
+
+Updater
+dir
+
+
+
+add
+
+AddOn.php
+file
+
+
+
+add
+
+Validator.php
+file
+
+
+
+add
+
+EventListener.php
+file
+
+
+
+add
+
+DataDict
+dir
+
+
+
+add
+
+Union.php
+file
+
+
+
+add
+
+Export
+dir
+
+
+
+add
+
+Exception.php
+file
+
+
+
+add
+
+Validator
+dir
+
+
+
+add
+
+Tree.php
+file
+
+
+
+add
+
+Model.php
+file
+
+
+
+add
+
+Factory.php
+file
+
+
+
+add
+
+Configuration.php
+file
+
+
+
+add
+
+IPlugin.php
+file
+
+
+
+add
+
+Sequence.php
+file
+
+
+
+add
+
+Connection
+dir
+
+
+
+add
+
+Tree
+dir
+
+
+
+add
+
+Tokenizer.php
+file
+
+
+
+add
+
+Report.php
+file
+
+
+
+add
+
+Reverse.php
+file
+
+
+
+add
+
+Events
+dir
+
+
+
+add
+
+SQLException.php
+file
+
+
+
+add
+
+Dialect
+dir
+
+
+
+add
+
+Event.php
+file
+
+
+
+add
+
+Log.php
+file
+
+
+
+add
+
+Sequence
+dir
+
+
+
+add
+
+Report
+dir
+
+
+
+add
+
+Reverse
+dir
+
+
+
+add
+
+ui
+dir
+
+
+
+add
+

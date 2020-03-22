@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+	
+	
+	<field name="NOME_CIDADE">
+	
+        <validator type="requiredString" msg="Informe o nome da cidade."/>
+				
+  </field>
+  
+  
+  
+	<field name="tb_sys_pais">
+	
+        <validator type="requiredString" msg="Selecione um país."/>
+				
+  </field>
+  
+  
+  	<field name="tb_sys_estado">
+	
+        <validator type="requiredString" msg="Selecione um estado."/>
+				
+  </field>
+  
+  
+  
+  <field name="SLUG_CIDADE">
+	
+       <validator type="requiredString" msg="Informe  um slug."/>
+	   <validator type="unique" msg="Já existe um slug com este nome."></validator>
+				
+  </field>
+
+  
+  
+	
+</lumine-validator>
+

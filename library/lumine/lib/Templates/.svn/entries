@@ -1,0 +1,119 @@
+10
+
+dir
+0
+https://subversion.assembla.com:443/svn/gcool/library/lumine/lib/Templates
+https://subversion.assembla.com:443/svn/gcool
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+d83b8a9f-cc6c-47ad-b7fc-fe536a07d6b6
+
+validator.dtd
+file
+
+
+
+add
+
+Configurations.php
+file
+
+
+
+add
+
+white
+dir
+
+
+
+add
+
+basic
+dir
+
+
+
+add
+
+config.txt
+file
+
+
+
+add
+
+edit_list.html
+file
+
+
+
+add
+
+validator.xml
+file
+
+
+
+add
+
+classes.body.txt
+file
+
+
+
+add
+
+classes.top.txt
+file
+
+
+
+add
+
+classes_license.txt
+file
+
+
+
+add
+
+ApplicationContext.php
+file
+
+
+
+add
+
+Model.tpl
+file
+
+
+
+add
+
+edit_form.php
+file
+
+
+
+add
+

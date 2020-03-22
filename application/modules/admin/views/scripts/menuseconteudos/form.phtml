@@ -1,0 +1,79 @@
+<script>
+$(function () {
+
+	$( "#tabs" ).tabs({});
+
+	$("#btnEnviar").bind("click", function(e){ 
+
+		$("#form1").DingousSubmit({
+			url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+			post: 
+			{
+				form: $("#form1").serializeArray(),
+				id_menu: $("#id_menu").val()
+			},
+			onCompletado: function(e) 
+			{	
+
+			}
+		});
+
+		return false;
+		
+	});
+	
+	
+		
+});
+</script>
+
+		<form id="form1" name="form1">
+  		<div id="tabs">
+  				
+  				<div class="form l300" style="width:590px;">
+  				 
+                <ul> 
+                    <li><a href="#tabs-1">Conteúdo</a></li> 
+                </ul> 
+                <div id="tabs-1"> 
+                		
+                	    <div class="linha">
+        					
+                            
+        					<div class="elemento">
+				            	<label for="TITLE">Título:</label>
+				             	<input type="text" name="TITLE" id="TITLE" style="width:510px;"></textarea>
+				            </div>
+                            
+                            <div class="elemento">
+								<label for="tb_cms_tipoconteudo">Tipo de conteúdo:</label>
+                                
+                                <div style="float:left;">
+                                <label style="float:right;" for="tipo1">URL</label>
+                                <input id="tipo1" type="radio" name="tb_cms_tipoconteudo" value="2">
+                                </div>
+                                &nbsp;&nbsp;
+				              	<div style="float:left;">
+                                <label style="float:right;" for="tipo2">Página</label>
+                                <input id="tipo2"  type="radio" name="tb_cms_tipoconteudo" value="3">
+                                </div>
+                                
+				            </div>
+                            
+        					<div class="elemento">
+				            	<label for="CONTEUDO">Conteúdo:</label>
+				             	<textarea name="CONTEUDO" id="CONTEUDO"></textarea>
+				            </div>
+        					
+				            
+            			</div>
+                        
+
+            			</div>
+                   
+                </div>   
+                              
+          </div>
+       </div>
+          
+       </form> 

@@ -1,0 +1,84 @@
+<html>    
+  <head> 
+    <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+    <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+    <script type="text/javascript" src="gmap3.min.js"></script>
+    <script type="text/javascript" src="jquery-autocomplete.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="jquery-autocomplete.css"/>
+    <style>
+      *{
+        font-family: verdana;
+        font-size: 12px;
+      }
+      body{
+        text-align:center;
+      }
+      .gmap3{
+        margin: 20px auto;
+        border: 1px dashed #C0C0C0;
+        width: 1000px;
+        height: 500px;
+      }
+      .ui-menu .ui-menu-item{
+        text-align: left;  
+        font-weight: normal;
+      }
+      .ui-menu .ui-menu-item a.ui-state-hover{
+        border: 1px solid red; 
+        background: #FFBFBF; 
+        color: black;
+        font-weight:bold;
+      }
+    </style>
+    
+    <script type="text/javascript">
+      $(function(){
+          
+          $('#test').gmap3();
+
+          $('#address').autocomplete({
+			  
+            source: function() {
+				
+              $("#test").gmap3({
+				  
+                action:'getAddress',
+                address: $(this).val(),
+                callback:function(results){
+					
+					
+					
+                  if (!results) return;
+                  $('#address').autocomplete(
+                    'display', 
+                    results,
+                    false
+                  );
+                }
+              });
+            },
+            cb:{
+              cast: function(item){
+                return item.formatted_address;
+              },
+              select: function(item) {
+				  alert(item.geometry.location);
+                $("#test").gmap3(
+                  {action:'clear', name:'marker'},
+                  {action:'addMarker',
+                    latLng:item.geometry.location,
+                    map:{center:true}
+                  }
+                );
+              }
+            }
+          })
+          .focus();
+          
+      });
+    </script>
+  <body>
+    <input type="text" id="address" size="60">
+    <div id="test" class="gmap3"></div>
+  </body>
+</html>

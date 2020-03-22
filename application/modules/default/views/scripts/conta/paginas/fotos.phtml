@@ -1,0 +1,96 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+<!--<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+<link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery.ui.button.css" rel="stylesheet" />
+<script type="text/javascript" src="/assets/jqueryui/js/jquery-ui-1.8.16.custom.min.js"></script>
+<link rel="Stylesheet" href="/assets/jqueryui/css/ui.selectmenu.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="/assets/portal/default/css/radio-style.css">
+<script type="text/javascript" src="/assets/portal/default/scripts/bValidator-0.6/jquery.bvalidator.js"></script>
+<link href="/assets/portal/default/scripts/bValidator-0.6/bvalidator.css" rel="stylesheet" type="text/css" />
+<link href="/assets/portal/default/scripts/bValidator-0.6/themes/bvalidator.theme.red.css" rel="stylesheet" type="text/css" />
+-->
+
+
+
+<style>
+
+
+
+</style>
+
+<script>
+  
+  
+  function resultado(pagina)
+	{
+		$("#btnVoltar").css("display", "none");
+		$("#btnApagar").css("display", "none");
+		
+		
+		
+		$.get('/conta/buscaalbunsajaxfrontend?pagina='+pagina+'&idPerfil=<?=$this->perfil->tb_sys_usuario?>',
+		{},
+		function (result) 
+		{ 
+			$("#albuns").html(result); 
+			$(".flexslider .slides > li, .flexslider-detail .slides > li").css("display", "block");
+			chamasAjax();
+		});	
+	}
+  	
+  	
+	
+    $(document).ready(function(){
+      		
+			$('body').attr("class","<?=$this->layout()->pattern == "" ? "pattern3" : $this->layout()->pattern?> <?=$this->layout()->color == "" ? "blue" : $this->layout()->color?>");
+			
+			resultado(1);	
+		
+		
+    });
+
+</script>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>   
+
+
+<?
+$profile = new Zend_Session_Namespace('perfil');
+$auth = Zend_Auth::getInstance();
+$usuario_logado = $auth->getStorage()->read();
+?>
+
+
+		
+
+<div style="overflow:hidden;">
+    <div style="float:left; padding-top:0px;" >
+	<?php if( $this->perfil->tb_sys_usuario == $usuario_logado->ID_USUARIO){?>
+ <h2><a title="Gerenciar Álbuns e fotos" onclick="Popup('/conta/multmedia?tipo=galeria', 800, 600);" href="javascript:void(0);"><b>Gerenciar fotos:</b> Clique aqui para inserir novas fotos ou editar álbuns ja existentes</a></h2>
+<?php } ?>    
+    </div>
+    <div style="float:right; padding-top:20px;">
+   <a href="javascript:void(0);" onclick="javascript:history.go(-1)" title="Voltar à página anterior">Voltar</a>
+    </div>    
+</div>
+
+<form id="form1" name="form1" method="post" >
+
+
+<div id="albuns">
+</div>
+
+
+
+</form>
+
+
+

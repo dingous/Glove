@@ -1,0 +1,129 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png">Destaques</h1>
+</div>
+
+
+    
+<table width="100%" border="0" cellpadding="0" align="center">
+    <tr>
+    	<td width="50%" valign="top">
+    	<input type="button" value="Cadastrar" class="botaoadd" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/cadastrar'">
+    	<input type="button" value="Excluir" class="botaoexc" onclick="deletar_selecionados();" /></td>
+    	<td width="3%" valign="top">&nbsp;</td>
+    	<td width="47%" align="right" valign="top">
+        
+           <?php
+		 if(count($this->aplicacoes) > 0){
+		 ?>  
+         
+        
+            	<label for="tb_sys_aplicacao">Filtrar por categoria:</label>
+                <select name="tb_sys_aplicacao" id="tb_sys_aplicacao">
+				<option value="">mostrar todos...</option>                
+                <?php 
+				foreach($this->aplicacoes as $chave => $valor){
+				?>
+                <option value="<?=$valor->ID_APLICACAO?>"><?=$valor->DESCRICAO?></option>
+                <?php } ?>
+                </select>
+                   
+         
+         <?php }else{ ?>
+         		
+               <input type="hidden" name="tb_sys_aplicacao" id="tb_sys_aplicacao" value="<?=$this->aplicacoes->ID_APLICACAO?>">
+                
+         <?php } ?> 
+        
+        
+        </td>
+    </tr>
+    <tr>
+    	<td colspan="3" valign="top">
+   	    	<div id="grid"></div>
+        </td>
+    </tr>
+
+</table>
+
+
+<script>
+
+	function deletar_selecionados()
+	{	
+		jConfirm('Confirmar exclusão?', 'Confirmar ação', function(r) {
+			if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluirselecionados",
+				 data: $("#mainform").serialize(),
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+					if(data.erro == "false")
+					{					
+						$.jGrowl(data.msg, { theme: 'ok'});	
+						grid(1);
+						
+					}
+					else if(data.erro == "true")
+					{
+						 $.jGrowl(data.msg, { theme: 'alerta'});
+					}
+					
+				 }
+			 }); 
+		 };
+		});
+	}
+	
+	
+	function deletar(id)
+	{	
+		jConfirm('Confirmar exclusão?', 'Confirmar ação', function(r) {
+			if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluir/id/",
+				 data: { id: id},
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+					if(data.erro == "false")
+					{					
+						$.jGrowl(data.msg, { theme: 'ok'});	
+						grid(1);
+						
+					}
+					else if(data.erro == "erro")
+					{
+						 $.jGrowl(data.msg, { theme: 'alerta'});
+					}
+					
+				 }
+			 }); 
+		 };
+		});
+	}
+	
+	
+	
+
+
+$(document).ready(function () {
+	grid(1);
+	
+	$('#tb_sys_aplicacao').bind('change', function(ui, e){
+		grid(1);
+	})
+});
+
+function grid(pagina)
+{
+	var app = $("#tb_sys_aplicacao").val();
+	
+$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: pagina, app: app}, function(data) { $('#grid').html(data); });	
+	
+}
+</script>

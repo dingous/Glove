@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+	
+	
+	<field name="DESCRICAO">
+	
+        <validator type="requiredString" msg="Informe o nome da cobertura"/>
+				
+  </field>
+  
+  
+	
+</lumine-validator>
+

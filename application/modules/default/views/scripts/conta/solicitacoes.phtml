@@ -1,0 +1,44 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+   <script src="/assets/core.js"></script>
+
+<style>
+body
+{
+	margin: 0px 0px 0px 0px;
+}
+#main {
+	  padding-top: 0;
+}
+</style>
+
+
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<div id="carregaHtml" style="min-height:400px;"></div>
+
+<script>
+function chamaUrl(url)
+{
+	window.parent.location = url;
+}
+
+</script>
+
+<script>
+  
+	   $(document).ready(function(){
+	        
+			$("body").InterfaceUsuario();
+				
+			var x =  $.fn.InterfaceUsuario.metodos.SolicitacoesPega();
+			x.success(function (data) {
+
+				 $("#carregaHtml").html(data.html);
+			});
+		});			
+			
+</script>
+

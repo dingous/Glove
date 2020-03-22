@@ -1,0 +1,73 @@
+<?php
+function formataNome($nome)
+{	
+	$nome = strtolower($nome);
+	$preposicoes = array(" da ", " do ", " de ", " das ", " dos ");
+	$nome = str_replace($preposicoes, " ", $nome);	
+	$exp = explode(" ", $nome);
+	if(count($exp) > 1)
+	{
+		$nome = ucfirst($exp[0]) . " " . (count($exp) >= 2 ? ($exp[1] == "" ? ucfirst($exp[2]) : ucfirst($exp[1])) : ucfirst($exp[1]));	
+	}else
+	{
+		$nome = ucfirst($exp[0]);		
+	}
+	return $nome;
+}
+?>
+
+<div id="chatWindows">
+<div class="window">
+<?php
+/*echo "<pre>";
+print_r($this->modelo);
+echo "</pre>";*/
+if(count($this->modelo) > 0)
+{
+
+$nome = $this->modelo[0]->DESTINARARIO_NOME . " " . $this->modelo[0]->DESTINARARIO_SOBRENOME;
+$id = $this->modelo[0]->DESTINARARIO_ID_USUARIO;
+
+?>
+<h3 style="color:#009999;">Conversas de <?=utf8_decode("você")?> com  <?=formataNome($nome)?></h3>
+<?
+	
+foreach($this->modelo as $chave => $valor)
+{
+?>
+	
+    <div class="corpo">
+    <br />
+	<span style="font-weight:bold; font-size:11px; font-style:italic;">conversa iniciada em <?=Lumine_Util::FormatDateTime($valor->DATA_CADASTRO, "%d/%m/%Y")?></span>
+    <br /><br />
+	<?=$valor->MENSAGEM?>
+    </div>
+<?
+}
+?>
+</div>
+</div>
+<center><input class="btnAceitar" id="btnBaterPapo"  type="button" style="border-radius: 8px; min-width:10px; height:33px; font-size:13px; cursor:pointer; background-color:#009999; color:#FFFFFF; border:none;" value="Bater papo com <?=formataNome($nome)?>" title="Clique aqui para bater papo com <?=formataNome($nome)?>" /></center>
+<input type="hidden" value="<?=$id?>" name="DESTINARARIO_ID_USUARIO" id="DESTINARARIO_ID_USUARIO" />
+<?php
+}
+?>
+
+
+<script>
+  
+$(document).ready(function(){
+	$("#btnBaterPapo").bind("click", function(ui, e)
+	{
+		var id = $("#DESTINARARIO_ID_USUARIO").val();
+		
+		
+	    window.parent.$.fn.interfaceChat.metodos.abreJanelaChat('<?=$this->id_user?>', id, '<?=$this->modelo[0]->DESTINARARIO_NOME?>', 'maximizado');
+        window.parent.$.fn.interfaceChat.metodos.registraSessaoChat(id);
+		window.parent.$.fn.interfaceChat.metodos.getlogChatUsuario(id);
+		window.parent.$.fancybox.close();
+		
+	});
+});
+</script>
+

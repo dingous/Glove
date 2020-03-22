@@ -1,0 +1,186 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+
+
+  <link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+  <link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery.ui.button.css" rel="stylesheet" />
+ <script type="text/javascript" src="/assets/jqueryui/js/jquery-ui-1.8.16.custom.min.js"></script>
+  <link rel="Stylesheet" href="/assets/jqueryui/css/ui.selectmenu.css" type="text/css" />
+
+<link rel="stylesheet" type="text/css" href="/assets/portal/default/css/radio-style.css">
+<script type="text/javascript" src="/assets/portal/default/scripts/bValidator-0.6/jquery.bvalidator.js"></script>
+<link href="/assets/portal/default/scripts/bValidator-0.6/bvalidator.css" rel="stylesheet" type="text/css" />
+
+
+<link href="/assets/portal/default/scripts/bValidator-0.6/themes/bvalidator.theme.red.css" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+<script>
+  
+    $(document).ready(function(){
+      
+		
+		EnviaForm();
+		
+		<? if($this->perfil->FL_PRIMEIROACESSO_usuario == 1){?>
+		
+		$.fancybox({
+			
+				width: 410,
+				height: 100,
+				transitionIn: 'elastic',
+				transitionOut: 'elastic',
+				type: 'iframe',
+				href: '/conta/termos',
+				centerOnScroll: true,
+				modal: true
+
+			});			
+		<? } ?>
+	
+    });
+
+function EnviaForm()
+{
+	
+	
+	
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/conta/salvaredicaoprimeiroacesso",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+			
+				
+ 
+				if(data.erro == "false")
+				{					
+					window.parent.$().toastmessage('showSuccessToast', data.msg);
+					<?
+					 $profile = new Zend_Session_Namespace('perfil');
+					 $auth = Zend_Auth::getInstance();
+					 $usuario_logado = $auth->getStorage()->read();
+					?>
+					
+					setTimeout(function() {
+					  window.location.href = "/conta/meuperfil-<?=$usuario_logado->ID_USUARIO?>";
+					}, 5000);
+					
+						
+				}else if(data.erro == "valida")
+				{
+					
+					
+					 
+
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : 'Por favor, preencha os campos obrigatórios.',
+						stayTime   : 60000,
+						type     : 'notice'
+					});					 
+					
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+					
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+					 });
+																
+				}
+				else if(data.erro == "true")
+				{
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : data.msg,
+						stayTime   : 60000,
+						type     : 'warning'
+					});				
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+</script>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>    
+
+<form id="form1" name="form1" method="post">
+
+   
+<h2>Editando perfil</h2>   
+   
+<div id="editando">
+
+<div id="left">
+
+	<ul>
+        <li>idade: <div><?=utf8_encode($this->perfil->DESCRICAO_idade)?></div></li>
+        <li>altura: <div><?=utf8_encode($this->perfil->DESCRICAO_altura)?></div></li>
+        <li>peso: <div><?=utf8_encode($this->perfil->DESCRICAO_peso)?></div></li>
+        <li>tipo: <div><?=utf8_encode($this->perfil->DESCRICAO_tipo)?></div></li>
+        <li>situação: <div><?=utf8_encode($this->perfil->DESCRICAO_situacao)?></div></li>
+        <li>fumante: <div><?=utf8_encode($this->perfil->DESCRICAO_fumante)?></div></li>
+        <li>buscando: <div><?=utf8_encode($this->perfil->DESCRICAO_interesse)?></div></li>
+        <li>disponível: <div><?=utf8_encode($this->perfil->DESCRICAO_disponibilidade)?></div></li>
+        <li>bebidas: <div><?=utf8_encode($this->perfil->DESCRICAO_bebidas)?></div></li>
+    </ul>
+    
+</div>
+
+
+<div id="right">
+	
+     <div class="form">
+
+	<div class="campo">
+       	  <label for="SENHA">Fale um pouco sobre você</label>
+          <textarea name="SOBREMIM" rows="10" style="width:355px;" id="SOBREMIM"></textarea>
+        </div>                                        
+        
+       	<div class="campo">
+		  <p>&nbsp;	      </p>
+		  <p>
+		    <input type="submit" value="Finalizar">
+	      </p>
+        </div>
+        
+        </div>
+    
+</div>
+
+</div>
+
+
+
+</form>
+
+
+

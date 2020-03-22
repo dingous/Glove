@@ -1,0 +1,26 @@
+<style>
+.fotos
+{
+	float:left;
+	padding:3px;
+	border:1px #CCC solid;
+	width:150px;
+	height:80px;
+	text-align:center;
+	margin-left:6px;
+	margin-bottom:6px;	
+}
+</style>
+
+
+<?php
+//print_r($this->fotos);
+foreach($this->fotos as $chave => $valor){
+?>
+
+<div class="fotos" id="foto<?=$valor->ID_FOTO?>">
+	<a rel="group1" href="/www/uploads/cms/coberturas/<?=$valor->CAMINHO_FOTO?>" class="grouped_elements"><img src="/thumbs/index/w/150/h/80/type/5/file/<?=$valor->CAMINHO_FOTO?>" /></a>
+</div>
+
+<?php } ?>
+

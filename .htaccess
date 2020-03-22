@@ -1,0 +1,10 @@
+RewriteEngine On
+
+#Adicionei htm|html|php pra rodar o ckfinder
+RewriteRule !\.(js|gif|jpg|png|css|txt|swf|ico|htm|html|xml|php|mp4|avi|flv|f4v|JPG|PNG|GIF|rar|mp3)$ index.php [L]
+
+RewriteCond %{REQUEST_URI} !^www/index.php
+
+RewriteRule ^(.*)$ www/$1 [L]
+
+

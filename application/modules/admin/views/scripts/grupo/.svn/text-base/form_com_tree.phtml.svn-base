@@ -1,0 +1,714 @@
+    <?php
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_lib/jquery.cookie.js");
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_lib/jquery.hotkeys.js");
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/jquery.jstree.js");
+		$this->headLink()->appendStylesheet('/path/to/page-styles.css');
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_docs/syntax/!script.js");		
+	?>
+
+
+<div id="page-heading">
+  <h1><img src="/assets/admin/icones/icon1.png"> Grupo de usuários</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Dados do grupo</a></li> 
+                    <li><a href="#tabs-2" onclick="carregaSelecionados();">Permissões deste grupo</a></li>
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Dados do grupo</legend>
+        
+        <div class="linha">
+        
+            
+          <div class="elemento">
+            	<label>Nome do grupo de usuário:</label>
+                <input name="DESCRICAO" type="text" id="DESCRICAO_MODULO" size="60" value="<?=isset($this->modelo->DESCRICAO) ? $this->modelo->DESCRICAO : NULL?>" />
+            </div>
+            
+        </div>
+            
+         
+          
+           
+           </fieldset>        
+             	    
+	    </div>
+		
+		<div id="tabs-2">
+			<fieldset>
+	        <legend>Permissões para este grupo</legend>
+	        
+	      <table width="100%" border="0" cellpadding="0" align="center">
+            <tr>
+            <td height="33" valign="top"><p>
+              <input type="button" id="btnSelecionarTodos" name="btnSelecionarTodos"  value="Marcar todos"/>
+              <input type="button" id="btnDesmarcarTodos" name="btnDesmarcarTodos"  value="Desmarcar todos"/>
+            </p>
+              <p>&nbsp; </p></td>
+            </tr>
+            <tr>
+                <td width="40%" valign="top">
+                <div id="description">
+        
+        <!-- the tree container (notice NOT an UL node) -->
+        
+        <div id="demo" class="demo" style="height:600px;width:400px; border: 1px solid #cccccc; overflow:auto;"></div>
+        
+        
+        
+        
+        
+        <div id='alog' style="border:1px solid gray; padding:5px; height:100px; margin-top:15px; overflow:auto; font-family:Monospace;"></div>
+        
+        <!-- JavaScript neccessary for the tree -->
+        
+        <script type="text/javascript" class="source below">
+        
+		
+		
+        $(function () {
+        
+        
+        
+        $("#demo")
+        
+            .bind("before.jstree", function (e, data) {
+        
+                $("#alog").append(data.func + "<br />");
+        
+            })
+        
+            .jstree({ 
+        
+                // List of active plugins
+        
+                "plugins" : [ 
+        
+                    "themes","json_data","ui","cookies","search","types","hotkeys","checkbox"//, "sort"
+        
+                ],
+        
+        
+        
+                // I usually configure the plugin that handles the data first
+        
+                // This example uses JSON as it is most common
+        
+                "json_data" : { 
+        
+                    // This tree is ajax enabled - as this is most common, and maybe a bit more complex
+        
+                    // All the options are almost the same as jQuery's AJAX (read the docs)
+        
+                    "ajax" : {
+        
+                        // the URL to fetch the data
+        
+                        "url" : "/<?=$this->modulo?>/menus/index",
+        
+                        // the `data` function is executed in the instance's scope
+        
+                        // the parameter is the node being loaded 
+        
+                        // (may be -1, 0, or undefined when loading the root nodes)
+        
+                        "data" : function (n) { 
+        
+                            // the result is fed to the AJAX request `data` option
+        
+                            return { 
+        
+                                "operation" : "get_children", 
+        
+                                "id" : n.attr ? n.attr("id").replace("node_","") : 1 
+        
+                            }; 
+        
+                        }
+        
+                    }
+        
+                },
+        
+                // Configuring the search plugin
+        
+                "search" : {
+        
+                    // As this has been a common question - async search
+        
+                    // Same as above - the `ajax` config option is actually jQuery's AJAX object
+        
+                    "ajax" : {
+        
+                        "url" : "/<?=$this->modulo?>/<?=$this->controlador?>/index",
+        
+                        // You get the search string as a parameter
+        
+                        "data" : function (str) {
+        
+                            return { 
+        
+                                "operation" : "search", 
+        
+                                "search_str" : str 
+        
+                            }; 
+        
+                        }
+        
+                    }
+        
+                },
+        
+                // Using types - most of the time this is an overkill
+        
+                // read the docs carefully to decide whether you need types
+        
+                "types" : {
+        
+                    // I set both options to -2, as I do not need depth and children count checking
+        
+                    // Those two checks may slow jstree a lot, so use only when needed
+        
+                    "max_depth" : -2,
+        
+                    "max_children" : -2,
+        
+                    // I want only `drive` nodes to be root nodes 
+        
+                    // This will prevent moving or creating any other type as a root node
+        
+                    "valid_children" : [ "drive" ],
+        
+                    "types" : {
+        
+                        // The default type
+        
+                        "default" : {
+        
+                            // I want this type to have no children (so only leaf nodes)
+        
+                            // In my case - those are files
+        
+                            "valid_children" : "none",
+        
+                            // If we specify an icon for the default type it WILL OVERRIDE the theme icons
+        
+                            "icon" : {
+        
+                                "image" : "/assets/admin/jstree_pre1.0_fix_1/_demo/file.png"
+        
+                            }
+        
+                        },
+        
+                        // The `folder` type
+        
+                        "folder" : {
+        
+                            // can have files and other folders inside of it, but NOT `drive` nodes
+        
+                            "valid_children" : [ "default", "folder" ],
+        
+                            "icon" : {
+        
+                                "image" : "/assets/admin/jstree_pre1.0_fix_1/_demo/folder.png"
+        
+                            }
+        
+                        },
+        
+                        // The `drive` nodes 
+        
+                        "drive" : {
+        
+                            // can have files and folders inside, but NOT other `drive` nodes
+        
+                            "valid_children" : [ "default", "folder" ],
+        
+                            "icon" : {
+        
+                                "image" : "/assets/admin/jstree_pre1.0_fix_1/_demo/root.png"
+        
+                            },
+        
+                            // those prevent the functions with the same name to be used on `drive` nodes
+        
+                            // internally the `before` event is used
+        
+                            "start_drag" : false,
+        
+                            "move_node" : false,
+        
+                            "delete_node" : false,
+        
+                            "remove" : false
+        
+                        }
+        
+                    }
+        
+                },
+        
+                // UI & core - the nodes to initially select and open will be overwritten by the cookie plugin
+        
+        
+        
+                // the UI plugin - it handles selecting/deselecting/hovering nodes
+        
+                "ui" : {
+        
+                    // this makes the node with ID node_4 selected onload
+        
+                    "initially_select" : [ "node_4" ]
+        
+                },
+        
+                // the core plugin - not many options here
+        
+                "core" : { 
+        
+                    // just open those two nodes up
+        
+                    // as this is an AJAX enabled tree, both will be downloaded from the server
+        
+                    "initially_open" : [ "node_2" , "node_3" ],
+                     strings: { loading: "carregando...", new_node: "Novo" }
+        
+                },
+        
+                    "themes":
+                    {
+                        theme: "apple"
+                    }
+        
+            })
+        
+            .bind("create.jstree", function (e, data) {
+        
+                $.post(
+        
+                    "/<?=$this->modulo?>/<?=$this->controlador?>/index", 
+        
+                    { 
+        
+                        "operation" : "create_node", 
+        
+                        "id" : data.rslt.parent.attr("id").replace("node_",""), 
+        
+                        "position" : data.rslt.position,
+        
+                        "title" : data.rslt.name,
+        
+                        "type" : data.rslt.obj.attr("rel")
+        
+                    }, 
+        
+                    function (r) {
+                    
+                        if(r.status) {
+                            
+                            
+                            
+                            $(data.rslt.obj).attr("id", "node_" + r.id);
+                            
+                            
+                            
+                            $(data.rslt.obj).click(function () {
+        
+                                    //carregaDadosEdit(id);
+                                    //alert('ID CRIADO: ' + r.id);
+                                   
+                                });
+        
+                        }
+        
+                        else {
+        
+                            $.jstree.rollback(data.rlbk);
+        
+                        }
+        
+                    }
+        
+                );
+        
+            })
+        
+            .bind("remove.jstree", function (e, data) {
+        
+                if(!(confirm("Remover menu?")))
+                {
+                    return false;
+                }
+                    
+                data.rslt.obj.each(function () {
+        
+                    $.ajax({
+        
+                        async : false,
+        
+                        type: 'POST',
+        
+                        url: "/<?=$this->modulo?>/<?=$this->controlador?>/index",
+        
+                        data : { 
+        
+                            "operation" : "remove_node", 
+        
+                            "id" : this.id.replace("node_","")
+        
+                        }, 
+        
+                        success : function (r) {
+        
+                            if(!r.status) {
+        
+                                data.inst.refresh();
+        
+                            }
+        
+                        }
+        
+                    });
+        
+                });
+        
+            })
+        
+            .bind("rename.jstree", function (e, data) {
+        
+                $.post(
+        
+                    "/<?=$this->modulo?>/<?=$this->controlador?>/index", 
+        
+                    { 
+        
+                        "operation" : "rename_node", 
+        
+                        "id" : data.rslt.obj.attr("id").replace("node_",""),
+        
+                        "title" : data.rslt.new_name
+        
+                    }, 
+        
+                    function (r) {
+        
+                        if(!r.status) {
+        
+                            $.jstree.rollback(data.rlbk);
+        
+                        }
+        
+                    }
+        
+                );
+        
+            })
+        
+            .bind("move_node.jstree", function (e, data) {
+        
+                data.rslt.o.each(function (i) {
+        
+                    $.ajax({
+        
+                        async : false,
+        
+                        type: 'POST',
+        
+                        url: "/<?=$this->modulo?>/<?=$this->controlador?>/index",
+        
+                        data : { 
+        
+                            "operation" : "move_node", 
+        
+                            "id" : $(this).attr("id").replace("node_",""), 
+        
+                            "ref" : data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
+        
+                            "position" : data.rslt.cp + i,
+        
+                            "title" : data.rslt.name,
+        
+                            "copy" : data.rslt.cy ? 1 : 0
+        
+                        },
+        
+                        success : function (r) {
+        
+                            if(!r.status) {
+        
+                                $.jstree.rollback(data.rlbk);
+        
+                            }
+        
+                            else {
+        
+                                $(data.rslt.oc).attr("id", "node_" + r.id);
+        
+                                if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {
+        
+                                    data.inst.refresh(data.inst._get_parent(data.rslt.oc));
+        
+                                }
+        
+                            }
+        
+                            $("#analyze").click();
+        
+                        }
+        
+                    });
+        
+                });
+        
+            }).bind("select_node.jstree", function (e, data) { 
+                
+                 var id = data.rslt.obj[0].id.replace("node_", "");
+                 //carregaForm(id);
+                
+            });
+        
+        });
+        
+        </script>
+        
+        <script type="text/javascript" class="source below">
+               
+		function carregaSelecionados()
+		{
+				var id = $("#ID_GRUPO").val();
+				var dados = { id : id };
+				$.ajax({
+					type: 'POST',
+					url: "/<?=$this->modulo?>/<?=$this->controlador?>/treeselecionados",
+					data: JSON.stringify(dados),
+		        	dataType: "json",
+		        	contentType: "application/json; charset=utf-8",
+					success: function (r) {
+						
+						$.each(r[0].tb_sys_admin_menus, function(index, value)
+						{
+							
+							$("#demo").jstree("check_node", $("#node_"+value.id));
+						});						
+					}
+				});
+			
+		}
+		
+        $(function () { 
+        	
+			$("#btnSelecionarTodos").bind("click", function(e){
+				$("#demo").jstree("check_all");
+			});
+			
+			$("#btnDesmarcarTodos").bind("click", function(e){
+				$("#demo").jstree("uncheck_all");
+			});
+			
+			$("#teste").bind("click", function(e){
+				$("#demo").jstree("check_node", $("#node_14"));
+			});
+			
+			
+			
+			$("#btnSalvar").bind("click", function(e){
+				
+			// var selecionados = $("#demo .jstree-checked, #demo .jstree-undetermined");
+				var selecionados = $("#demo .jstree-checked");
+				var selc = [];
+				$.each(selecionados, function(index, value){
+					if($(value).attr("id") != "node_2")
+					{
+						selc.push($(value).attr("id"));
+					}
+				});
+				
+					$("#form1").DingousSubmit({
+						url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+						post: 
+						{
+							form: $("#form1").serializeArray()
+							,id_grupo: $("#ID_GRUPO").val()
+							,selecionados: selc
+						},
+						onCompletado: function(e) 
+						{	
+							 
+							 //alert('chamou o callback'); 
+						}
+					});
+
+			});
+			
+            $("#mmenu input").click(function () {
+        
+                switch(this.id) {
+        
+                    case "add_default":
+        
+                    case "add_folder":
+                        
+                        $("#demo").jstree("create", null, "last", { "attr" : { "rel" : this.id.toString().replace("add_", "") } });
+        
+                        break;
+        
+                    case "search":
+        
+                        $("#demo").jstree("search", document.getElementById("text").value);
+        
+                        break;
+        
+                    case "text": break;
+        
+                    default:
+        
+                        $("#demo").jstree(this.id);
+        
+                        break;
+        
+                }
+        
+            });
+        
+        });
+        
+          carregaForm = function (id) {
+        
+                //se o menu clicado não for o "MENUS DO PORTAL"
+                if (id != 2) {
+                    //alert('aqui');
+                    $.ajax({
+                        type: 'POST',
+                        url: "/<?=$this->modulo?>/<?=$this->controlador?>/editar",
+                        data: "id="+id,
+                        //contentType: "application/x-www-form-urlencoded",
+                        //dataType: "html",
+                        success: function (r) {
+                            
+                            $("#form").html(r);
+                            
+                        }
+                    });
+                }
+          };
+        
+        </script>
+        
+        </div>
+        
+        
+     
+                
+                
+          </td>
+              <td width="2%">&nbsp;</td>
+                <td width="60%" valign="top"><input type="button" id="teste" name="teste" value="Checar" />
+<div id="form"></div>
+             
+                
+                </td>
+            </tr>
+        
+        </table>
+       
+           </fieldset>    
+		</div>
+	
+    
+    	   <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+         	   <input type="button" id="btnSalvar" name="btnSalvar" value="Salvar" />
+         	   <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_GRUPO" type="hidden" id="ID_GRUPO" value="<?=isset($this->modelo->ID_GRUPO) ? $this->modelo->ID_GRUPO : NULL?>" readonly="readonly" />
+             
+           </div>
+         </div>
+    
+    </div>
+
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+				 $('#form1').validationEngine('hideAll');
+				
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/';
+					
+						
+				}else if(data.erro == "valida")
+				{
+					$.each(data.campos_erros, function(index, value) { 
+						//$('#'+index).validationEngine('showPrompt', value, 'load');
+						//$('#'+index).validationEngine('showPrompt', value);
+					 });
+					
+					$("#validacao").css("display", "block");
+					$("#validacao").html(data.error_html);
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs()
+	 
+});
+</script>
+

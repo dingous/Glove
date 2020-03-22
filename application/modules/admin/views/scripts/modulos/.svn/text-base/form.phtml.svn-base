@@ -1,0 +1,144 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Módulos</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Dados do módulo</a></li> 
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Dados do módulo</legend>
+        
+        <div class="linha">
+        	
+            <div class="elemento">
+            <label>Aplicação do Mandroid:</label>
+            <select name="tb_sys_aplicacao" id="tb_sys_aplicacao">
+              <option value="">selecione...</option>
+              <?php echo Lumine_Util::buildOptions("dao.tb_sys_aplicacao", "ID_APLICACAO", "DESCRICAO", isset($this->modelo->tb_sys_aplicacao) ? $this->modelo->tb_sys_aplicacao : NULL, NULL); ?>
+            </select>
+            
+            </div>
+            
+          <div class="elemento">
+            	<label>Nome do módulo:</label>
+                <input name="DESCRICAO_MODULO" type="text" id="DESCRICAO_MODULO" size="60" value="<?=isset($this->modelo->DESCRICAO_MODULO) ? $this->modelo->DESCRICAO_MODULO : NULL?>" />
+            </div>
+            
+            
+             <div class="elemento">
+            	<label>Controlador:</label>
+                <input name="CONTROLADOR" type="text" id="CONTROLADOR" size="60" value="<?=isset($this->modelo->CONTROLADOR) ? $this->modelo->CONTROLADOR : NULL?>" />
+            </div>
+            
+        </div>
+            
+           <div class="linha">
+            
+            <div class="elemento">
+           	  <label>Descrição:</label>
+              <textarea name="DETALHES" cols="60" rows="5" id="DETALHES"><?=isset($this->modelo->DETALHES) ? $this->modelo->DETALHES : NULL?></textarea>
+            </div>
+          
+           
+           </fieldset> 
+           
+           
+        </div>
+        
+    	 <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+             <input type="submit" value="Salvar" name="salvar" class="btnSalvar" />
+             <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_MODULO" type="hidden" id="ID_MODULO" value="<?=isset($this->modelo->ID_MODULO) ? $this->modelo->ID_MODULO : NULL?>" readonly="readonly" />
+             
+             </div>
+         </div>
+        
+    	    
+    </div>
+
+    </div>
+
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+				 $('#form1').validationEngine('hideAll');
+				
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					window.location = '/<?=$this->modulo?>/<?=$this->controlador?>';
+					
+						
+				}else if(data.erro == "valida")
+				{
+					$.each(data.campos_erros, function(index, value) { 
+						//$('#'+index).validationEngine('showPrompt', value, 'load');
+						//$('#'+index).validationEngine('showPrompt', value);
+					 });
+					
+					$("#validacao").css("display", "block");
+					$("#validacao").html(data.error_html);
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs();
+	
+});
+</script>
+

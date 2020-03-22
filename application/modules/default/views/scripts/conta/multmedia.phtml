@@ -1,0 +1,256 @@
+<?
+	$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/uploadify-v2.1.4/uploadify.css');
+	$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/swfobject.js');
+	$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/jquery.uploadify.v2.1.4.js');
+?>
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+
+
+<script>
+	
+	
+	function salva(id_album, descricao, act)
+	{
+		   $.ajax({
+				 type: "POST",
+				 url: "/conta/salvaralbum",
+				 data: { id_album : id_album, descricao : descricao, act : act },
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+				 	window.parent.$().toastmessage('showSuccessToast', data.msg);
+					if(act == "insert")
+					{					
+						$("#panelFotos").css("display", "block");
+						$("#id_album").val(data.id);
+						$("#acao").val("edit");
+					}
+				 }
+		   });
+	}
+	  
+  
+  function resultado(pagina)
+	{
+		$("#btnVoltar").css("display", "none");
+		$("#btnApagar").css("display", "none");
+		
+		
+		
+		$.get('/conta/buscaalbunsajax?pagina='+pagina,
+		{},
+		function (result) 
+		{ 
+			$("#albuns").html(result); 
+			
+			
+		});	
+	}
+
+ 	 
+  function addAlbum(id)
+	{
+		$.get('/conta/editalbumajax?id='+id+'&act=insert',
+		{},
+		function (result) 
+		{ 
+			$("#albuns").html(result); 	
+			$("#DESCRICAO").focus();
+			$("#btnVoltar").css("display", "inline");
+				
+		});	
+	}	 
+	 
+  function editAlbum(id)
+	{
+		$.get('/conta/editalbumajax?id='+id+'&act=edit',
+		{},
+		function (result) 
+		{ 
+			$("#albuns").html(result); 		
+			$("#DESCRICAO").focus();
+			$("#panelFotos").css("display", "block");	
+			$("#btnApagar").css("display", "inline");
+			$("#btnVoltar").css("display", "inline");				
+			
+		});	
+	}
+	
+	
+	function buscaImagens(id)
+	{
+		$.get('/conta/buscaimagensajax?id='+id,
+		{},
+		function (result) 
+		{ 
+			$("#albunsfotos").html(result); 			
+		});	
+	}
+
+    $(document).ready(function(){
+		
+  	    var InterfaceUsuario = $("body").InterfaceUsuario();
+			
+		$('#tabs').tabs();
+		
+		<?php
+		if(isset($_GET['tipo']) && $_GET['tipo'] == "galeria")
+		{
+		?>
+		var index = $('#tabs a[href="#tabs-2"]').parent().index();
+		$('#tabs').tabs('select', index);
+		<?
+		}
+        ?>
+		
+		
+		resultado(1);
+		
+		 $('#file_upload').uploadify({  
+						'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+						'script'    : '/conta/uploadfoto',
+						'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+						'folder'    : '/uploads/perfis/',
+						'multi'     : true,		
+						'auto'      : true,
+						'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+						'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+						'removeCompleted': false,
+						'scriptData'  : {'id_usuario': $("#id_usuario").val(), 'id_album' : $("#id_albumpadrao").val()},
+						'buttonText': 'Alterar imagem',
+						onSelectOnce : function(event,data) {
+							
+								  $('#status-message').text(data.filesSelected + ' files have been added to the queue.');
+						},
+						onAllComplete  : function(event,data) {
+						  $('#status-message').text(data.filesUploaded + ' files uploaded, ' + data.errors + ' errors.');
+						},
+						onComplete  : function(event, ID, fileObj, response, data) {
+						 
+						
+						 
+						  var json = jQuery.parseJSON(response);
+						  var msg = json.msg;
+						  
+						  if(json.erro == "false")
+						  {
+							  $("#iconepqn").attr("src", "/thumbs/index/w/190/h/200/type/2/file/"+json.file);
+							  
+													  
+							  	window.parent.parent.$().toastmessage('showToast', {
+								text     : "Foto do perfil atualizada com sucesso!",
+								stayTime   : 20000,
+								type     : 'success'
+								
+							});
+							
+							  window.parent.parent.$("#pictureMeuPerfil").attr("src", "/thumbs/index/w/150/h/150/type/2/file/"+json.file);
+							  
+							  if(window.parent.parent.$("#pictureMeuPerfilEdit").attr("src") != null)
+							  {
+							  	window.parent.parent.$("#pictureMeuPerfilEdit").attr("src", "/thumbs/index/w/150/h/150/type/2/file/"+json.file);							 							  }
+							 
+							  
+							  
+							
+							
+						  }
+						  
+						  resultado(1);
+						
+						},
+						onError     : function (event,ID,fileObj,errorObj) {
+
+						  	alert(errorObj.type + ' Error: ' + errorObj.info);
+						}
+					  });
+
+    });
+
+
+
+</script>
+
+
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+
+<form id="form1" name="form1">
+
+
+
+<div id="tabs" style="width:800px;">
+  				
+  				 <div class="form l300">
+  				 
+                <ul> 
+                    <li><a href="#tabs-1">Foto do Perfil</a></li>
+                    <li><a href="#tabs-2">Galeria de fotos</a></li>
+                    <!--<li><a href="#tabs-3">Galeria de vídeos</a></li>-->
+                                                                                 
+                </ul> 
+                <div id="tabs-1"> 
+                
+                		
+				
+                
+                <h2 style="margin:0 0 20px 0;">Foto do meu perfil</h2> 
+               	<div style="margin-left:auto; margin-right:auto;">
+                <img src="/thumbs/index/w/190/h/200/type/2/file/<?=$this->fotoperfil->ARQUIVO_fotoperfil?>" id="iconepqn" style="border: 1px solid #cccccc;" /><br />
+                <br />
+   				<input id="file_upload" name="file_upload" type="file" value="selecionar arquivos" />
+                </div>
+                
+                <br /><br /><br />
+                
+                </div>
+
+                <div id="tabs-2"> 
+                <h2 style="margin:0 0 20px 0;">Meus álbuns (<span id="quantAlbuns">0</span>) 
+                <br />
+                <input type="button" value="[+] Novo album" title="Adicionar novo álbum" name="btnAddAlbum" id="btnAddAlbum" style="border-radius: 8px; min-width:10px; height:25px; font-size:11px; cursor:pointer; background-color:#999; color:#FFFFFF; border:none;" onclick="addAlbum($('#id_album').val());" /> 
+                
+                <input type="button" value="Voltar" title="Voltar" name="btnVoltar" id="btnVoltar" style="border-radius: 8px; min-width:10px; height:25px; font-size:11px; cursor:pointer; background-color:#999; color:#FFFFFF; border:none; display:none;" onclick="resultado(1);" />
+                
+                
+                <input type="button" value="Apagar álbum" title="Apagar este álbum" name="btnApagar" id="btnApagar" style="border-radius: 8px; min-width:10px; height:25px; font-size:11px; cursor:pointer; background-color:#999; color:#FFFFFF; border:none; display:none;" onclick="$.fn.InterfaceUsuario.metodos.AlbumDeletar($('#ID_ALBUM').val())" />
+               
+               
+                </h2>
+
+                </h2>
+                
+                <div id="albuns" style="min-height:400px;">
+                  
+                </div>
+                    
+                
+                    
+                </div>
+
+				
+                
+                <!--<div id="tabs-3"> 
+                
+                
+                 	em construção...
+                
+                </div>-->
+
+                </div>
+                </div>
+                
+              
+               
+                <input type="hidden" readonly="readonly" name="id_usuario" id="id_usuario"  value="<?=$this->usuario->ID_USUARIO?>"/>
+                <input type="hidden" readonly="readonly" name="id_album" id="id_album"  value="<?=$this->albumpadrao->ID_ALBUM?>"/>
+ 				<input type="hidden" readonly="readonly" name="id_albumpadrao" id="id_albumpadrao"  value="<?=$this->albumpadrao->ID_ALBUM?>"/>
+</form>
+
+

@@ -1,0 +1,179 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Conteúdos do Portal</h1>
+</div>
+
+
+    
+<table width="100%" border="0" cellpadding="0" align="center">
+    <tr>
+    	<td width="26%" valign="top">
+    	<input type="button" value="Cadastrar" class="botaoadd" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/cadastrar'">
+    	<input type="button" value="Excluir" class="botaoexc" onclick="deletar_selecionados();" /></td>
+    	<td width="33%" valign="top">
+        
+          <?php
+		 if(count($this->aplicacoes) > 0){
+		 ?>  
+         
+        
+            	<label for="tb_sys_aplicacao">Filtrar por categoria:</label>
+                <select name="tb_sys_aplicacao" id="tb_sys_aplicacao">
+				<option value="">mostrar todos...</option>                
+                <?php 
+				foreach($this->aplicacoes as $chave => $valor){
+				?>
+                <option value="<?=$valor->ID_APLICACAO?>"><?=$valor->DESCRICAO?></option>
+                <?php } ?>
+                </select>
+                   
+         
+         <?php }else{ ?>
+         		
+               <input type="hidden" name="tb_sys_aplicacao" id="tb_sys_aplicacao" value="<?=$this->aplicacoes->ID_APLICACAO?>">
+                
+         <?php } ?>         
+    
+        
+        </td>
+    	<td width="34%" valign="top">
+
+      <label for="selectFiltro">Filtar por tipo: </label>
+      <select name="selectFiltro" id="selectFiltro">
+      <option value="">mostrar todos...</option>
+              <?php
+			  	foreach($this->tipos as $chave => $valor)
+				{
+					?>
+                    <option value="<?=$valor->ID_TIPO?>"><?=$valor->DESCRICAO?></option>
+                    <?php
+				}
+				?>         
+      </select>
+      </td>
+    	<td width="7%" valign="top">&nbsp;</td>
+    </tr>
+    <tr>
+    	<td valign="top">&nbsp;</td>
+    	<td colspan="2" valign="top"><label for="input_busca">Buscar: </label>
+        <input name="input_busca" type="text" class="inp-form" id="input_busca" />
+        <!--<input name="btnBuscar" type="button" id="btnBuscar" value="ok" /></td>-->
+    	<input name="btnMostrarTodos" type="button" class="botaoadd" id="btnMostrarTodos" value="Mostrar todos" />
+             
+    	<td valign="top">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="4" valign="top"><div id="grid"></div></td>
+    </tr>
+
+</table>
+
+
+<script>
+
+	function deletar_selecionados()
+	{	
+		jConfirm('Confirmar exclusão?', 'Confirmar ação', function(r) {
+			if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluirselecionados",
+				 data: $("#mainform").serialize(),
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+					if(data.erro == "false")
+					{					
+						$.jGrowl(data.msg, { theme: 'ok'});	
+						grid(1);
+						
+					}
+					else if(data.erro == "true")
+					{
+						 $.jGrowl(data.msg, { theme: 'alerta'});
+					}
+					
+				 }
+			 }); 
+		 };
+		});
+	}
+	
+	
+	function deletar(id)
+	{	
+		jConfirm('Confirmar exclusão?', 'Confirmar ação', function(r) {
+			if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluir/id/",
+				 data: { id: id},
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+					if(data.erro == "false")
+					{					
+						$.jGrowl(data.msg, { theme: 'ok'});	
+						grid(1);
+						
+					}
+					else if(data.erro == "erro")
+					{
+						 $.jGrowl(data.msg, { theme: 'alerta'});
+					}
+					
+				 }
+			 }); 
+		 };
+		});
+	}
+	
+	
+	
+
+
+$(document).ready(function () {
+	
+ 	grid(1);
+
+	$('#selectFiltro, #tb_sys_aplicacao').bind('change', function(ui, e){
+		grid(1);
+	})
+	
+	
+	$("#input_busca").bind('keyup', function(ui, e){
+		var size = $("#input_busca").val().length;
+		var keyCode = ui.keyCode;
+		
+		if(size >= 3)
+		{
+			if(keyCode != 13 && keyCode != 8)
+			{
+				$.unblockUI();
+				grid(1);			
+			}
+		}
+	});
+	
+	$("#btnMostrarTodos").bind('click', function(ui, e){
+		$("#selectFiltro").val("");
+		$("#tb_sys_aplicacao").val("");
+		$("#input_busca").val("");
+		grid(1);			
+	});
+	
+		
+});
+
+function grid(pagina)
+{
+	var id = $("#selectFiltro").val();
+	var app = $("#tb_sys_aplicacao").val();
+	var criterio = $("#input_busca").val();
+
+	$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: pagina, filtro: id, app: app, criterio: criterio}, function(data) { $('#grid').html(data); });
+		
+}
+
+</script>

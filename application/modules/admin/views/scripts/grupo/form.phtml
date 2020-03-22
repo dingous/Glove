@@ -1,0 +1,185 @@
+    <?php
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_lib/jquery.cookie.js");
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_lib/jquery.hotkeys.js");
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/jquery.jstree.js");
+		$this->headLink()->appendStylesheet('/path/to/page-styles.css');
+		$this->headScript()->appendFile("/assets/admin/jstree_pre1.0_fix_1/_docs/syntax/!script.js");		
+	?>
+
+
+<div id="page-heading">
+  <h1><img src="/assets/admin/icones/icon1.png"> Grupo de usuários</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/grupo/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Dados do grupo</a></li> 
+                    <li><a href="#tabs-2" onclick="">Permissões deste grupo</a></li>
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Dados do grupo</legend>
+        
+        <div class="linha">
+        
+            
+          <div class="elemento">
+            	<label>Nome do grupo de usuário:</label>
+                <input name="DESCRICAO" type="text" id="DESCRICAO_MODULO" size="60" value="<?=isset($this->modelo->DESCRICAO) ? $this->modelo->DESCRICAO : NULL?>" />
+                <input type="hidden" id="ID_GRUPO" name="ID_GRUPO" value="<?=$this->ID_GRUPO?>" />
+            </div>
+            
+        </div>
+            
+         
+          
+           
+           </fieldset>        
+             	    
+	    </div>
+		
+        
+        
+		<div id="tabs-2">
+			<fieldset>
+	        <legend>Permissões para este grupo</legend>
+
+          
+    <style>
+	.controlador
+	{
+		line-height:30px;
+		background-color:#CCC;
+		text-indent:10px;
+		font-weight:bold;
+		font-size:12px;
+		list-style-type:none;
+	}
+	.action
+	{
+		line-height:20px;
+		text-indent:20px;
+		font-weight:bold;
+		list-style-type:none;
+	}
+	
+	.action .descricao
+	{
+		font-style:italic;
+		font-weight:normal;
+		list-style-type:none;
+	}
+	</style>
+    
+	<?php 
+    foreach($this->controladores as $chave => $valor){ 
+    if($valor->CONTROLADOR != NULL)
+        {
+			//var_dump($valor);
+            $classe = ucwords($valor->CONTROLADOR)."Controller";
+			$metodos = Admin_GrupoController::getMetodos($classe);
+        ?>
+            <ul>
+            <li class="controlador"><b><?=$valor->DESCRICAO_MODULO?></b></li>
+            <li>
+            	<ul>
+	                <? foreach($metodos as $keymetodos => $valormetodos){ 
+							if(strpos($valormetodos->getName(), "Action") == true){
+								
+								$blocoDocs = Admin_GrupoController::getBlocoDocs("Admin_".$classe, $valormetodos->getName());
+								//var_dump($blocoDocs);
+					?>
+                		<li class="action">
+                        <input type="checkbox" name="acoes[]" id="acoes[]" value="<?=$valormetodos->getName()?>_<?=$classe?>_<?=$valor->ID_MODULO?>" <?=in_array("".$valormetodos->getName()."_".$classe.""."_".$valor->ID_MODULO."", $this->marcados) ? "checked=\"checked\"" : ""?>  /> <?=str_replace("Action", "",$valormetodos->getName())?> - 
+                        	<span class="descricao">
+								<? if($blocoDocs != null) { 
+                                    echo utf8_encode($blocoDocs->getShortDescription()); 
+                                }?>
+                            </span>
+                        </li>
+                        
+                    	<? }
+					  } ?>
+                </ul>
+            </li>
+            
+            
+            </ul>
+        <?php 
+        }
+    } ?>
+	
+            
+		   </fieldset>    
+		</div>
+	
+    
+    	   <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+         	   <input type="submit" id="btnSalvar" name="btnSalvar" value="Salvar" />
+         	   <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_GRUPO" type="hidden" id="ID_GRUPO" value="<?=isset($this->modelo->ID_GRUPO) ? $this->modelo->ID_GRUPO : NULL?>" readonly="readonly" />
+             
+           </div>
+         </div>
+    
+    </div>
+
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+		
+		var selecionados = [];
+		$.each($('#tabs-2 input:checkbox[name="acoes[]"]:checked'), function(index, value)
+		{
+			selecionados.push($(value).val());
+		});
+		
+     $("#form1").DingousSubmit({
+			url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+			post: 
+			{
+				form: $("#form1").serializeArray(),
+				ID_GRUPO: $("#ID_GRUPO").val()
+				//,selecionados: JSON.stringify(selecionados)
+				,selecionados: selecionados
+			},
+			onCompletado: function(e) 
+			{	
+			  
+				 window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/editar/id/'+e.modelo;
+			}
+		});
+
+		return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs()
+	 
+});
+</script>
+

@@ -1,0 +1,70 @@
+<div id="content-table-inner">
+    <table border="0" cellpadding="0" cellspacing="0" id="paging-table" width="">
+              <tr>
+                <td align="center">
+                <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '1'}, function(data) { $('#grid').html(data); });" class="page-far-left"></a> <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->anterior?>'}, function(data) { $('#grid').html(data); });" class="page-left"></a>
+                  <div id="page-info">Página <strong><?=$this->pagina?></strong> / <?=$this->total_paginas?></div>
+                  <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->proxima?>'}, function(data) { $('#grid').html(data); });" class="page-right"></a> <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->ultima?>'}, function(data) { $('#grid').html(data); });" class="page-far-right"></a></td>
+              </tr>
+      </table>
+  <div class="clear"></div>
+</div>
+
+<form id="mainform" action="">
+  <table width="100%" border="0" align="right" cellpadding="0" cellspacing="0" id="product-table">
+	          <tr>
+	            <th width="2%" class="table-header-check"><a id="toggle-all" ></a></th>
+	            <th width="2%" class="table-header-options line-left"><a href="">Id</a></th>                
+	            <th width="39%" class="table-header-repeat line-left minwidth-1"><a href="">Nome do usuário</a></th>
+	            <th width="20%" class="table-header-repeat line-left minwidth-1"><a href="">Login</a></th>
+	            <th width="20%" class="table-header-repeat line-left minwidth-1"><a href="">Grupo</a></th>
+
+                <th width="17%" class="table-header-options line-left"><a href="">Acoes</a></th>
+              </tr>
+              
+            <?php
+			if($this->total_registros > 0)
+			{
+	        foreach ($this->lista as $chave => $valor){
+	        ?>
+	          <tr>
+	            <td><input  type="checkbox" name="exclui[<?=$valor->ID_USUARIO?>]" id="exclui[<?=$valor->ID_USUARIO?>]"/></td>
+                <td><?=$valor->ID_USUARIO?></td>
+	            <td><?=$valor->NOME?></td>
+	            <td><?=$valor->EMAIL?></td>
+	            <td><?=$valor->DESCRICAO_grupo?></td>
+	 
+                	<td class="options-width">
+	            	<a href="javascript:void(0);" onclick="window.location='/<?=$this->modulo?>/<?=$this->controlador?>/editar/id/<?=$valor->ID_USUARIO?>'" title="Editar" class="icon-1 info-tooltip"></a>
+	            	<a href="javascript:deletar('<?=$valor->ID_USUARIO?>');" title="Excluir" class="icon-2 info-tooltip"></a>
+	            </td>	            
+              </tr>
+	          
+              <?php }
+			  
+			}else{?>
+            
+            <tr>
+	            <td colspan="9" align="center">Nenhum registro cadastrado.</td>	            
+            </tr>
+            
+            <?php } ?>
+              
+	          
+
+            </table>
+	        
+     </form>
+
+	      
+ <div id="content-table-inner">
+    <table border="0" cellpadding="0" cellspacing="0" id="paging-table" width="">
+              <tr>
+                <td align="center">
+                <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '1'}, function(data) { $('#grid').html(data); });" class="page-far-left"></a> <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->anterior?>'}, function(data) { $('#grid').html(data); });" class="page-left"></a>
+                  <div id="page-info">Página <strong><?=$this->pagina?></strong> / <?=$this->total_paginas?></div>
+                  <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->proxima?>'}, function(data) { $('#grid').html(data); });" class="page-right"></a> <a href="javascript:void(0);" onclick="javascript:$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: '<?=$this->ultima?>'}, function(data) { $('#grid').html(data); });" class="page-far-right"></a></td>
+              </tr>
+      </table>
+  <div class="clear"></div>
+</div>

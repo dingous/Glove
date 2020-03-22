@@ -1,0 +1,330 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+<script>
+	$(document).ready(function(){
+		
+	 
+	 
+
+	
+		
+		$('body').attr("class","<?=$this->layout()->pattern == "" ? "pattern3" : $this->layout()->pattern?> <?=$this->layout()->color == "" ? "blue" : $this->layout()->color?>");
+		
+		$(".slides li").show();
+		
+		
+	
+		
+		
+		
+		 $( "#NOME" ).autocomplete({
+
+		 	autoFocus: true,
+			minLength: 2,
+			source: function( request, response ) {
+				$.ajax({
+					url: "/conta/buscaamigosjson",
+					dataType: "json",
+					data: {
+						featureClass: "P",
+						style: "full",
+						maxRows: 12,
+						name_startsWith: request.term
+					},
+					success: function( data ) {
+						response( $.map( data, function( item ) {
+								
+							return {
+								label: item.NOME ,
+								nome2: item.SOBRENOME ,
+								id: item.tb_sys_usuario,						
+								slug: item.SLUG,
+								foto: item.ARQUIVO
+							}
+
+						}));
+					}
+				});
+			},
+
+			select: function( event, ui ) {
+
+				  //window.location = '/'+ui.item.slug+"-"+ui.item.id;
+			   	  chamasAjaxUrl('/'+ui.item.slug+"-"+ui.item.id);
+				  
+			},
+
+			open: function() {
+
+				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+
+			},
+
+			close: function() {
+
+				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+
+			}
+
+		}).data( "autocomplete" )._renderItem = function( ul, item ) {
+
+		
+				/*return $( "<li></li>" )
+
+				.data( "item.autocomplete", item )
+
+				.append( "<a>" + item.label + "</a>" )
+
+				.appendTo( ul );*/
+				
+				return $( "<li></li>" )
+
+				.data( "item.autocomplete", item )
+
+				.append("<a><div style='overflow:hidden; padding:10px;'><div style='float:left;'><img border='0' src='/thumbs/index/w/50/h/50/type/2/file/"+item.foto+"'></div><div style='float:left; padding-left:10px; padding-top:20px;'>" + item.label +  " " + item.nome2 + "</div></div></a>")
+
+				.appendTo( ul );
+
+
+		};
+		
+		
+		
+	
+	});
+    </script>
+
+
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>    
+
+
+<?php 
+
+ $profile = new Zend_Session_Namespace('perfil');
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+
+?>
+   
+    
+<div style="overflow:hidden;">
+    <div style="float:left; padding-top:20px;" >
+<h2>
+
+	 <?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+                	<h2>Meus Amigos (<?=($this->resultado["total"])?>)</h2>
+                <?php }else{?>
+                	<h2>Amigos de <?=ucfirst(strtolower($this->perfil->NOME_usuario))?> (<?=($this->resultado["total"])?>)</h2>
+                <?php } ?>
+    
+ 
+
+</h2>
+
+
+<div class="campo" style="float:right; margin-right:40px;">
+        	<label for="NOME" style="width:200px;">Buscar em meus amigos</label>
+           	<input name="NOME" type="text" id="NOME" style="width:250px;" />            
+		    <input type="submit" value="Procurar">         
+</div>
+        
+
+</div>
+ <div style="float:right; padding-top:50px;">
+    <a href="/conta/busca" title="Clique aqui para procurar novos amigos">Clique aqui para procurar novos amigos</a>
+    </div>    
+</div>
+
+
+<?php
+function formataNome($nome)
+{	
+	$nome = strtolower($nome);
+	$preposicoes = array(" da ", " do ", " de ", " das ", " dos ");
+	$nome = str_replace($preposicoes, " ", $nome);	
+	$exp = explode(" ", $nome);
+	if(count($exp) > 1)
+	{
+		$nome = ucfirst($exp[0]) . " " . (count($exp) >= 2 ? ($exp[1] == "" ? ucfirst($exp[2]) : ucfirst($exp[1])) : ucfirst($exp[1]));	
+	}else
+	{
+		$nome = ucfirst($exp[0]);		
+	}
+	return $nome;
+}
+?>
+
+<section id="sec-portfolio">
+                <section id="portfolio">
+                    <div class="flexslider">
+                        <ul class="slides">
+                            <li>
+                                <ul class="portfolio-slide">
+                                    
+                                  <?php
+								
+								  
+								 if(count($this->resultado["retorno"]) > 0)
+								 {
+								 foreach($this->resultado["retorno"] as $chave => $valor){
+							
+									 ?>
+                 
+                                     <li>
+                                     <figure style="width:82px; height:95px;"> 
+                                     <a href="/<?=$valor->SLUG?>-<?=$valor->tb_sys_usuario?>" title="<?=ucfirst(strtolower($valor->NOME))?> <?=ucfirst(strtolower($valor->SOBRENOME))?>, <?=utf8_encode($valor->NOME_CIDADE)?>-<?=$valor->SGL_ESTADO?> - Brasil ">
+                                     <img data-original="/thumbs/index/w/82/h/95/type/2/file/<?=isset($valor->ARQUIVO) ? $valor->ARQUIVO : ""?>" class="lazy" src="/thumbs/index/w/82/h/95/type/2/file/x" border="0" />
+                                     <!--<img src="/thumbs/index/w/82/h/95/type/2/file/<?=isset($valor->ARQUIVO) ? $valor->ARQUIVO : ""?>" class="lazy" border="0" />-->
+                                     </a>
+                                     </figure>
+                                     <a class="show-portfolio-text" href="#port1">
+									 
+									 	<?=formataNome($valor->NOME . " " . $valor->SOBRENOME)?>
+                                     
+                                     </a></li>
+                                    
+                                     <?php } 
+									 }else{ ?>
+									 
+									 nenhum amigo adicionado.
+									 
+									 <?php } ?>
+                                    
+                                   
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+.table_paginacao a
+{
+	text-decoration:none;
+	color:#000000;
+	padding:4px;
+}
+
+.table_paginacao td
+{
+padding-left: 5px;
+padding-right: 5px;
+text-decoration:none;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+color:#CCCCCC;
+font-size:10px;
+border: 1px #999999 solid;
+padding:2px;
+}
+
+.table_paginacao td:hover
+{
+background-color:#ffffff;
+
+}
+</style>
+
+
+<div style="width:100%; min-height:1px; overflow:hidden; padding-top:30px;">
+
+<?php 
+
+
+
+$pags = $this->resultado['total_paginas']; 
+if($pags > 1):
+$pgmod = 1;
+$mod_atual = 1;
+?>
+
+
+<table border="1" class="table_paginacao">
+      <tr>
+   
+<?php
+
+
+
+$p = isset($this->resultado['paginaatual']) ? $this->resultado['paginaatual'] : 1;
+
+if(isset($p)) {
+	$p = $p;
+} else {
+	$p = 1;
+}
+
+$qnt = 8;
+$inicio = ($p*$qnt) - $qnt;
+$max_links = 8;
+
+echo "<td><a href='/conta/".$profile->slug."/friends/?page=1' title=\"Ir à primeira página\"> << </a> </td>";
+
+for($i = $p-$max_links; $i <= $p-1; $i++) {
+if($i <=0) {
+} else {
+echo "<td><a href='/conta/".$profile->slug."/friends/?page=".$i."' >".$i."</a></td> ";
+}
+}
+	echo "<td class=\"ativa\" style=\"padding:4px;\">".$p."</td>";
+	for($i = $p+1; $i <= $p+$max_links; $i++) {
+	if($i > $pags)
+	{
+	
+	}
+	else
+	{
+		echo "<td><a href='/conta/".$profile->slug."/friends/?page=".$i."'>".$i."</a></td> ";
+	}
+	}
+	echo "<td class=\"classe_td_no_border\"><a href='/conta/".$profile->slug."/friends/?page=".$pags."' title=\"Ir à última página\"> >> </a></td> ";
+	?>
+</tr>
+    </table>
+ <?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<script src="jquery.lazyload.js?v=1.8.3" charset="utf-8"></script>-->
+
+  <script type="text/javascript" charset="utf-8">
+      $(function() {          
+          $("img").lazyload({});
+		   
+		    setTimeout(function() { $(window).trigger('scroll');  }, 1000);
+      });
+    
+  </script>

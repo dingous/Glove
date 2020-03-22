@@ -1,0 +1,93 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+<script>
+function FormLogin()
+{
+
+$("#formLogin").submit(function () {
+		
+	
+     	$.ajax({
+             type: "POST",
+             url: "/conta/recuperar",
+             data: $("#formLogin").serialize(),
+             dataType: "json",
+             //ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 
+			 	
+			 
+				if(data.erro == "false")
+				{					
+
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : data.msg,
+						stayTime   : 20000,
+						type     : 'success'
+					});
+											
+				}else if(data.erro == "true")
+				{
+				    window.parent.parent.$().toastmessage('showErrorToast', data.msg);
+																		
+				}
+				
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+$(document).ready(function () {
+
+	FormLogin();
+	$("#EMAIL").focus();
+	
+});
+
+</script>
+
+
+</script>
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+<div>
+<div id="inline1" style="width:300px;height:230px; overflow: hidden;">             
+
+<form action="" name="formLogin" id="formLogin" method="post">
+
+<div class="box_lg">	
+			 <div class="lgtit"><h1>Recuperar senha</h1>
+			 <div class="lginfo">Caso você perdeu suas credenciais do Glove você pode solicitar a sua senha novamente informando o seu e-mail no campo abaixo:</div></div>
+			
+           
+        <div class="bxcam">
+              	<div class="form">	
+                	<div class="titfr"></div>
+                     <div class="camps">
+    					<div class="campse">Seu E-mail<br /><input name="EMAIL" type="text" id="EMAIL" size="35" /></div>
+                    </div>
+                     
+                    <div class="camps">
+      					<div class="rgt"><br />
+				    <input type="submit" name="" value="Entrar" id="button1" /></div>	
+   	  					<div class="rgt3">
+                   </div>      
+    				</div>
+                    <div class="titfr"></div>
+                </div>
+			</div>
+</div>
+
+</form>
+</div>
+</div>

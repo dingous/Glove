@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+	
+	  	<field name="tb_sys_aplicacao">
+	
+        <validator type="requiredString" msg="Selecione uma aplicação do Mandroid."/>
+				
+  </field>
+	
+	<field name="DESCRICAO_MODULO">
+	
+        <validator type="requiredString" msg="Informe uma descrição para o módulo."/>
+				
+  </field>
+  
+
+	
+	
+	
+</lumine-validator>
+

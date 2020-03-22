@@ -1,0 +1,707 @@
+<?
+
+	/*$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/uploadify-v2.1.4/uploadify.css');
+
+	$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/swfobject.js');
+
+	$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/jquery.uploadify.v2.1.4.js');*/
+
+?>
+
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+<script>
+	
+	var timer = null;
+	var editor = null;
+	var InterfaceUsuario = null;
+	
+	
+    $(document).ready(function(){
+		timer = $.timer(function() {	
+  	    //$.fn.InterfaceUsuario.metodos.MensagensPega(1);
+	});
+
+		timer.set({ time : 60000, autostart : false }); 
+		timer.stop();
+		timer.play();
+
+		$('body').attr("class","<?=$this->layout()->pattern == "" ? "pattern3" : $this->layout()->pattern?> <?=$this->layout()->color == "" ? "blue" : $this->layout()->color?>");
+
+	   InterfaceUsuario = $("body").InterfaceUsuario
+
+	   (
+
+			{
+
+				onAddComentario : function(data)
+
+				{
+
+					$.fn.InterfaceUsuario.metodos.ComentariosPega(1, data.post, "#placeHolderComentario"+data.post, "#totalComentarios"+data.post, data.remetente);
+
+					
+
+					if(socket != null)
+
+					{
+
+						//socket.emit('notificacao', { tipo: 'ComentarioNovo', data : { data : data }});	
+
+					}
+
+					
+
+				}
+
+			}
+
+	    );
+
+		
+
+		$(".statusField textarea:first").focus();
+
+		
+		
+		editor = CKEDITOR.instances['message'];
+
+	    /*if (editor) 
+
+		{ 
+
+			editor.destroy();
+			CKEDITOR.remove(editor);
+			editor = null;
+
+		}*/
+
+	   //editor = null;
+	   editor = CKEDITOR;
+	   editor.config.language = 'pt-br';	
+	   editor.config.toolbarStartupExpanded = false;
+	   editor.config.width = '100%';
+	   //editor.config.height = '70';
+	   editor.config.resize_enabled = true;
+	   editor.config.autoUpdateElement = true;
+	   editor.config.startupFocus = true;
+	   editor.config.entities_latin = false;
+	   editor.config.entities_greek = false;
+	   editor.config.toolbar =
+		[
+
+			//['Save','NewPage','-','Undo','Redo'], ['oembed']
+		];
+   	   //editor.config.extraPlugins = "oembed";
+	   editor.config.removePlugins = 'elementspath,contextmenu,liststyle,tabletools,image,paragraph';
+	   editor.config.fullPage = false;
+	   editor.config.resize_enabled = false;
+	   editor.config.startupShowBorders = false;
+	   editor.config.disableObjectResizing = true;
+	   editor.config.enterMode = CKEDITOR.ENTER_BR;
+	   
+   
+		CKEDITOR.on('instanceCreated', function(e) {
+			
+			e.editor.on('key', function(evt) {
+		
+				if(evt.data.keyCode == 8 || evt.data.keyCode == 46)
+				{
+					
+					var selection = this.getSelection();
+					var start = selection.getStartElement();
+				
+					if(start != null)
+					{
+						return recursiveBloqueio(start);
+					}
+			
+				}
+				
+				return true;
+			});
+		});
+		
+
+	   
+	   CKEDITOR.replace('message', {readOnly: true});
+	   //CKEDITOR.replace('message');
+	     
+
+	  
+
+
+		 $('#file_upload').uploadify({
+			'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+			'script'    : '/conta/uploadfotopublicacao',
+			'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+			'folder'    : '/uploads/temp/',
+			'multi'     : false,		
+			'auto'      : true,
+			'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+			'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+			'removeCompleted': true,
+			'scriptData'  : {'id_usuario': $("#id_usuario").val(), 'id_album' : $("#id_albumpadrao").val()},
+			'buttonText': 'FOTO',
+			onSelectOnce : function(event,data) {
+
+			   $('#status-message').text(data.filesSelected + ' files have been added to the queue.');
+			   $("#tb_social_tipo_publicacao").val("4");
+			},
+
+			onAllComplete  : function(event,data) {
+
+			  $('#status-message').text(data.filesUploaded + ' files uploaded, ' + data.errors + ' errors.');
+
+			},
+
+			onComplete  : function(event, ID, fileObj, response, data) {
+			
+			
+			
+			 var json = jQuery.parseJSON(response);
+
+			 var msg = json.msg;			  
+
+			 if(json.erro == "false")
+			 {
+				var editor = CKEDITOR.instances['message'];
+				if (editor) 
+				{ 
+					var contents = 
+					$("<div style='width:300px;'><div style='float:left; width:100px;' id='fotoUploadedDiv'><div id='specialwrapperthing'><img src='/www/uploads/temp/"+json.fileminiatura+"' id='fotoUploadedImg' class='nao_editavel'/></div></div><div id='legendaFotoDiv' class='legendaFoto' style='float:right; width:540px;'></div></div>");
+					
+					editor.setData(contents.html());
+
+					editor.resize('98%', 180);
+					
+					$("#file_recent_uploades").val(json.file_original);
+					
+					
+					
+					var img  = editor.document.getById('fotoUploadedImg');
+					
+					//$("#legendaMidia").val("");
+					$("#legendaMidia").focus();
+					
+				}
+
+			 }
+
+			},
+			 onError : function (event,ID,fileObj,errorObj) 
+			 {
+				alert(errorObj.type + ' Error: ' + errorObj.info);
+			 }
+
+		  });
+		
+	
+			$("#insertVideo").click(function(ui, e){
+			   
+			    CKEDITOR.instances['message'].setReadOnly( false );
+
+			    
+				$("#tb_social_tipo_publicacao").val("2");
+				var editor = CKEDITOR.instances['message'];
+				editor.execCommand('oembed');
+				
+				 
+				 $(".cke_dialog").find(".cke_dialog_ui_button.cke_dialog_ui_button_ok").bind("click", function()
+				 {
+					 window.setTimeout(call, 1000);
+				 });
+											
+			})
+			
+			function call()
+			{
+				CKEDITOR.instances['message'].setReadOnly( true )
+			}
+	   
+
+	   $("#form1").submit(function () 
+
+	   {
+
+		  $.fn.InterfaceUsuario.metodos.MensagensAdd();
+
+		  return false;
+
+		   
+
+	   });
+
+
+
+	
+	   var s = window.location.toString();
+	   if(s.indexOf("/post/") !== -1)
+	   {
+   		  // alert(s);
+		   var n=s.split("/");
+    	   var msgajax = $.fn.InterfaceUsuario.metodos.MensagensPega(1, n[5]);
+		   msgajax.success(function (data){		
+			    $(".table_paginacao").css("display", "none");
+		   });
+		  
+		   
+	   }else
+	   {
+    	   var msgajax = $.fn.InterfaceUsuario.metodos.MensagensPega(1);
+		    msgajax.success(function (data){		
+			    $(".table_paginacao").css("display", "block");
+		   });
+	   }
+
+	
+		$("#legendaMidia").click(function()
+		{
+			if($(this).val() == "Digite aqui sua legenda...")
+			{
+				$(this).val("");
+			}
+		});
+		
+		$("#legendaMidia").bind("blur", function()
+		{
+			if($(this).val() == "")
+			{
+				$(this).val("Digite aqui sua legenda...");
+			}
+		});
+		
+		
+		
+
+
+    });
+
+
+		
+	
+	  function recursiveBloqueio(start)
+	  {		
+			if(start.$ != null)															
+			{
+				var filhos = start.$.childNodes;
+				var total = filhos.length;
+
+			}				
+			 for(var w=0;w<total;w++)
+			 {
+				 
+				var currentElement = filhos[w];
+				
+				if(currentElement.className == "nao_editavel")
+				{
+	
+					return false;
+				}					
+			}
+	  }
+		
+      function ResetContextMenu() {
+
+		  
+
+          if ($("#customerTable td:first-child :checked").length > 0) {
+
+			  
+
+              $("#myMenu").enableContextMenuItems('#deleteSelected');
+
+          }
+
+          else {
+
+              $("#myMenu").disableContextMenuItems('#deleteSelected');
+
+          }
+
+      }    
+
+	function clickStatus()
+	  {
+		$("#tb_social_tipo_publicacao").val(1);
+		$(".statusField").show();
+		$(".fotovideoField").hide();
+		$(".statusField textarea:first").focus();
+		$("#placeHolderBotaoUpload").hide();
+	  }
+		
+	  function clickMedia()
+	  {
+			$("#tb_social_tipo_publicacao").val(4);
+			$(".statusField").hide();
+			$(".fotovideoField").show();
+			$("#placeHolderBotaoUpload").show();			
+			CKEDITOR.instances.message.focus();
+	  }
+
+      
+
+      function contextMenuWork(action, el, pos) {
+
+      	var id = $(el).attr("id");
+
+		id = id.replace("btn", "");
+
+		
+
+	
+
+				
+
+          switch (action) {
+
+              case "delete":
+
+                  {
+
+                      $.fn.InterfaceUsuario.metodos.MensagensDeletar(id);
+
+                      break;
+
+                  }
+
+           
+
+              case "edit":
+
+                  {
+
+                     Popup('/conta/reportarspam/id/'+ id, 430, 600);
+
+                      break;
+
+                  }
+
+			 case "abuso":
+
+             {
+
+             	      Popup('/conta/reportarabuso/id/'+ id, 430, 600);
+
+                      break;
+
+              }
+			  
+			  case "facebook":
+
+             {
+
+             	    $(".botoesFaceBook").css("display", "block");
+
+                      break;
+
+              }
+
+           
+
+          }
+
+      }
+
+    //]]>
+
+
+
+</script>
+
+
+
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+
+
+
+<?php $this->placeholder('header')->captureStart();?>
+
+
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+
+     
+
+<?php $this->placeholder('header')->captureEnd() ?>    
+
+
+
+<?
+
+
+
+ $profile = new Zend_Session_Namespace('perfil');
+
+ $auth = Zend_Auth::getInstance();
+
+ $usuario_logado = $auth->getStorage()->read();
+
+ 
+
+?>
+
+
+
+
+
+  <!-- Right Click Menu -->
+
+  <ul class='contextMenu' id='myMenu'>
+
+    <li class='delete'>
+
+      <a href='#delete'>Deletar</a>
+
+    </li>
+
+    
+
+     <li class='edit'>
+
+      <a href='#abuso'>Reportar abuso</a>
+
+    </li>
+
+    
+
+    <li class='edit'>
+
+      <a href='#edit'>Denunciar como spam</a>
+
+    </li>
+    
+   <!--<li class='facebook'>
+
+      <a href='#facebook'>Facebook</a>
+
+    </li>-->
+
+  </ul>
+
+
+
+
+
+<div style="overflow:hidden;">
+
+    <div style="float:left;">
+
+    
+
+    <h2>  <?php if( $this->perfil->tb_sys_usuario != $usuario_logado->ID_USUARIO)
+
+			{ 
+
+				echo "Mural de recados de ". ucfirst($this->perfil->NOME_usuario); 
+
+			}else { 
+
+				 if( $this->perfil->tb_sys_usuario == $usuario_logado->ID_USUARIO && $this->action != "minhatimeline"){
+
+					echo "Últimas atualizações";  
+
+				 }else{
+
+					 
+
+					 echo "Meu mural de recados";  
+
+				 }
+
+			}?></h2>
+
+    
+
+    </div>
+
+    <div style="float:right; padding-top:20px;">
+
+    
+
+            <?php if( $this->perfil->tb_sys_usuario == $usuario_logado->ID_USUARIO){?>
+
+                                 	
+									
+                                    <a href="javascript:void(0);" onclick="Popup('/conta/indicaramigo', 350, 300);" title="Indicar amigo!"> • Convidar amigos</a> 
+
+                                      &nbsp;&nbsp;&nbsp;
+
+                                         
+
+                                    <!--<a href="javascript:void(0);" onclick="Popup('/conta/solicitacoes', 430, 600);"  title="Solicitações"> •  Solicitações (<?=$this->totalSolicitacoes?>)</a>
+
+                                    &nbsp;&nbsp;&nbsp;-->
+
+                                    <a href="javascript:void(0);" onclick="Popup('/conta/multmedia', 800, 900);"  title="Alterar foto do perfil"> • Alterar foto do perfil</a>
+                                    
+                                    &nbsp;&nbsp;&nbsp;
+                                    
+                                    
+                                    
+                                      <a href="javascript:void(0);" onclick="Popup('/conta/reportarsugestoes', 430, 600);" title="Indicar amigo!"> • Envie sua sugestão</a> 
+
+                                      
+
+                                    
+
+                                    <?php }?>
+
+                                    <!--&nbsp;&nbsp;&nbsp;                                                                    
+
+                                    <a href="/conta/logoff" title="Sair do Glove"> •  Sair [x]</a>-->
+
+                                    
+
+                                   
+
+    
+
+    </div>
+
+</div>
+
+
+
+
+
+ 						
+
+
+
+				  <form id="form1" name="form1" action="#">
+                  
+
+                    <section id="contact-me">
+
+                              <dl>
+
+                               <dt>
+
+                               <?php if( $this->perfil->tb_sys_usuario == $usuario_logado->ID_USUARIO && $this->action != "minhatimeline"){?>
+
+                               	Status • Compartilhe com todos o que você esta pensando agora! 
+
+                                <input type="hidden" readonly="readonly" id="FL_PRIVADA" name="FL_PRIVADA" value="0" />
+
+                               <?php }else{ ?>
+
+                               
+
+                               	Publicar no mural de <bold><?=$this->perfil->NOME_usuario?></bold>
+
+                                <input type="hidden" readonly="readonly" id="FL_PRIVADA" name="FL_PRIVADA" value="1" />
+
+                               <?php } ?>
+
+                               
+
+                               <input type="hidden" readonly="readonly" id="ACTION" name="ACTION" value="<?=$this->action?>" />
+                               <input type="hidden" readonly="readonly" name="id_albumpadrao" id="id_albumpadrao"  value="<?=$this->albumpadrao->ID_ALBUM?>"/>
+                               <input type="hidden" readonly="readonly" name="tb_social_tipo_publicacao" id="tb_social_tipo_publicacao"  value="1"/>
+							   <input type="hidden" readonly="readonly" name="file_recent_uploades" id="file_recent_uploades"  value=""/>
+
+                               </dt>
+
+                                <dd>
+
+                                
+
+                                <div id="BlocoStatus">
+
+                                
+
+                                    <div id="options">
+
+                                        <div class="optStatus"><a onclick="clickStatus();"><img src="/assets/portal/default/images/imgStatus.jpg" width="14" height="14" border="0" /> Status</a></div>
+
+                                        <div class="optMedia" style="width:400px;">
+                                        
+                                        <a onclick="clickMedia();">
+                                        	<img src="/assets/portal/default/images/imgMedia.jpg" width="16" height="14" border="0" /> Adicionar Fotos/Vídeos
+                                        </a>
+
+                                        
+
+                                        <div id="placeHolderBotaoUpload" style="float:right; padding-top:0px; margin-left:20px; display:none;" >
+										 <div style="float:left;">
+                                         	<input id="file_upload" name="file_upload" type="file" value="selecionar arquivos" />
+                                         </div>
+										 <div style="float:left; margin-left:20px;">                                         
+	                                         <input type="button" value="inserir video" id="insertVideo" name="insertVideo" />
+                                         </div>
+
+                                        </div>
+
+                                        
+
+                                        </div>                                
+
+                                    </div>
+
+                                    
+
+                                    <div id="fields">
+
+                                        <div class="statusField">
+                                        <textarea name="messageStatus" id="messageStatus" style="border:2px solid #cccccc; background-color:#FFF; height:20px; width:98%;"></textarea>
+                                        </div>
+
+                                        <div class="fotovideoField">
+                                        
+                                        <textarea name="message" id="message" class="field f2"  style="height:50px;"></textarea>
+                                        <input type="text" value="Digite aqui sua legenda..." name="legendaMidia" id="legendaMidia" style="border:1px dashed #cccccc; background-color:#FFFFFF; width:300px;" />
+                                        
+                                        </div>
+
+                                    </div>
+
+                                        
+
+                                </div>      
+
+                               
+
+                               </dd>
+
+                                
+
+                              
+
+                                
+
+                                <dd style="text-align:right; margin-top:5px;">
+
+                                <input type="submit" value="Publicar" />
+
+                                <input type="hidden" readonly="readonly" id="id_perfil" name="id_perfil" value="<?=$this->perfil->tb_sys_usuario?>" />
+                                
+                                </dd>
+
+                              </dl>
+
+                         
+
+                    </section>
+
+              		   </form>
+
+                  
+
+                    
+
+  <div id="recados"></div>
+
+
+
+
+
+
+
+
+

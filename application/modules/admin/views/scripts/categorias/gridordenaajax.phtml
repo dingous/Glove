@@ -1,0 +1,31 @@
+<?php 
+
+	if(count($this->dados) > 0){
+?>
+<ul id="sortable"> 
+	
+    <?php
+	foreach($this->dados as $chave => $valor){?>
+      <li class="ui-state-default" id="<?=$valor->id?>">
+      
+          <div style="float:left;" class="setas">
+          	<center>
+			<img src="/thumbs/index/w/0/h/17/type/1/autocrop/false/file/<?=$valor->icone_pequeno?>" id="iconepqn" />
+            </center>
+          </div>
+          
+          <div style="float:left;" class="ordem"><b><?=$valor->ORDEM?>º</b></div>
+         
+          <div style="float:left;" class="titulo"> <?=utf8_encode($valor->title)?></div>
+          
+      
+  </li> 
+   	<?php } ?>
+</ul> 
+<?php 
+	}else{
+		?>
+        
+<p align="center">nenhum registro encontrado.</p>   
+        
+   <?php } ?>

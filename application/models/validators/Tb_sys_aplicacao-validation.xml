@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+	
+	
+	<field name="DESCRICAO">
+	
+        <validator type="requiredString" msg="Informe a descrição da aplicação."/>
+				
+  </field>
+  
+  
+  
+	<field name="tb_sys_empresa">
+	
+        <validator type="requiredString" msg="Selecione a empresa a qual esta aplicação pertence."/>
+				
+  </field>
+  
+  
+	
+</lumine-validator>
+

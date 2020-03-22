@@ -1,0 +1,426 @@
+
+
+
+<form action="/admin/baixa/geraurl" method="post"  id="form1">
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<table width="100%">
+<tr>
+	<td width="30%" align="right">Cidade cadastrada no GCOOL:</td>
+   	<td width="5%"></td>
+   	<td width="65%"> <!--<select id="tb_sys_franqueado" name="tb_sys_franqueado" >
+    <option value="">selecione...</option>
+    <?php 
+	
+foreach($this->franquias as $chave => $valor){?>
+    <option value="<?=$valor->ID_FRANQUEADO?>_<?=$valor->tb_sys_cidade?>">
+    <?=utf8_encode($valor->SLUG_FRANQUIA)?> 
+    
+    </option>
+    <?php } ?>    
+  </select>	-->
+  
+  
+    <select id="tb_sys_estado" name="tb_sys_estado" class="validate[required]">
+    <option value="">selecione...</option>
+    <?php
+    echo Lumine_Util::buildOptions($this->estados, "ID_ESTADO", "SGL_ESTADO", NULL);
+    ?>             
+    </select>
+    
+    
+     <select id="tb_sys_cidade" name="tb_sys_cidade" class="validate[required]">
+	 <option value="">selecione...</option>                 
+	 </select>
+  
+  
+  </td>    
+</tr>
+<tr>
+  <td align="right">Estado no apontador Ex.: MG</td>
+  <td></td>
+  <td><input type="text" name="apontador_estado"/></td>
+</tr>
+<tr>
+  <td align="right">Cidade no apontador Ex.: ARAXA </td>
+  <td></td>
+  <td><input type="text" name="apontador_cidade"/></td>
+</tr>
+<tr>
+  <td align="right">URL no apontador </td>
+  <td></td>
+  <td><input name="apontador_url" id="apontador_url" type="text" size="105" value="<?=$this->url?>"/></td>
+</tr>
+<tr>
+  <td height="64" align="right">&nbsp;</td>
+  <td></td>
+  <td>
+
+<p>&nbsp;</p>
+<input type="button" value="Gerar Url"  name="btnGerarUrl" id="btnGerarUrl" />
+
+<input type="button" value="Analisar" name="btnAnalisar" id="btnAnalisar" style="display:none;" />
+
+
+<input type="button" value="Iniciar"  name="btnInicia" id="btnInicia" /> <span id="tickerInfo"></span>
+
+</td>
+</tr>
+
+</table>
+
+
+<table width="100%">
+<tr>
+  <td width="256" align="left">Início: <input name="txtInicio" type="text" id="txtInico" readonly="readonly" /></td>
+  <td width="212" align="left">Fim: <input name="txtFim" type="text" id="txtFim" readonly="readonly" /></td>
+  <td width="191" align="left">Total: <input name="txtTotal" type="text" id="txtTotal" readonly="readonly" /></td>
+  <td width="261" align="left">Qtd por página:
+    <input name="txtQtdPagina" type="text" id="txtQtdPagina" value="50" /></td>
+  <td width="234" align="left">Páginas:  
+  <select id="pagina_atual" name="pagina_atual">
+  <option value="0">0</option>
+  </select></td>
+  </tr>
+<tr>
+  <td height="66" colspan="7" align="left">
+  	<span id="carregaGrid"></span>
+  </td>
+  </tr>
+</table>
+
+</form>
+
+
+
+
+
+<script>
+var timer = null;
+
+
+function geraUrl(autodisparo)
+{
+			disparados = new Array();
+		
+		$.ajax({
+             type: "POST",
+             url: '/admin/baixa/geraurl',
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+	  				
+				 $("#apontador_url").val(data.url);
+				 
+				 //$("#btnAnalisar").show();
+				 
+				 analisa(data.pagina_atual, data.qtdPagina, autodisparo);
+			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+}
+
+function analisa(pagina_atual, qtdPagina, autodisparo)
+{
+	
+		$("#carregaGrid .campos").remove();
+		
+		
+		$.ajax({
+             type: "POST",
+             url: '/admin/baixa/analisa',
+             data: {url : $("#apontador_url").val(), pagina_atual : pagina_atual, qtdPagina:qtdPagina},
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+				
+				$("#txtInico").val(data.apont.information.start);
+				$("#txtFim").val(data.apont.information.end);
+				$("#txtTotal").val(data.apont.information.total);
+			
+				$('#pagina_atual')
+					 .find('option')
+					 .remove()
+					 .end();
+					 
+				for(i=0; i<data.total_paginas; i++)
+				{
+					$("#pagina_atual").append("<option value='"+i+"'>"+i+"</option>");
+				}
+				
+				$("#pagina_atual").val(pagina_atual);
+				$("#txtQtdPagina").val(data.qtd_pagina);
+				
+				geraGrid(data.apont.organic);
+				
+				
+				if(autodisparo == true)
+				{
+					iniciaDisparo();
+				}
+				
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+	 
+}
+
+
+function geraGrid(html)
+{
+	//alert(html);
+	var pai = $("#carregaGrid");
+	var html = $(html);
+	//var query = html.find(".pd5");
+	var query = $(html).find("div").parent();
+	
+	var cont =0;
+	$.each(query, function(index, value) { 
+	if($(this).attr("class") == "result hreview-aggregate vcard"){
+		var elemento = $(this);
+		var titulo = elemento.find(".info .left h2 .left").html();
+		var categoria = elemento.find(".info .left p").html();		
+		var endereco = elemento.find(".more_info p span");				
+		endereco.find("a").remove()
+		var ender = endereco.html();
+		var bairro = elemento.find(".more_info p span").eq(1).html().replace(",","");					
+		var tel = elemento.find(".more_info p span").eq(4).find("span").eq(0).html();
+		
+		
+		var	div = $("<div\>");	
+		div.attr("id", "linha"+cont);
+		div.attr("class", "campos");
+		
+		var inp1 = $("<input\>");
+		inp1.attr("id", cont);
+		inp1.val(titulo);
+		
+		var inp2 = $("<input\>");
+		inp2.attr("id", cont);
+		inp2.val(categoria);
+		
+		var inp3 = $("<input\>");
+		inp3.attr("id", cont);
+		inp3.val(ender);
+		
+		var inp4 = $("<input\>");
+		inp4.attr("id", cont);
+		inp4.val(bairro);
+		
+		var inp5 = $("<input\>");
+		inp5.attr("id", cont);
+		inp5.val(tel);
+		
+		var inp6 = $("<input\>");
+		inp6.attr("id", cont);
+		inp6.attr("size", '150');
+		inp6.css("background-color", "#cccccc");
+		
+		var br = $("<br\><br\>");
+		
+		div.append(inp1);
+		div.append(inp2);		
+		div.append(inp3);
+		div.append(inp4);				
+		div.append(inp5);						
+		div.append(inp6);
+		div.append(br);								
+		
+		
+		
+		pai.append(div);
+		
+		cont = cont + 1;
+		}
+	 });
+}
+
+
+
+
+var disparados = new Array();
+function iniciaDisparo()
+{	
+
+	var cidade = $("#tb_sys_cidade");
+	if(cidade.val() == "")
+	{
+		alert('Selecione uma cidade.');
+		cidade.focus();
+		return false;
+	}
+
+	
+	
+	 timer.play();	
+
+	var divs = $("#carregaGrid .campos");
+	
+	var totalLinhas = (divs.length);
+	
+	
+	
+	var i = 0;
+	$.each(divs, function(index, value) { 
+	
+		var data = 
+		{
+		 "titulo" : $(this).find("input").eq(0).val(),
+		 "categoria" : $(this).find("input").eq(1).val(),
+		 "ender" : $(this).find("input").eq(2).val(),
+		 "bairro" : $(this).find("input").eq(3).val(),
+		 "tel" : $(this).find("input").eq(4).val(),
+		 "cidade" : cidade.val(),
+		 "indice_linha" : i
+		};
+		
+		
+		$.ajax({
+             type: "POST",
+             url: '/admin/baixa/baixarnovo',
+             data: data,
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+
+				disparados.push(data);
+				$(value).find("input").eq(5).val(data.msg);
+				
+             },
+			 error: function (data) 
+			 {
+				disparados.push(data);
+			 }
+         });
+		
+		
+		i = i + 1;
+		
+		
+	 });
+}
+
+function pegaCidades(estado)
+{
+	
+		
+		$.ajax({
+             type: "POST",
+             url: '/admin/baixa/getcidades/idCidade/'+ estado,
+             data: null,
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+				$('#tb_sys_cidade')
+					 .find('option')
+					 .remove()
+					 .end()
+					 .append('<option value="">selecione...</option>');
+				
+				$.each(data, function(index, value) { 
+						  
+				  $("#tb_sys_cidade").append("<option value='"+value.ID_CIDADE+"'>"+value.NOME_CIDADE+"</option>");
+
+				});
+				
+			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+	 
+}
+
+
+$(function() {
+		
+	timer = $.timer(function() {
+		var divs = $("#carregaGrid .campos");
+		var totalLinhas = (divs.length);
+		//alert(totalLinhas);
+		//alert(disparados.length);		
+		
+			var data = new Date();
+			var dia     = data.getDate();           // 1-31
+			var dia_sem = data.getDay();            // 0-6 (zero=domingo)
+			var mes     = data.getMonth();          // 0-11 (zero=janeiro)
+			var ano2    = data.getYear();           // 2 dígitos
+			var ano4    = data.getFullYear();       // 4 dígitos
+			var hora    = data.getHours();          // 0-23
+			var min     = data.getMinutes();        // 0-59
+			var seg     = data.getSeconds();        // 0-59
+			var mseg    = data.getMilliseconds();   // 0-999
+			var tz      = data.getTimezoneOffset(); // em minutos
+			// Formata a data e a hora (note o mês + 1)
+			var str_data = dia + '/' + (mes+1) + '/' + ano4;
+			var str_hora = hora + ':' + min + ':' + seg;
+			
+			$("#tickerInfo").html(disparados.length + " de "+ totalLinhas + " - " + str_data + " " + str_hora);
+						
+			
+		if(totalLinhas > 0)
+		{
+		
+        if(totalLinhas == disparados.length)
+		{
+			disparados = new Array();
+			var pagina_atual = $("#pagina_atual").val();
+			var proxima = parseInt(pagina_atual) + 1;
+			$("#pagina_atual").val(proxima);
+			geraUrl(true);
+			
+		
+			
+		}
+		}
+
+     });	
+	 timer.set({ time : 5000, autostart : false }); 
+
+	$("#tb_sys_estado").bind("change", function(e)
+	 {
+		 pegaCidades($(this).val());
+	 });
+	 
+
+
+	 
+	 $("#btnGerarUrl").bind("click", function(e)
+	 {
+		geraUrl(false);
+	 });
+	 
+	  $("#btnInicia").bind("click", function(e)
+	 {	
+	 	return iniciaDisparo();
+	 });
+	 
+	 $("#pagina_atual").bind("change", function(e)
+	 {
+		 geraUrl(false);
+	 });
+	
+	
+	
+	
+});
+</script>

@@ -1,0 +1,304 @@
+#Areachat
+{
+    /*position:fixed; 	width:210px; 	height:400px; 	bottom:0; 	right:0; 	border: 1px solid #cccccc; 	background-color:#FFFFFF; 	font-family:Verdana, Geneva, sans-serif; 	font-size:10px; 	padding:5px;*/
+    position: fixed;
+    width: 200px;
+    height: 400px;
+    bottom: 0;
+    right: 0;
+    border: 1px solid #99BFD7;
+    background-color: #FFFFFF;
+    padding: 1px;
+    margin: auto auto auto auto;
+    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+#likeBox
+{
+	position: fixed;
+    width: 200px;
+    height: 234px;
+    bottom: 0;
+    left: 0;
+    padding: 1px;
+    margin: auto auto auto auto;
+    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+#Areachat h2
+{
+	line-height:20px;
+	font-size:18px;
+	margin-left:5px;
+}
+
+#Areachat .titulo
+{
+    background-image: url("../../Content/Images/userbarbg.jpg");
+    width: 100%;
+    overflow: hidden;
+}
+
+#Areachat h1
+{
+    background-position: center bottom;
+    background-repeat: repeat-x;
+    color: #2C3440;
+    display: block;
+    font-family: Tahoma,Verdana,Arial,sans-serif;
+    font-size: 15px;
+    padding: 7px;
+}
+
+#Areachat #blocoPersons
+{
+    height: 322px;
+    width: 100%;
+    overflow: auto;
+}
+
+#Areachat #opcoes
+{
+    background-color: #EBEBEB;
+    height: 20px;
+    width: 100%;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+
+#Areachat #opcoes .btns
+{
+}
+
+#Areachat #opcoes .btns input
+{
+    border:none;
+    width:159px;
+    height:20px;
+}
+
+#Areachat ul
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#Areachat .persons
+{
+	height:22px; 
+	float:left;
+	overflow:hidden;
+}
+
+#Areachat .persons .fotoPerson
+{
+ border: 1px solid #cccccc;
+ float:left;
+}
+
+#Areachat .persons .nomePerson
+{
+	float:left; 
+	width:143px;
+	overflow:hidden;
+	padding-top:4px;
+	font-size:9px;
+	padding-left:3px;
+	font-family:Verdana, Geneva, sans-serif;
+}
+
+#Areachat .persons .iconePerson
+{
+	float:left;
+	padding-top:3px;
+}
+
+#Areachat ul li
+{
+    cursor: pointer;
+    border-bottom: 1px solid #eeeeee;
+    overflow: hidden;
+    font-size: 10px;
+    padding: 4px;
+}
+
+#Areachat ul li:hover
+{
+    background-color: #eeeeee;
+}
+
+#chatWindows
+{
+    position: fixed;
+    right: 230px;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 10px;
+    bottom: 0;
+    background: transparent;
+    min-height: 1px;
+}
+
+#chatWindows .window
+{
+    width: 250px;
+    height: 300px;
+    border: 1px solid #cccccc;
+    background-color: #FFFFFF;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px position:absolute;
+    border: 1px solid #99BFD7;
+    background-color: #FFFFFF;
+    padding: 1px;
+    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+}
+
+#chatWindows .window .topo
+{
+    /*height: 25px;     background-color: #ccc;     padding-top: 9px;     padding-left: 4px;     font-weight: bold;*/
+    background-image: url("../../Content/Images/userbarbg.jpg");
+    background-position: center bottom;
+    background-repeat: repeat-x;
+    color: #2C3440;
+    display: block;
+    font-family: Tahoma,Verdana,Arial,sans-serif;
+    font-size: 12px;
+    padding: 7px;
+    height: 16px;
+}
+
+#chatWindows .window .topo .titulo
+{
+    float: left;
+    width: 188px;
+    height: 16px;
+    overflow: hidden;
+}
+
+#chatWindows .window .topo .botoes
+{
+    float: right;
+    cursor: pointer;
+    padding-right: 0px;
+}
+
+#chatWindows .window .topo .botoesMinimiza
+{
+    float: right;
+    cursor: pointer;
+    padding-right: 4px;
+}
+
+#chatWindows .window .corpo
+{
+    overflow: auto;
+    overflow-x: hidden;
+    -ms-overflow-x: hidden;
+    height: 242px;
+    padding-left: 5px;
+    padding-right: 5px;
+    word-wrap: break-word;
+}
+
+#chatWindows .window .corpo .status
+{
+    font-size: 10px;
+    color: #999;
+}
+
+#chatWindows .window .corpo .linhaMsg
+{
+    border-bottom: 1px solid #eeeeee;
+    width: 240px;
+    overflow: hidden;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    margin-right: 14px;
+    word-wrap: break-word;
+}
+
+#chatWindows .window .corpo .linhaMsg .avatar
+{
+    width: 40px;
+    height: 40px;
+    float: left;
+}
+
+#chatWindows .window .corpo .linhaMsg .msg
+{
+    float: right;
+    width: 188px;
+    word-wrap: break-word;
+    margin-right: 8px;
+    color: #5a5a5a;
+}
+
+
+#chatWindows .window .corpo .linhaMsg .msg b
+{
+    font-size: 10px;
+}
+
+#chatWindows .window .inputfieldchat
+{
+    height: 40px;
+}
+
+#chatWindows .window .inputfieldchat .chatmsg
+{
+    width: 238px;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+}
+
+.contextMenuChat
+{
+    position: absolute;
+    top: 345px;
+    border: 1px solid #cccccc;
+    width: 140px;
+    height: 15px;
+    padding: 8px;
+    background-color: #EBEBEB;
+}
+
+.contextMenuChat label
+{
+	font-size:12px;
+	line-height:10px;
+	padding-left:4px;
+	width:100px;
+	float:left;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:9px;
+}
+
+.visivel
+{
+    display: block;
+}
+
+.invisivel
+{
+    display: none;
+}

@@ -1,0 +1,204 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+<!--
+
+  <link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+  <link type="text/css" href="/assets/jqueryui/development-bundle/themes/gc/jquery.ui.button.css" rel="stylesheet" />
+ <script type="text/javascript" src="/assets/jqueryui/js/jquery-ui-1.8.16.custom.min.js"></script>
+  <link rel="Stylesheet" href="/assets/jqueryui/css/ui.selectmenu.css" type="text/css" />
+
+<link rel="stylesheet" type="text/css" href="/assets/portal/default/css/radio-style.css">
+<script type="text/javascript" src="/assets/portal/default/scripts/bValidator-0.6/jquery.bvalidator.js"></script>
+<link href="/assets/portal/default/scripts/bValidator-0.6/bvalidator.css" rel="stylesheet" type="text/css" />
+
+
+<link href="/assets/portal/default/scripts/bValidator-0.6/themes/bvalidator.theme.red.css" rel="stylesheet" type="text/css" />
+
+
+
+-->
+
+
+<script>
+  
+    $(document).ready(function(){
+		
+		$('body').attr("class","<?=$this->layout()->pattern == "" ? "pattern3" : $this->layout()->pattern?> <?=$this->layout()->color == "" ? "blue" : $this->layout()->color?>");
+		
+		EnviaForm();	
+    });
+
+function EnviaForm()
+{
+
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/conta/addamigo",
+             data: {amigo : '<?=$this->perfil->tb_sys_usuario?>'},
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+								
+			
+				
+ 
+				if(data.erro == "false")
+				{					
+				
+					
+					window.parent.parent.$().toastmessage('showToast', {
+						text     :  data.msg,
+						stayTime   : 6000,
+						type     : 'success'
+					});		
+					
+				
+				if(socket != null)
+				{
+
+					socket.emit('AmigoAdd', { tipo: 'AmigoAdd', data : { data : '<?=$this->perfil->tb_sys_usuario?>' }});	
+				}
+
+						
+				
+				}else if(data.erro == "true")
+				{
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : data.msg,
+						stayTime   : 60000,
+						type     : 'warning'
+					});				
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+</script>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>   
+
+
+<?php 
+
+ $profile = new Zend_Session_Namespace('perfil');
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+
+?>
+
+
+
+<form id="form1" name="form1" method="post">
+
+
+
+             <!-- BEGIN HOME -->
+            <section id="sec-home" style="display: block;" class="active">
+                 
+            <div style="overflow:hidden;">
+            <div style="float:left;">
+            	 <?php if(!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO){?>
+                	<h2>Meu Perfil</h2>
+                <?php }else{?>
+                	<h2>Perfil de <?=ucfirst(strtolower($this->perfil->NOME_usuario))?></h2>
+                <?php } ?>
+            </div>
+             <div style="float:right; padding-top:30px;">
+                <a href="/conta/busca" title="Clique aqui para procurar novos amigos">Voltar para busca avançada</a>
+                </div>    
+            </div>                
+            
+            
+                <div class="clearfix">
+                <table cellspacing="0" cellpadding="0" border="0" class="table fl">
+                  <tbody><tr>
+                    <td class="td-title">Idade</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_idade)?></td>
+                  </tr>
+                  <tr>
+                    <td class="td-title">Altura</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_altura)?></td>
+                  </tr>
+                  <tr>
+                    <td class="td-title">Peso</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_peso)?></td>
+                  </tr>
+				  <tr>
+                    <td class="td-title">Tipo</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_tipo)?></td>
+                  </tr>                  
+				  <tr>
+                    <td class="td-title">Situação</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_situacao)?></td>
+                  </tr>   
+                  
+                  
+			    <tr>
+                    <td class="td-title">Localização</td>
+                    <td style="text-transform:uppercase;">
+					<?=utf8_encode($this->perfil->NOME_CIDADE_cidade)?> - <?=$this->perfil->SGL_ESTADO_estado?>
+                    </td>
+                  </tr>                       
+				                               
+                </tbody>
+                </table>
+                <table cellspacing="0" cellpadding="0" border="0" class="table fr">
+                  <tbody>
+                    <tr>
+                    <td class="td-title">Fumante</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_fumante)?></td>
+                  </tr>     
+                  <tr>
+                    <td class="td-title">Buscando</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_interesse)?></td>
+                  </tr>
+                  <tr>
+                    <td class="td-title">Disponível</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_disponibilidade)?></td>
+                  </tr>
+                  <tr>
+                    <td class="td-title">Bebidas</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_bebidas)?></td>
+                  </tr>
+                  
+                  <?php 
+				
+				  if($this->is_friend == false) { ?>
+                  <tr>
+                    <td colspan="2" align="left" style="text-align:left; padding:0;"><br /><input type="submit" value="Adicionar como seu amigo" style="background-color:#099;"></td>
+                  </tr>
+                  <?php }else{ ?>
+                  <tr>
+                    <td colspan="2" align="left" style="text-align:left; padding:0;"><br /><input disabled="disabled" type="submit" value="<?=ucfirst(strtolower($this->perfil->NOME_usuario))?> já está na sua lista de amigos" style="background-color:#099;"></td>
+                  </tr>
+                  <? } ?>
+                </tbody></table>
+                </div>
+            </section>
+            <!-- END HOME -->
+       
+       
+</form>
+

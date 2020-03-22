@@ -1,0 +1,906 @@
+<?
+
+ $profile = new Zend_Session_Namespace('perfil');
+ $auth = Zend_Auth::getInstance();
+ $usuario_logado = $auth->getStorage()->read();
+ 
+?>
+
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+
+
+<script>
+   function setupLabel() {
+        if ($('.label_check input').length) {
+            $('.label_check').each(function(){ 
+                $(this).removeClass('c_on');
+            });
+            $('.label_check input:checked').each(function(){ 
+                $(this).parent('label').addClass('c_on');
+            });                
+        };
+        if ($('.label_radio input').length) {
+            $('.label_radio').each(function(){ 
+                $(this).removeClass('r_on');
+            });
+            $('.label_radio input:checked').each(function(){ 
+                $(this).parent('label').addClass('r_on');
+            });
+        };
+    };
+    $(document).ready(function(){
+			
+			
+		$("#btnBuscaSenhaOld").click(function () {
+		
+		
+		
+     	$.ajax({
+             type: "POST",
+             url: "/conta/buscasenha",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+				if(data.erro == "false")
+				{					
+					window.parent.$().toastmessage('showSuccessToast',  data.msg);
+					
+					$("#blocoNovaSenha").css("display", "block");
+					$("#btnSalvarAlteracoesSenha").css("display", "block");					
+					$("#SENHA1").focus();
+					$("#typeChange").val("changePass");
+
+						
+				}else if(data.erro == "edit")
+				{
+					window.parent.$().toastmessage('showSuccessToast', data.msg);			
+					
+					$(".tab2Bloco").hide();
+					var index = $('#tabs a[href="#tabs-1"]').parent().index();
+					$('#tabs').tabs('select', index);
+					
+				}else if(data.erro == "valida")
+				{
+					
+					
+					 
+
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : 'Por favor, preencha os campos obrigatórios.',
+						stayTime   : 60000,
+						type     : 'notice'
+					});					 
+				
+																
+				}
+				else if(data.erro == "true")
+				{
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : data.msg,
+						stayTime   : 60000,
+						type     : 'warning'
+					});				
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });	
+			
+
+
+
+$("#btnSalvarConfirmarExclusao").click(function () {
+	
+	jConfirm('Deseja confirmar a exclusão da sua conta?', 'Confirmar ação', function(r) {
+			
+		$("#btnSalvarConfirmarExclusao").val("Excluindo...");	
+			
+		if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluirconta",
+				 data: {},
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+					if(data.erro == "false")
+					{					
+						jAlert(data.msg, 'Alerta', function(r) {
+							window.location = "/conta/logoff";
+						});
+						
+					}
+					else if(data.erro == "true")
+					{
+						 jAlert("Houve um erro na tentativa de excluir sua conta, entre em contato com a nossa equipe.", 'Alerta', function(r) {
+							
+						 });
+					}
+					
+					
+					
+				 }
+			 }); 
+		 };
+			
+	});
+	
+});
+
+
+$("#btnBuscaSenhaExclui").click(function () {
+		
+		
+		
+     	$.ajax({
+             type: "POST",
+             url: "/conta/buscasenhaexclui",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+				if(data.erro == "false")
+				{					
+					window.parent.$().toastmessage('showSuccessToast',  data.msg);
+					
+					/*$("#blocoNovaSenha").css("display", "block");
+					$("#btnSalvarAlteracoesSenha").css("display", "block");					
+					$("#SENHA1").focus();
+					$("#typeChange").val("changePass");*/
+					
+					$("#btnSalvarConfirmarExclusao").css("display", "block");
+
+
+						
+				}else if(data.erro == "edit")
+				{
+				/*	window.parent.$().toastmessage('showSuccessToast', data.msg);			
+					
+					$(".tab2Bloco").hide();
+					var index = $('#tabs a[href="#tabs-1"]').parent().index();
+					$('#tabs').tabs('select', index);
+					*/
+				}else if(data.erro == "valida")
+				{
+					/*
+
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : 'Por favor, preencha os campos obrigatórios.',
+						stayTime   : 60000,
+						type     : 'notice'
+					});					 */
+				
+																
+				}
+				else if(data.erro == "true")
+				{
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : data.msg,
+						stayTime   : 60000,
+						type     : 'warning'
+					});				
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });	
+
+
+
+
+		$('body').attr("class","<?=$this->layout()->pattern == "" ? "pattern3" : $this->layout()->pattern?> <?=$this->layout()->color == "" ? "blue" : $this->layout()->color?>");
+		
+		<? if($this->perfil->FL_PRIMEIROACESSO_usuario == 1){?>
+		
+		$.fancybox({
+			
+				width: 410,
+				height: 100,
+				transitionIn: 'elastic',
+				transitionOut: 'elastic',
+				type: 'iframe',
+				href: '/conta/termos',
+				centerOnScroll: true,
+				modal: true
+
+			});			
+		<? } ?>
+		
+		
+        $('body').addClass('has-js');
+        $('.label_check, .label_radio').click(function(){
+            setupLabel();
+        });
+        setupLabel(); 
+		
+		var optionsRed = {
+			classNamePrefix: 'bvalidator_red_'
+		};
+		
+		$('#form1').bValidator(optionsRed);
+		
+		EnviaForm();
+		
+		
+		
+		 $( "#tb_sys_cidade2" ).autocomplete({
+
+		 	autoFocus: true,
+			minLength: 2,
+			source: function( request, response ) {
+				$.ajax({
+					url: "/conta/cidadesjson",
+					dataType: "json",
+					data: {
+						featureClass: "P",
+						style: "full",
+						maxRows: 12,
+						name_startsWith: request.term
+					},
+					success: function( data ) {
+						response( $.map( data, function( item ) {
+							return {
+								//label: item.TITULO + (item.TITULO ? ", " + item.TITULO : "") + ", " + item.TITULO,
+								label: item.NOME_CIDADE + ", " + item.SGL_ESTADO,
+								id: item.ID_CIDADE							
+							}
+
+						}));
+					}
+				});
+			},
+
+			select: function( event, ui ) {
+
+				  $("#tb_sys_cidade").val(ui.item.id);
+				  $("#EMAIL").focus();
+				  
+			},
+
+			open: function() {
+
+				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+
+			},
+
+			close: function() {
+
+				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+
+			}
+
+		}).data( "autocomplete" )._renderItem = function( ul, item ) {
+
+		
+				return $( "<li></li>" )
+
+				.data( "item.autocomplete", item )
+
+				.append( "<a>" + item.label + "</a>" )
+
+				.appendTo( ul );
+
+
+		};
+		
+		
+		
+	$('form').bind("keyup", function(e) {
+	  var code = e.keyCode || e.which; 
+	  if (code  == 13) {               
+		e.preventDefault();
+		return false;
+	  }
+	});
+	 	
+    });
+	
+	
+	
+function checkUsername(username){
+		
+		/*var ret = false;
+		
+		$.ajax({
+			type: 'POST',
+			url: 'index/checausername',
+			async: false,
+			data: {'username':username},
+			success: function(data){
+				if(data == 'ok')
+					ret = true
+			}
+		});
+
+		return ret;
+		*/
+		
+		return true;
+	}
+
+
+function EnviaForm()
+{
+	
+	
+	
+	$("#form1").submit(function () {
+		
+		
+		
+     	$.ajax({
+             type: "POST",
+             url: "/conta/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+			
+				
+ 
+				if(data.erro == "false")
+				{					
+					window.parent.$().toastmessage('showSuccessToast', 'Usuário cadastrado com sucesso<br /> você será redirecionado para a página de login!');
+					
+					setTimeout(function() {
+					  window.location.href = "/";
+					}, 5000);
+					
+					
+
+						
+				}else if(data.erro == "edit")
+				{
+					window.parent.$().toastmessage('showSuccessToast', data.msg);			
+					
+					$(".tab2Bloco").hide();
+					var index = $('#tabs a[href="#tabs-1"]').parent().index();
+					$('#tabs').tabs('select', index);
+					$("#typeChange").val("");
+					$("#btnSalvarAlteracoesSenha").css("display", "none");					
+					$("#blocoNovaSenha").css("display", "none");
+					
+				}else if(data.erro == "valida")
+				{
+					
+					
+					 
+
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : 'Por favor, preencha os campos obrigatórios.',
+						stayTime   : 60000,
+						type     : 'notice'
+					});					 
+					
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+					
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+					 });
+																
+				}
+				else if(data.erro == "true")
+				{
+					window.parent.parent.$().toastmessage('showToast', {
+						text     : data.msg,
+						stayTime   : 60000,
+						type     : 'warning'
+					});				
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+</script>
+
+
+
+<style>
+
+
+.ui-tabs .ui-tabs-panel 
+{
+	font-family:'Yanone Kaffeesatz',sans-serif;	
+	color: #555555;
+	font-size:16px;
+}
+
+</style>
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>    
+
+
+<form id="form1" name="form1" method="post">
+
+
+<h2>Editando Perfil <span class="campo">
+  <input name="tb_sys_usuario" type="hidden" id="tb_sys_usuario" style="width:330px;" readonly="readonly" data-bvalidator="required" data-bvalidator-msg="Informe a sua cidade" value="<?=$this->perfil->tb_sys_usuario?>"/>
+</span></h2>
+
+<script>
+	$(function() {
+		$( "#tabs" ).tabs();
+		
+	});
+	
+	function trocaTabs()
+	{
+		$(".tab2Bloco").show();
+		var index = $('#tabs a[href="#tabs-2"]').parent().index();
+		$('#tabs').tabs('select', index);
+	}
+	</script>
+<br />
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-1">Meu Perfil</a></li>
+		<li class="tab2Bloco" style="display:none;"><a href="#tabs-2">Alterar Perfil</a></li>
+		<li><a href="#tabs-3">Privacidade</a></li>
+      	<li><a href="#tabs-4">Alterar Senha</a></li>
+      	<li><a href="#tabs-5">Excluir minha conta</a></li>
+	</ul>
+	<div id="tabs-1">
+    
+    
+      		<!-- BEGIN HOME -->
+            <section id="sec-home" style="display: block;" class="active">
+                 
+        
+            
+            
+                <div class="clearfix">
+                <table cellspacing="0" cellpadding="0" border="0" class="table fl">
+                  <tbody><tr>
+                    <td class="td-title">Idade</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_idade)?></td>
+                  </tr>
+                  <tr>
+                    <td class="td-title">Altura</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_altura)?></td>
+                  </tr>
+                  <tr>
+                    <td class="td-title">Peso</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_peso)?></td>
+                  </tr>
+				  <tr>
+                    <td class="td-title">Tipo</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_tipo)?></td>
+                  </tr>                  
+				  <tr>
+                    <td class="td-title">Situação</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_situacao)?></td>
+                  </tr> 
+                    <!--<tr>
+                    <td class="td-title">Um pouco sobre mim</td>
+                    <td style="text-transform:uppercase;"><textarea name="SOBREMIM" rows="10" style="width:200px;" id="SOBREMIM"><?=$this->perfil->SOBREMIM?></textarea></td>
+                  </tr> -->        
+				              
+                                               
+                </tbody>
+                </table>
+                <table cellspacing="0" cellpadding="0" border="0" class="table fr">
+                  <tbody>
+                    <tr>
+                    <td class="td-title">Fumante</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_fumante)?></td>
+                  </tr>     
+                  <tr>
+                    <td class="td-title">Buscando</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_interesse)?></td>
+                  </tr>
+                  <tr>
+                    <td class="td-title">Disponível</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_disponibilidade)?></td>
+                  </tr>
+                  <tr>
+                    <td class="td-title">Bebidas</td>
+                    <td style="text-transform:uppercase;"><?=utf8_encode($this->perfil->DESCRICAO_bebidas)?></td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"  style="text-align:left; padding:0;"> <!--<input type="submit" value="Salvar Alterações">-->
+                    <input type="button" value="Alterar foto e perfil" onclick="trocaTabs();" style="background-color:#099; font-family:'Yanone Kaffeesatz',sans-serif;">
+                    </td>
+                  </tr>
+                </tbody></table>
+                </div>
+            </section>
+            <!-- END HOME -->
+    
+	
+	</div>
+	<div id="tabs-2" class="tab2Bloco" style="display:none;">
+		
+        
+        
+        <div id="criandoetapa2">
+
+	<div id="left" style="width: 780px;">
+   
+    	<div class="box2">
+        	<div class="titulo">Idade</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php 
+					foreach($this->idade as $chave => $valor){
+						if($this->perfil->tb_glove_idade == $valor->ID_IDADE)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}
+						
+					?>
+                	<li><label class="label_radio" for="tb_glove_idade[<?=$valor->ID_IDADE?>]"><input name="tb_glove_idade" id="tb_glove_idade[<?=$valor->ID_IDADE?>]" value="<?=$valor->ID_IDADE?>" type="radio" <?=$checked?>  /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Altura</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->altura as $chave => $valor){
+						if($this->perfil->tb_glove_altura == $valor->ID_ALTURA)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}
+						?>
+                	<li><label class="label_radio" for="tb_glove_altura[<?=$valor->ID_ALTURA?>]"><input name="tb_glove_altura" id="tb_glove_altura[<?=$valor->ID_ALTURA?>]" value="<?=$valor->ID_ALTURA?>" type="radio" <?=$checked?> /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                                 
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Peso</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->peso as $chave => $valor){
+						if($this->perfil->tb_glove_peso == $valor->ID_PESO)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}
+						?>
+                	<li><label class="label_radio" for="tb_glove_peso[<?=$valor->ID_PESO?>]"><input name="tb_glove_peso" id="tb_glove_peso[<?=$valor->ID_PESO?>]" value="<?=$valor->ID_PESO?>" type="radio" <?=$checked?> /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                               
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Tipo</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->tipo as $chave => $valor){
+						if($this->perfil->tb_glove_tipo == $valor->ID_TIPO)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}
+						?>
+                	<li><label class="label_radio" for="tb_glove_tipo[<?=$valor->ID_TIPO?>]"><input name="tb_glove_tipo" id="tb_glove_tipo[<?=$valor->ID_TIPO?>]" value="<?=$valor->ID_TIPO?>" type="radio" <?=$checked?> /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                        
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Situação</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->situacao as $chave => $valor){
+						if($this->perfil->tb_glove_situacao == $valor->ID_SITUACAO)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}
+						?>
+                	<li><label class="label_radio" for="tb_glove_situacao[<?=$valor->ID_SITUACAO?>]"><input name="tb_glove_situacao" id="tb_glove_situacao[<?=$valor->ID_SITUACAO?>]" value="<?=$valor->ID_SITUACAO?>" type="radio" <?=$checked?> /> <?=$valor->DESCRICAO?></label></li>
+                    <?php } ?>                                      
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Fumante</div>
+            <div class="opcoes">
+            	<ul>
+                		<?php foreach($this->fumante as $chave => $valor){
+						if($this->perfil->tb_glove_fumante == $valor->ID_FUMANTE)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}	
+						?>
+                	<li><label class="label_radio" for="tb_glove_fumante[<?=$valor->ID_FUMANTE?>]"><input name="tb_glove_fumante" id="tb_glove_fumante[<?=$valor->ID_FUMANTE?>]" value="<?=$valor->ID_FUMANTE?>" type="radio" <?=$checked?> /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                           
+                </ul>
+            </div>
+        </div>
+        
+        
+        <div class="box2">
+        	<div class="titulo">Buscando</div>
+            <div class="opcoes">
+            	<ul>
+                	
+                	<?php foreach($this->interesse as $chave => $valor){
+						if($this->perfil->tb_glove_insteresse == $valor->ID_INSTERESSE)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}	
+					?>
+                	<li><label class="label_radio" for="tb_glove_insteresse[<?=$valor->ID_INSTERESSE?>]"><input name="tb_glove_insteresse" id="tb_glove_insteresse[<?=$valor->ID_INSTERESSE?>]" value="<?=$valor->ID_INSTERESSE?>" type="radio" <?=$checked?> /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                           
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Disponível</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->disponivel as $chave => $valor){
+						if($this->perfil->tb_glove_disponibilidade == $valor->ID_DISPONIBILIDADE)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}	
+						?>
+                	<li><label class="label_radio" for="tb_glove_disponibilidade[<?=$valor->ID_DISPONIBILIDADE?>]"><input name="tb_glove_disponibilidade" id="tb_glove_disponibilidade[<?=$valor->ID_DISPONIBILIDADE?>]" value="<?=$valor->ID_DISPONIBILIDADE?>" type="radio" <?=$checked?> /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                                       
+                </ul>
+            </div>
+        </div>
+        
+        <div class="box2">
+        	<div class="titulo">Bebidas</div>
+            <div class="opcoes">
+            	<ul>
+                	<?php foreach($this->bebida as $chave => $valor){
+						if($this->perfil->tb_glove_bebidas == $valor->ID_BEBIDA)
+						{
+							$checked = "checked=\"checked\"";	
+						}else
+						{
+							$checked = "";
+						}	
+						
+					?>
+                	<li><label class="label_radio" for="tb_glove_bebidas[<?=$valor->ID_BEBIDA?>]"><input name="tb_glove_bebidas" id="tb_glove_bebidas[<?=$valor->ID_BEBIDA?>]" value="<?=$valor->ID_BEBIDA?>" type="radio" <?=$checked?> /> <?=utf8_encode($valor->DESCRICAO)?></label></li>
+                    <?php } ?>                               
+                </ul>
+            </div>
+        </div>
+        
+        <div id="right">
+        <div class="form">
+     	<div class="campo">
+        	<label for="tb_sys_cidade2">Cidade onde reside</label>
+           	<input name="tb_sys_cidade2" type="text" id="tb_sys_cidade2" style="width:535px;" data-bvalidator="required" data-bvalidator-msg="Informe a sua cidade" value="<?=utf8_encode($this->perfil->NOME_CIDADE_cidade)?>, <?=$this->perfil->SGL_ESTADO_estado?>"/>
+          <input name="tb_sys_cidade" type="hidden" id="tb_sys_cidade" style="width:330px;" readonly="readonly" data-bvalidator="required" data-bvalidator-msg="Informe a sua cidade" value="<?=$this->perfil->ID_CIDADE_cidade?>"/>
+     	</div>
+        
+     	<div class="campo">
+        	<label for="EMAIL">Seu e-mail</label>
+           	<input name="EMAIL" type="text" id="EMAIL" style="width:535px;"  value="<?=$this->perfil->EMAIL_usuario?>" readonly="readonly" data-bvalidator="email,required" data-bvalidator-msg="Informe um e-mail válido"/>
+        </div>
+        
+     	<div class="campo">
+        	<label for="NOME">Nome</label>
+           	<input name="NOME" type="text" value="<?=$this->perfil->NOME_usuario?>" id="NOME" style="width:535px;" data-bvalidator="required" data-bvalidator-msg="Informe o seu nome"/>
+        </div>
+        
+           	<div class="campo">
+        	<label for="SOBRENOME">Sobrenome</label>
+           	<input name="SOBRENOME" type="text" value="<?=$this->perfil->SOBRENOME_usuario?>" id="SOBRENOME" style="width:535px;" data-bvalidator="required" data-bvalidator-msg="Informe o seu sobrenome"/>
+        </div>
+        
+     	<!--<div class="campo">
+        	<label for="SLUG">Digite um nome de usuário</label>
+           	<input name="SLUG" type="text" id="SLUG" value="<?=$this->perfil->SLUG_usuario?>" style="width:535px;" data-bvalidator="checkUsername,required" data-bvalidator-msg="Este usuário não é válido ou está em uso."/>
+        </div> 
+        
+		<div class="campo">
+       	  <label for="SENHA1">Digite uma senha</label>
+           	<input name="SENHA1" type="password" id="SENHA1" style="width:535px;" value="<?=$this->perfil->SENHA_usuario?>" maxlength="8"  data-bvalidator-msg="Informe uma senha" />
+        </div>
+        
+        
+		<div class="campo">
+       	  <label for="SENHA">Confirme a senha digitada</label>
+           	<input name="SENHA" type="password" id="SENHA" style="width:535px;" value="<?=$this->perfil->SENHA_usuario?>"  maxlength="8"  data-bvalidator="equalto[SENHA1],required" data-bvalidator-msg="As senhas não conferem"/>
+        </div>                                        
+		 -->
+        
+        
+       	<div class="campo">
+       	  <label for="SOBREMIM">Sobre mim</label>
+           <textarea name="SOBREMIM" rows="5" style="width:535px;" id="SOBREMIM"><?=$this->perfil->SOBREMIM?></textarea>
+        </div>   
+        
+                
+       	<div class="campo" style="margin-top:5px;">
+		<input type="submit" value="Salvar Alterações"  style="background-color:#099; font-family:'Yanone Kaffeesatz',sans-serif;">       
+		</div>
+        
+     </div>
+         </div>    
+        
+      
+    </div>
+    
+	
+    
+     
+      
+   
+	<div style="position:absolute; margin-top:560px; text-align:center;">
+    	
+        <img src="/thumbs/index/w/150/h/150/type/2/file/<?=isset($this->perfil->ARQUIVO_fotoperfil) ? $this->perfil->ARQUIVO_fotoperfil : ""?>" border="0" id="<?=!empty($profile->idPerfil) && $profile->idPerfil == $usuario_logado->ID_USUARIO ? 'pictureMeuPerfilEdit' : ''?>" />
+    	<br />
+           <a href="javascript:void(0);" onclick="Popup('/conta/multmedia', 800, 900);"  title="Alterar foto do perfil"> • Alterar foto do perfil</a>
+        
+    </div>
+    
+   
+
+</div>
+	</div>
+	<div id="tabs-3">
+		<p>Permissão para ser encontrado nas buscas? 
+        <select name="ID_PRIVACIDADEBUSCA">
+        	<option value="1">Todos</option>
+        	<option value="2">Somente Amigos</option>            
+        	<option value="3">Somente Eu</option>                        
+        </select>
+        </p>
+        <br /><br />
+		<p>Permissão para visualização de mensagens? 
+        <select name="ID_PRIVACIDADEMENSAGENS">
+        	<option value="1">Todos</option>
+        	<option value="2">Somente Amigos</option>            
+        	<option value="3">Somente Eu</option>                        
+        </select>
+        </p>
+	</div>
+    
+    <div id="tabs-4">
+    	
+        <div class="campo">
+        	<label for="SLUG">Seu usuário</label>
+           	<input name="SLUG" type="text" id="SLUG" value="<?=$this->perfil->SLUG_usuario?>" style="width:335px;" data-bvalidator="checkUsername,required" readonly="readonly" data-bvalidator-msg="Este usuário não é válido ou está em uso."/>
+        </div> 
+        
+        <div class="campo">
+       	  <label for="SENHAOLD">Digite sua senha atual</label>
+           	<input name="SENHAOLD" type="password" id="SENHAOLD" style="width:335px;" value=""  data-bvalidator-msg="Informe uma senha" /> <input type="button" id="btnBuscaSenhaOld" value="Ok" style="background-color:#099; font-family:'Yanone Kaffeesatz',sans-serif;">
+        </div>
+        
+        <span id="blocoNovaSenha" style="display:none;">
+        
+		<div class="campo">
+       	  <label for="SENHA1">Digite uma nova senha</label>
+           	<input name="SENHA1" type="password" id="SENHA1" style="width:535px;" value=""  data-bvalidator-msg="Informe uma senha" />
+        </div>
+        
+        <div class="campo">
+       	  <label for="SENHA">Confirme a nova senha digitada</label>
+           	<input name="SENHA" type="password" id="SENHA" style="width:535px;" value=""   data-bvalidator="equalto[SENHA1],required" data-bvalidator-msg="As senhas não conferem"/>
+        </div>  
+        
+        </span>
+        
+        	<div class="campo" style="margin-top:5px;">
+		<input type="submit" value="Salvar Alterações" id="btnSalvarAlteracoesSenha" style="background-color:#099; font-family:'Yanone Kaffeesatz',sans-serif; display:none;"> 
+        
+   
+		</div>
+        
+    </div>
+    
+    
+    <div id="tabs-5">
+    
+    
+       
+        <div class="campo">
+       	  <label for="SENHAEXCLUI">Digite a sua senha atual</label>
+           	<input name="SENHAEXCLUI" type="password" id="SENHAEXCLUI" style="width:335px;" value=""   data-bvalidator="required" data-bvalidator-msg="Informe a sua senha" /> <input type="button" id="btnBuscaSenhaExclui" value="Ok" style="background-color:#099; font-family:'Yanone Kaffeesatz',sans-serif;">
+        </div>
+       
+        
+        <div class="campo">
+       	  <label for="SENHAEXCLUIREPEAT">Confirme a sua senha </label>
+           	<input name="SENHAEXCLUIREPEAT" type="password" id="SENHAEXCLUIREPEAT" style="width:335px;" value=""   data-bvalidator="equalto[SENHAEXCLUI],required" data-bvalidator-msg="As senhas não conferem"/>
+        </div>  
+        
+        </span>
+        
+        	<div class="campo" style="margin-top:5px;">
+		<input type="button" value="Confirmar exclusão" id="btnSalvarConfirmarExclusao" style="background-color:#099; font-family:'Yanone Kaffeesatz',sans-serif; display:none;"> 
+        
+   
+		</div>
+    
+    
+    
+    
+    
+    </div>
+    
+</div>
+
+
+
+
+     <input type="hidden" id="typeChange" name="typeChange"/>
+
+</form>
+
+
+

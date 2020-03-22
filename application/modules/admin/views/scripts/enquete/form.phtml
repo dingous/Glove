@@ -1,0 +1,442 @@
+<div id="page-heading">
+<?php
+/*Juqery UI*/
+$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/jqueryui/development-bundle/themes/base/jquery.ui.all.css');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.core.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.widget.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.mouse.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.sortable.js');
+?>
+
+<style>
+#sortable
+{
+	margin: 0 0 0 0;
+	position: 0 0 0 0;
+}
+
+#sortable .ui-state-default
+{
+	height:30px;
+	list-style-type:none;	
+	font-size:13px;
+}
+#sortable  .ui-state-highlight
+{
+	height:28px;
+	list-style-type:none;	
+}
+
+
+body
+{
+	margin: 0 0 0 0;	
+}
+
+.ordem
+{
+	background-color:#FFF;
+	height:28px;
+	padding: 1px 1px 1px 8px;
+}
+
+.url
+{
+	height:18px;
+	padding:5px;
+	padding-left:30px;	
+	width:600px;
+	float:left;	
+}
+
+
+.acoes
+{
+	float:right;
+	padding:2px;
+}
+
+</style>
+
+
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Enquetes</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Enquete</a></li> 
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Preencha o formulário</legend>
+        
+        
+        <?php
+				 if(count($this->aplicacoes) > 0){
+				 ?>  
+				 
+				 <div class="linha">
+				   <div class="elemento">
+						<label>Escolha uma rádio:</label>
+						<select name="tb_sys_aplicacao" id="tb_sys_aplicacao">
+						<?php 
+						$selected = "";
+						foreach($this->aplicacoes as $chave => $valor){
+						if(isset($this->modelo))
+						{
+						$selected = ($this->modelo->tb_sys_aplicacao == $valor->ID_APLICACAO) ? 'selected="selected"' : "";
+						}
+						?>
+						<option value="<?=$valor->ID_APLICACAO?>" <?=$selected?> ><?=$valor->DESCRICAO?></option>
+						<?php } ?>
+						</select>
+				   </div>
+				 </div>
+				 
+				 
+				 <?php }else{ ?>
+						
+					   <input type="hidden" name="tb_sys_aplicacao" id="tb_sys_aplicacao" value="<?=$this->aplicacoes->ID_APLICACAO?>">
+						
+				 <?php } ?>   
+        
+        
+        <div class="linha">
+        	
+        
+            
+          <div class="elemento">
+            	<label>Pergunta da enquete:</label>
+                <input name="PERGUNTA" type="text" id="PERGUNTA" size="100" value="<?=isset($this->modelo->PERGUNTA) ? $this->modelo->PERGUNTA : NULL?>" />
+          </div>
+            
+          
+            
+        </div>
+        
+        
+        <?php if(isset($this->modelo->ID_ENQUETE)){ ?>    
+            
+       <div class="linha">
+        	
+        
+            
+          <div class="elemento">
+            	<label>Respostas da enquete:</label>
+                
+                <input name="RESPOSTAS" type="text" id="RESPOSTAS" size="100" value="" /> <input type="button" name="btnInserir" id="btnInserir" value="inserir" />
+                
+                
+            <br /><br />
+            <ul id="sortable"> 
+            <?php 
+                if(count($this->respostas) > 0){
+            ?>
+                <?php
+				$i=1;
+                foreach($this->respostas as $chave => $valor){?>
+                
+                    <li class="ui-state-default" id="<?=$valor->ID_RESPOSTA?>">
+                      
+                      <div style="float:left;" class="ordem"><b><?=$valor->ORDEM?>º</b></div>
+                      <div style="float:left;" class="setas">
+                      </div>
+                      <div class="url">
+                      <input type="text" name="resposta<?=$valor->ID_RESPOSTA?>" value="<?=$valor->RESPOSTA?>" id="resposta<?=$valor->ID_RESPOSTA?>" size="90" class="inputResposta"/>
+                      </div>
+                      <div class="acoes">
+                      <a href="javascript:deletar(<?=$valor->ID_RESPOSTA?>);"  class="icon-2 info-tooltip btnExcluir" title="Excluir este ítem" alt="Excluir este ítem" ></a></div>
+                                          
+                   </li> 
+                   
+                <?php $i++; } ?>
+            
+           	 	<?php } ?>
+                
+                </ul> 
+                
+                
+                
+          </div>
+            
+          
+            
+        </div>
+            
+          <?php } ?>  
+          
+          
+          <div class="linha">
+        	
+        
+            
+          <div class="elemento">
+          
+            <label>Publicar no site?</label>
+                
+			<?php if(isset($this->modelo->FL_ATIVA) && $this->modelo->FL_ATIVA == 1){?>
+            <input type="radio" name="FL_ATIVA" id="FL_ATIVA" value="1" checked="checked" />Sim 
+            <input type="radio" name="FL_ATIVA" id="FL_ATIVA" value="0"/>Não    
+            <?php  }elseif(isset($this->modelo->FL_ATIVA) && $this->modelo->FL_ATIVA == 0){ ?>             
+            <input type="radio" name="FL_ATIVA" id="FL_ATIVA" value="1"  />Sim 
+            <input type="radio" name="FL_ATIVA" id="FL_ATIVA" value="0" checked="checked"/>Não    
+            <?php  }else{ ?>   
+            <input type="radio" name="FL_ATIVA" id="FL_ATIVA" value="1"  />Sim 
+            <input type="radio" name="FL_ATIVA" id="FL_ATIVA" value="0" checked="checked"/>Não    
+            <?php } ?>
+                
+          </div>
+            
+          
+            
+        </div>
+              
+          
+    	 <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+             <input type="submit" value="Salvar" name="salvar" class="btnSalvar" />
+             <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_ENQUETE" type="hidden" id="ID_ENQUETE" value="<?=isset($this->modelo->ID_ENQUETE) ? $this->modelo->ID_ENQUETE : NULL?>" readonly="readonly" />
+             
+             </div>
+         </div>
+        
+    	    
+    
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+						
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					if(data.tipo_acao == "insert")
+					{
+						window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/editar/id/' + data.modelo.ID_ENQUETE;
+					}else
+					{
+						window.location = '/<?=$this->modulo?>/<?=$this->controlador?>';
+					}
+					
+						
+				}else if(data.erro == "valida")
+				{
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+						
+						
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+
+					 });
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs();
+	 
+	 $("input")[0].focus();
+	 
+	 sortable();
+	$( "#sortable" ).bind( "sortupdate", function(event, ui) 
+	 { 
+			var result = $(this).sortable('toArray');	
+			updateSortable(result); 
+	 });
+
+	 
+	 
+	 
+	 
+	 
+	 $("#btnInserir").bind("click", function(ui, e)
+	 {
+
+		 	$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/insereresposta",
+				 data: $("#form1").serialize(),
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+				 	clonaLinha(data);
+					$('#sortable').trigger('sortupdate') 	
+				 }
+			});
+		 
+	 });
+	 
+	 bindUrl();
+	
+});
+
+
+
+function clonaLinha(json)
+{
+	var pai = $("#sortable");
+
+	var html = '';
+    html += '<li class="ui-state-default" id="">';               
+    html += '<div style="float:left;" class="ordem"><b></b></div>';               
+    html += '<div style="float:left;" class="setas">';               
+    html += '</div>';               
+    html += '<div class="url">';               
+    html += '<input type="text" name="resposta" value="" id="resposta" size="90" class="inputResposta"/>';               
+    html += '</div>';               
+    html += '<div class="acoes">';               
+    html += '<a href="javascript:deletar();"  class="icon-2 info-tooltip btnExcluir" title="Excluir este ítem" alt="Excluir este ítem" ></a></div>';               
+    html += '</li>';
+	
+	
+	var li = $(html);
+	li.css("display", "block");
+	li.attr("id", json.modelo.ID_RESPOSTA);
+	li.find(".ordem").find("b").html(json.modelo.ORDEM + "º");
+	li.find(".url").find('.inputResposta').attr("name", "resposta"+json.modelo.ID_RESPOSTA);
+	li.find(".url").find('.inputResposta').attr("id", "resposta"+json.modelo.ID_RESPOSTA);
+	li.find(".url").find('.inputResposta').val(json.modelo.RESPOSTA);
+	li.find(".acoes").find("a").attr("href", "javascript:deletar("+json.modelo.ID_RESPOSTA+");");
+	
+	
+	var clone = li.clone();
+	clone.appendTo(pai);
+	
+	bindUrl();
+	
+	
+}
+
+function bindUrl()
+{
+	$(".inputResposta").bind( "blur", function(event, ui) 
+		 { 
+		 		var txt = $(this).val();
+				var name = $(this).attr("name");
+				var id = name.replace('resposta', '');
+				$.ajax({
+					type: "POST",
+					url: '/<?=$this->modulo?>/<?=$this->controlador?>/updatefield', 
+					data: { id : id, txt: txt},
+					dataType: "json",
+					ContentType:	"text/json",  
+					success: function(data) {}
+				});			
+	     });
+}
+
+function updateSortable(result)
+{
+	$.each(result, function(index, value) { 				
+		$("#"+value+"").find(".ordem").html("<b>"+(parseInt(index) + 1) + "º</b>");
+	});
+					
+	$.ajax({
+	type: "POST",
+	url: '/<?=$this->modulo?>/<?=$this->controlador?>/ordena/sort/' + result.toString(), 
+	dataType: "json",
+	ContentType:	"text/json",  
+	success: function(data) {
+			
+		$.jGrowl(data.msg, { theme: 'alerta'});
+			
+	}});			
+}
+
+function sortable()
+{
+	$( "#sortable" ).sortable({
+			placeholder: "ui-state-highlight",
+	    	update: function(event, ui) {}
+		});
+			
+}
+
+
+function deletar(id)
+	{	
+		jConfirm('Confirmar exclusão?', 'Confirmar ação', function(r) {
+			if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluirresposta",
+				 data: { id: id},
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+				 
+					if(data.erro == "false")
+					{					
+						//$.jGrowl(data.msg, { theme: 'ok'});	
+						$("#"+id).remove();
+						$('#sortable').trigger('sortupdate') 		
+										
+					}
+					else if(data.erro == "erro")
+					{
+						 $.jGrowl(data.msg, { theme: 'alerta'});
+					}
+					
+				 }
+			 }); 
+		 };
+		});
+	}
+
+</script>
+

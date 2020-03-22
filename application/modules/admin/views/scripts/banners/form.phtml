@@ -1,0 +1,454 @@
+<?php
+
+$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/uploadify-v2.1.4/uploadify.css');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/swfobject.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/uploadify-v2.1.4/jquery.uploadify.v2.1.4.js');
+
+
+/*Juqery UI*/
+$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/jqueryui/development-bundle/themes/base/jquery.ui.all.css');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.core.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.widget.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.mouse.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.sortable.js');
+?>
+
+
+
+<div id="page-heading">
+
+<style>
+#sortable
+{
+	margin: 0 0 0 0;
+	position: 0 0 0 0;
+}
+
+#sortable .ui-state-default
+{
+	height:240px;
+	list-style-type:none;	
+	font-size:13px;
+}
+#sortable  .ui-state-highlight
+{
+	height:240px;
+	list-style-type:none;	
+}
+
+
+body
+{
+	margin: 0 0 0 0;	
+}
+
+.ordem
+{
+	background-color:#FFF;
+	height:236px;
+	padding: 1px 1px 1px 8px;
+}
+
+.url
+{
+	height:18px;
+	padding:5px;
+	padding-left:30px;	
+	width:200px;
+	float:left;
+	
+}
+
+.setas
+{
+	width:150px;
+	overflow:hidden;
+	margin-left:30px;
+}
+
+.acoes
+{
+	float:right;
+	padding:5px;
+}
+
+</style>
+
+
+
+	<h1><img src="/assets/admin/icones/icon1.png"> Gerenciar Banner</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Banner</a></li> 
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Imagens do banner</legend>
+        
+        <div class="linha">
+        	
+        
+            
+          <div class="elemento">
+            	<label>Adicionar nova imagem ao banner, dimensões: <?=$this->modelo->WIDTH?> x <?=$this->modelo->HEIGHT?> <?=$this->modelo->DIMENSOES?>:</label>
+                <input id="file_upload" name="file_upload" type="file" value="selecionar arquivos" />
+                <input type="hidden" value="<?=$this->modelo->WIDTH?>" id="width" name="width" />
+                <input type="hidden" value="<?=$this->modelo->HEIGHT?>" id="height" name="height" />                
+	            <input type="hidden" value="<?=$this->modelo->AUTOCROP == "0" ? "false" : "true"?>" id="autocrop" name="autocrop" />
+          </div> 
+            
+          
+            
+        </div>
+            
+                 
+    	 <div class="linha">
+         <ul id="sortable"> 
+            <?php 
+                if(count($this->modeloimg) > 0){
+            ?>
+                <?php
+				$i=1;
+                foreach($this->modeloimg as $chave => $valor){?>
+                
+                    <li class="ui-state-default" id="<?=$valor->ID_FOTOBANNER?>">
+                      
+                      <div style="float:left;" class="ordem"><b><?=$valor->ORDEM?>º</b></div>
+                      <div style="float:left;" class="setas">
+                        <center>
+                            <img src="/thumbs/index/w/200/h/200/type/4/file/<?=$valor->CAMINHO_FOTO?>/autocrop/false" id="thumb" />
+                        </center>
+                      </div>
+                      <div class="url">URL: <input name="url<?=$valor->ID_FOTOBANNER?>" type="text" id="url" size="60" class="urlField" value="<?=$valor->URL?>" />
+                      
+                      
+                       
+                       <br /><br />
+                      Abrir url:<br />                   
+                      <select name="urlTarget<?=$valor->ID_FOTOBANNER?>" class="urlTarget">
+                      <option value="_self" <?=$valor->URL_TARGET == "_self" ? "selected=\"selected\"" : ""?>>Mesma janela</option>             
+                      <option value="_blank" <?=$valor->URL_TARGET == "_blank" ? "selected=\"selected\"" : ""?>>Nova janela</option>         
+                      </select>
+                      
+                      <br /><br />
+                      Título: 
+                      <input name="titulo<?=$valor->ID_FOTOBANNER?>" type="text" id="titulo" size="60" class="tituloField" value="<?=$valor->TITULO?>" />
+                       <br /><br />
+                      Descrição:                       
+                      <textarea name="descricao<?=$valor->ID_FOTOBANNER?>" cols="60" class="descricaoField" id="descricao"><?=$valor->DESCRICAO?></textarea>
+                      
+                      </div>
+                      <div class="acoes">
+                      <a href="javascript:deletar(<?=$valor->ID_FOTOBANNER?>);"  class="icon-2 info-tooltip btnExcluir" title="Excluir este ítem" alt="Excluir este ítem" ></a></div>
+                                          
+                   </li> 
+                   
+                <?php $i++; } ?>
+            
+           	 	<?php } ?>
+                
+                </ul> 
+                
+         </div>
+         
+         
+         <br style="clear:both" />
+         
+         
+         
+         
+         <div class="linha">
+         	 <div class="elemento">
+         	   <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_BANNER" type="hidden" id="ID_BANNER" value="<?=isset($this->modelo->ID_BANNER) ? $this->modelo->ID_BANNER : NULL?>" readonly="readonly" />
+             
+             </div>
+         </div>
+        
+    	    
+            
+            
+     
+            
+    
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+						
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					window.location = '/<?=$this->modulo?>/<?=$this->controlador?>';
+					
+						
+				}else if(data.erro == "valida")
+				{
+				
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+						
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+
+					 });
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 
+	 $( "#tabs" ).tabs();
+	 
+	 $("input")[0].focus();
+	 
+	 
+	  $('#file_upload').uploadify({  
+		'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+		'script'    : '/<?=$this->modulo?>/<?=$this->controlador?>/uploadicone',
+		'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+		'folder'    : '/uploads/banners/',
+		'multi'     : true,		
+		'auto'      : true,
+		'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+		'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+		'removeCompleted': true,
+		'scriptData'  : {'ID_BANNER': $("#ID_BANNER").val(), 'WIDTH': $("#width").val(), 'HEIGHT': $("#height").val(), 'AUTOCROP': $("#autocrop").val()},
+		onSelectOnce : function(event,data) {
+		  	$('#status-message').text(data.filesSelected + ' files have been added to the queue.'); 			
+		},
+		onAllComplete  : function(event,data) {
+			
+		  $('#status-message').text(data.filesUploaded + ' arquivos uploaded, ' + data.errors + ' erros.');
+		},
+		onComplete  : function(event, ID, fileObj, response, data) {
+			
+			
+		
+		  var json = jQuery.parseJSON(response);
+		  var msg = json.msg;
+		  
+		 
+   		  clonaLinha(json);
+
+		},
+		onError: function (event,ID,fileObj,errorObj) {
+		  alert(errorObj.type + ' Error: ' + errorObj.info);
+		}
+	  });
+	  
+	  	sortable();
+		
+		$( "#sortable" ).bind( "sortupdate", function(event, ui) 
+		 { 
+				var result = $(this).sortable('toArray');	
+				updateSortable(result); 
+	     });
+		 
+		 
+		
+		 bindUrl();
+	
+		
+});
+
+
+
+function bindUrl()
+{
+	 $(".urlField, .tituloField, .descricaoField ").bind( "blur", function(event, ui) 
+		 { 
+		 		var txt = $(this).val();
+				var name = $(this).attr("name");
+				var id = name;
+				$.ajax({
+					type: "POST",
+					url: '/<?=$this->modulo?>/<?=$this->controlador?>/updateurl', 
+					data: { id : id, txt: txt},
+					dataType: "json",
+					ContentType:	"text/json",  
+					success: function(data) {}
+				});			
+	     });
+		 
+	 $(".urlTarget").bind( "change", function(event, ui) 
+		 { 
+		 		var txt = $(this).val();
+				var name = $(this).attr("name");
+				var id = name.replace('urlTarget', '');
+				$.ajax({
+					type: "POST",
+					url: '/<?=$this->modulo?>/<?=$this->controlador?>/updateurl', 
+					data: { id : id, txt: txt},
+					dataType: "json",
+					ContentType:	"text/json",  
+					success: function(data) {}
+				});			
+	     });
+}
+
+
+function updateSortable(result)
+{
+	$.each(result, function(index, value) { 				
+		$("#"+value+"").find(".ordem").html("<b>"+(parseInt(index) + 1) + "º</b>");
+	});
+					
+	$.ajax({
+	type: "POST",
+	url: '/<?=$this->modulo?>/<?=$this->controlador?>/ordena/sort/' + result.toString(), 
+	dataType: "json",
+	ContentType:	"text/json",  
+	success: function(data) {
+			
+		$.jGrowl(data.msg, { theme: 'alerta'});
+			
+	}});			
+}
+
+function sortable()
+{
+	$( "#sortable" ).sortable({
+			placeholder: "ui-state-highlight",
+	    	update: function(event, ui) {}
+		});
+			
+}
+
+
+function clonaLinha(json)
+{
+	var pai = $("#sortable");
+
+	
+	var html = '';
+	
+	 html += '<li class="ui-state-default" id="">';
+	 html += '<div style="float:left;" class="ordem"><b></b></div>';
+	 html += '<div style="float:left;" class="setas">';
+	 html += '<center>';
+	 html += '<img src="" id="thumb" />';
+	 html += '</center></div>';
+	 html += '<div class="url">URL: <input name="ur" type="text" id="url" size="60" class="urlField" value="" />';
+	 html += '<br /><br />';
+	 html += 'Abrir url:<br />';                     
+	 html += '<select name="" class="urlTarget">';
+	 html += '<option value="_self">Mesma janela</option>';          
+	 html += '<option value="_blank">Nova janela</option>';         
+	 html += '</select>';
+	 html += '<br /><br />';
+	 html += 'Título: ';
+	 html += '<input name="titulo" type="text" id="titulo" size="60" class="tituloField" value="" />';
+	 html += '<br /><br />';
+	 html += 'Descrição:    ';                   
+	 html += '<textarea name="descricao" cols="60" class="descricaoField" id="descricao"></textarea></div>';
+	 html += '<div class="acoes">';
+	 html += '<a href=""  class="icon-2 info-tooltip btnExcluir" title="Excluir este ítem" alt="Excluir este ítem" ></a></div>';
+	 html += '</li> ';
+	
+	
+	var li = $(html);
+	li.css("display", "block");
+	li.attr("id", json.modelo.ID_FOTOBANNER);
+	li.find(".ordem").find("b").html(json.modelo.ORDEM + "º");
+	li.find(".setas").find("center").find("img").attr("src", "/thumbs/index/w/150/h/90/type/4/file/"+json.file+"/autocrop/false");
+	li.find(".url").find('.urlField').attr("name", "url"+json.modelo.ID_FOTOBANNER);
+	li.find(".url").find('.tituloField').attr("name", "titulo"+json.modelo.ID_FOTOBANNER);
+	li.find(".url").find('.descricaoField').attr("name", "descricao"+json.modelo.ID_FOTOBANNER);	
+	li.find(".url").find('.urlTarget').attr("name", "urlTarget"+json.modelo.ID_FOTOBANNER);		
+	li.find(".acoes").find("a").attr("href", "javascript:deletar("+json.modelo.ID_FOTOBANNER+");");
+	
+	
+	var clone = li.clone();
+	clone.appendTo(pai);
+	
+	bindUrl();
+
+}
+
+
+
+
+function deletar(id)
+	{	
+		jConfirm('Confirmar exclusão?', 'Confirmar ação', function(r) {
+			if( r ){ 
+				$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/excluirfotobanner",
+				 data: { id: id},
+				 dataType: "json",
+				 ContentType:	"text/json",
+				 success: function (data) 
+				 { 
+				 
+					if(data.erro == "false")
+					{					
+						//$.jGrowl(data.msg, { theme: 'ok'});	
+						$("#"+id).remove();
+						$('#sortable').trigger('sortupdate') 		
+										
+					}
+					else if(data.erro == "erro")
+					{
+						 $.jGrowl(data.msg, { theme: 'alerta'});
+					}
+					
+				 }
+			 }); 
+		 };
+		});
+	}
+</script>
+
+

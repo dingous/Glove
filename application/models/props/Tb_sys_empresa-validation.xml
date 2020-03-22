@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+	
+	
+	<field name="RAZAO_SOCIAL">
+	
+        <validator type="requiredString" msg="Informa a razao social."/>
+				
+  </field>
+  
+  
+	<field name="NOME_FANTASIA">
+	
+        <validator type="requiredString" msg="Informe o nome fantasia da empresa."/>
+				
+  </field>  
+  
+  
+	
+</lumine-validator>
+

@@ -1,0 +1,131 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Aplicações</h1>
+</div>
+
+<form id="form1" name="form1" enctype="application/x-www-form-urlencoded" action="/admin/modulos/salvar" method="post">
+
+	<div id="tabs"> 
+                <ul> 
+                    <li><a href="#tabs-1">Aplicações</a></li> 
+                </ul> 
+    
+    <div id="validacao"></div>
+    
+    <div class="form">
+       	
+        <div id="tabs-1"> 
+        
+        
+        <fieldset>
+        <legend>Preencha o formulário</legend>
+        
+        <div class="linha">
+        	
+        
+        
+            <div class="elemento">
+            <label>Empresa que a aplicação pertence:</label>
+            <select name="tb_sys_empresa" id="tb_sys_empresa">
+              <option value="">selecione...</option>
+              <?php echo Lumine_Util::buildOptions("dao.tb_sys_empresa", "ID_EMPRESA", "NOME_FANTASIA", isset($this->modelo->tb_sys_empresa) ? $this->modelo->tb_sys_empresa : NULL, NULL); ?>
+            </select>
+            
+            </div>
+        
+            
+          <div class="elemento">
+            	<label>Descrição do aplicativo:</label>
+                <input name="DESCRICAO" type="text" id="DESCRICAO" size="60" value="<?=isset($this->modelo->DESCRICAO) ? $this->modelo->DESCRICAO : NULL?>" />
+          </div>
+            
+          
+            
+        </div>
+            
+                 
+    	 <br style="clear:both" />
+         
+         <div class="linha">
+         	 <div class="elemento">
+             <input type="submit" value="Salvar" name="salvar" class="btnSalvar" />
+             <input type="button" value="Voltar" name="salvar" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/'; " />           
+             
+             
+             <input name="ID_APLICACAO" type="hidden" id="ID_APLICACAO" value="<?=isset($this->modelo->ID_APLICACAO) ? $this->modelo->ID_APLICACAO : NULL?>" readonly="readonly" />
+             
+             </div>
+         </div>
+        
+    	    
+    
+</form>
+
+<script>
+
+
+function EnviaForm()
+{
+	$("#form1").submit(function () {
+
+     	$.ajax({
+             type: "POST",
+             url: "/<?=$this->modulo?>/<?=$this->controlador?>/salvar",
+             data: $("#form1").serialize(),
+             dataType: "json",
+             ContentType:	"text/json",
+             success: function (data) 
+             { 
+			 	
+			
+				
+ 
+				if(data.erro == "false")
+				{					
+					$.jGrowl(data.msg, { theme: 'ok'});
+					
+					window.location = '/<?=$this->modulo?>/<?=$this->controlador?>';
+					
+						
+				}else if(data.erro == "valida")
+				{
+					$(".msg_validacao_input").remove();
+					$.each(data.campos_erros, function(index, value) { 
+						
+						
+						var input = $('#'+index).focus();				
+						input.after("<div class=\"msg_validacao_input\"><div class=\"icone\"></div><div class=\"msg\">"+value+"</div></div>");
+
+					 });
+										 
+					$.jGrowl(data.msg, { theme: 'alerta'});													
+				}
+				else if(data.erro == "erro")
+				{
+					$("#validacao").css("display", "none");
+	                 $.jGrowl(data.msg, { theme: 'alerta'});
+				}
+       			
+             },
+			 error: function (data) 
+			 {
+
+				
+			 }
+         });
+     
+     return false;
+ });
+}
+
+
+
+$(function() {
+
+	 EnviaForm();	 
+	 $( "#tabs" ).tabs();
+	 
+	 $("input")[0].focus();
+	
+});
+</script>
+

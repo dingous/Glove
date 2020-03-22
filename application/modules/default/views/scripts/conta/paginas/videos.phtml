@@ -1,0 +1,51 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+
+<script>
+  
+  
+  	function resultado(pagina)
+	{
+		$.get('/conta/buscaresultadoajax?pagina='+pagina,
+		
+			<?=$this->json?>
+		,
+		function (result) 
+		{ 
+			$("#placeholderCarregaResultadoBusca").html(result); 
+		});	
+	}
+	
+    $(document).ready(function(){
+      	
+		resultado(1);
+		
+    });
+
+</script>
+
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<?php $this->placeholder('header')->captureStart();?>
+
+	 <?php echo $this->partial('conta/includes/header.phtml', array("perfil" => $this->perfil));?>
+     
+<?php $this->placeholder('header')->captureEnd() ?>   
+
+
+<a href="javascript:history.back(-1);" title="Voltar à página anterior">Voltar</a>
+
+
+<form id="form1" name="form1" method="post" >
+
+
+	<span id="placeholderCarregaResultadoBusca"></span>
+
+
+</form>
+
+
+

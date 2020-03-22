@@ -1,0 +1,153 @@
+<?php
+/*Juqery UI*/
+$this->headLink()->appendStylesheet($this->baseUrl() . '/assets/jqueryui/development-bundle/themes/base/jquery.ui.all.css');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.core.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.widget.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.mouse.js');
+$this->headScript()->appendFile($this->baseUrl() . '/assets/jqueryui/development-bundle/ui/jquery.ui.sortable.js');
+
+
+
+?>
+
+<style>
+#sortable
+{
+	margin: 0 0 0 0;
+	position: 0 0 0 0;
+}
+
+.ui-state-default
+{
+	height:32px;
+	list-style-type:none;	
+	font-size:13px;
+}
+.ui-state-highlight
+{
+	height:32px;
+	list-style-type:none;	
+}
+
+
+body
+{
+	margin: 0 0 0 0;	
+}
+
+.ordem
+{
+	background-color:#FFF;
+	height:30px;
+	padding: 1px 1px 1px 8px;
+}
+
+.titulo
+{
+	height:18px;
+	padding:5px;
+}
+
+.setas
+{
+	width:30px;
+}
+.setas img
+{
+
+}
+</style>
+
+
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Ordenar categorias em destaque</h1>
+</div>
+
+
+    
+<table width="100%" border="0" cellpadding="0" align="center">
+    <tr>
+    	<td width="19%" valign="top">
+    	<input type="button" value="Voltar" class="botaoadd" onclick="window.location = '/<?=$this->modulo?>/<?=$this->controlador?>/index'"></td>
+    	<td width="53%" valign="top">
+        
+       
+        
+        <br />
+        * Para ordenar clique na linha e arraste para posição desejada.
+        
+        
+        </td>
+    	<td width="28%" valign="top">&nbsp;</td>
+    </tr>
+    <tr>
+    	<td colspan="3" valign="top">
+   	    	<div id="grid"></div>
+        </td>
+    </tr>
+
+</table>
+
+<BR />
+
+
+<span id="carregaLista"></span>
+
+
+<script> 
+
+
+
+
+$(function() {
+	
+	geraLista();		
+
+});
+
+
+function geraLista()
+{
+	
+	$.ajax({
+				 type: "POST",
+				 url: "/<?=$this->modulo?>/<?=$this->controlador?>/gridordenaajax",
+				 data: {},
+				 success: function (data) 
+				 { 
+					$("#carregaLista").html(data);	
+					
+						$( "#sortable" ).sortable({
+						placeholder: "ui-state-highlight",
+						update: function(event, ui) 
+						{ 								
+							var result = $(this).sortable('toArray');	
+					
+							$.each(result, function(index, value) { 				
+								$("#"+value+"").find(".ordem").html("<b>"+(parseInt(index) + 1) + "º</b>");
+							});
+											
+							$.ajax({
+							type: "POST",
+							url: '/<?=$this->modulo?>/<?=$this->controlador?>/ordena/sort/' + result.toString(), 
+		   				    data: {},
+							dataType: "json",
+							ContentType:	"text/json",  
+							success: function(data) {
+									
+								$.jGrowl(data.msg, { theme: 'alerta'});
+									
+							}});					
+						}
+					});
+					
+					$( "#sortable" ).disableSelection();
+									
+				 }
+			 }); 
+		
+	
+}
+
+	
+</script> 

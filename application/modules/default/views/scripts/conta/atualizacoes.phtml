@@ -1,0 +1,39 @@
+<script src="/assets/portal/default/js/jquery-1.7.2.min.js"></script> <!-- não pode remover -->
+
+<style>
+body
+{
+	background-color:#FFF;
+}
+#content {
+
+    border-radius: 0 0 0 0;
+    box-shadow: 0 0 0 #999999;
+}
+</style>
+
+<script>
+function chamaUrl(url)
+{
+	window.parent.location = url;
+}
+
+</script>
+
+<div id="atualizacoes" style="height:400px;">
+  <?php 
+  			$profile = new Zend_Session_Namespace('perfil');
+			$auth = Zend_Auth::getInstance();
+			$usuario_logado = $auth->getStorage()->read();
+			
+  			$dados = My_Sites_Glove::atualizacoes(1, 8, $usuario_logado->ID_USUARIO);
+			
+			
+		
+			echo $this->partial('/conta/ajax/atualizacoesajax.phtml', 
+			array(
+					'modelo' => $dados[0]->alltoobject(),
+    				'total_paginas' => $dados[1]
+				 ));
+		?>
+</div>

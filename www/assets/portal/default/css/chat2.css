@@ -1,0 +1,184 @@
+#Areachat
+{
+	position:fixed;
+	width:210px;
+	height:400px;
+	bottom:0;
+	right:0;
+	border: 1px solid #cccccc;
+	background-color:#FFFFFF;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:10px;
+	padding:5px;
+	
+	
+}
+
+#Areachat #blocoPersons
+{
+	height:330px;	
+	width:100%;
+	overflow: auto;
+}
+
+#Areachat #opcoes
+{
+	background-color:#EBEBEB;
+	height:30px;
+	width:95%;
+	bottom:0;
+	padding:5px;
+	
+}
+
+#Areachat #opcoes .btns
+{
+	float:right;
+	margin-right:10px;
+}
+
+#Areachat ul
+{
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+
+#Areachat ul li
+{
+	cursor:pointer;
+	padding-top:3px;
+	padding-bottom:3px;	
+	border-bottom: 1px solid #eeeeee;
+	overflow:hidden;
+}
+
+#Areachat ul li:hover
+{
+	background-color:#eeeeee;
+}
+
+#chatWindows
+{
+	position:fixed;
+	right:260px;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:10px;
+	bottom:0;
+
+}
+
+#chatWindows .window
+{
+	width:250px;
+	height:300px;
+	border: 1px solid #cccccc;
+	background-color:#FFFFFF;
+	float:right;
+	margin-right:10px;
+	-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px
+	position:absolute;
+}
+
+#chatWindows .window .topo
+{
+	height:25px;
+	background-color:#ccc;
+	padding-top: 9px;
+	padding-left:4px;	
+	font-weight:bold;
+}
+
+#chatWindows .window .topo .titulo
+{
+	float:left;
+
+}
+
+#chatWindows .window .topo .botoes
+{
+	float:right;
+	cursor:pointer;
+	padding-right:4px;	
+}
+
+#chatWindows .window .topo .botoesMinimiza
+{
+	float:right;
+	cursor:pointer;
+	padding-right:4px;	
+}
+
+#chatWindows .window .corpo
+{
+	overflow-y: scroll;
+	overflow-x: hidden;
+	/*height:234px;*/
+	border-bottom:1px solid #cccccc;
+	padding-left:5px;
+	padding-right:5px;	
+}
+
+#chatWindows .window .corpo .status
+{
+	font-size:10px;
+	color:#999;
+}
+
+#chatWindows .window .corpo .linhaMsg
+{
+	border-bottom:1px solid #eeeeee;
+	width:240px;
+	overflow:hidden;
+	padding-bottom:3px;
+	padding-top:3px;
+	margin-right:14px;
+}
+
+#chatWindows .window .corpo .linhaMsg .avatar
+{
+	width:40px;
+	height:40px;
+	float:left;
+}
+
+#chatWindows .window .corpo .linhaMsg .msg
+{
+	float:right;
+	width:195px;
+	word-wrap: break-word;
+}
+
+
+#chatWindows .window .inputfieldchat
+{
+	height:40px;
+}
+
+#chatWindows .window .inputfieldchat .chatmsg
+{
+	width:234px;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:12px;
+}
+
+.contextMenuChat
+{
+	position:absolute;
+	top:345px;
+	border:1px solid #cccccc;
+	width:140px;
+	height:15px;
+	padding:8px;
+	background-color:#EBEBEB;
+}
+
+.visivel
+{
+	display:block;
+}
+
+.invisivel
+{
+	display:none;
+}

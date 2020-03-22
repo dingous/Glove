@@ -1,0 +1,65 @@
+<div id="page-heading">
+	<h1><img src="/assets/admin/icones/icon1.png"> Participantes vs Promoções</h1>
+</div>
+
+
+    
+<table width="100%" border="0" cellpadding="0" align="center">
+    <tr>
+    	<td width="50%" valign="top">&nbsp;</td>
+    	<td width="4%" valign="top">&nbsp;</td>
+    	<td width="46%" align="right" valign="top">
+        
+           
+           <?php
+		 if(count($this->aplicacoes) > 0){
+		 ?>  
+         
+        
+            	<label for="tb_sys_aplicacao">Filtrar por categoria:</label>
+                <select name="tb_sys_aplicacao" id="tb_sys_aplicacao">
+				<option value="">mostrar todos...</option>                
+                <?php 
+				foreach($this->aplicacoes as $chave => $valor){
+				?>
+                <option value="<?=$valor->ID_APLICACAO?>"><?=$valor->DESCRICAO?></option>
+                <?php } ?>
+                </select>
+                   
+         
+         <?php }else{ ?>
+         		
+               <input type="hidden" name="tb_sys_aplicacao" id="tb_sys_aplicacao" value="<?=$this->aplicacoes->ID_APLICACAO?>">
+                
+         <?php } ?> 
+        
+        
+        </td>
+    </tr>
+    <tr>
+    	<td colspan="3" valign="top">
+   	    	<div id="grid"></div>
+        </td>
+    </tr>
+
+</table>
+
+
+<script>
+
+$(document).ready(function () {
+	grid(1);
+	
+	$('#tb_sys_aplicacao').bind('change', function(ui, e){
+		grid(1);
+	})
+});
+
+function grid(pagina)
+{
+	var app = $("#tb_sys_aplicacao").val();
+	
+$.post('/<?=$this->modulo?>/<?=$this->controlador?>/grid', { pagina: pagina, app: app}, function(data) { $('#grid').html(data); });	
+	
+}
+</script>

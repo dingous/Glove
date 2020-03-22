@@ -1,0 +1,102 @@
+Nome do álbum: 
+<input type="hidden" readonly="readonly" name="acao" id="acao"  value="<?=$this->act?>"/>
+<br />
+<input name="DESCRICAO" type="text" id="DESCRICAO" value="<?=$this->album->DESCRICAO?>" size="80" /> <input type="button" value="Salvar" name="btnSalvar" id="btnSalvar" style="border-radius: 8px; min-width:10px; height:33px; font-size:13px; cursor:pointer; background-color:#999; color:#FFFFFF; border:none;" onclick="salva($('#id_album').val(), $('#DESCRICAO').val(), $('#acao').val());" />
+
+
+
+
+
+<span style="display:none;" id="panelFotos"> 
+
+<br style="clear:both;"/>
+<h2>Fotos (<span id="total_fotos"></span>) <input id="file_upload_fotos" name="file_upload_fotos" type="file" value="selecionar arquivos" /></h2>
+ <input type="hidden" id="ID_ALBUM" name="ID_ALBUM" value="<?=$this->album->ID_ALBUM?>" /> 
+ 
+ <input type="button" value="Excluir fotos selecionadas" name="btnExcluirFotos" id="btnExcluirFotos" style="border-radius: 8px; min-width:10px; height:33px; font-size:13px; cursor:pointer; background-color:#999; color:#FFFFFF; border:none;" onclick="$.fn.InterfaceUsuario.metodos.FotosDeletar();" />
+ 
+ <input type="button" value="Definir como foto do perfil" name="btnFotoPerfil" id="btnFotoPerfil" style="border-radius: 8px; min-width:10px; height:33px; font-size:13px; cursor:pointer; background-color:#999; color:#FFFFFF; border:none;" onclick="$.fn.InterfaceUsuario.metodos.FotosPerfil();" />
+ 
+ 
+<br style="clear:both;"/>
+<br style="clear:both;"/>
+
+<div id="albunsfotos" style="overflow:hidden;"></div>
+
+
+<br style="clear:both;"/>
+<br style="clear:both;"/>
+
+
+</span>
+
+<style>
+.buttonClass
+{
+	width:300px;
+}
+</style>
+
+<script>
+$(document).ready(function(){
+	
+	$("#id_album").val('<?=$this->album->ID_ALBUM?>');
+	buscaImagens('<?=$this->album->ID_ALBUM?>');
+	
+	$("#form1").bind("submit", function()
+	{
+		return false;
+	});
+	
+	$("#DESCRICAO").keypress(function(event) {
+	  if ( event.which == 13 ) {
+		 	
+			$('#btnSalvar').trigger('click');
+			
+	   }
+	});
+	
+	
+	 $('#file_upload_fotos').uploadify({  
+						'uploader'  : '/assets/uploadify-v2.1.4/uploadify.swf',
+						'script'    : '/conta/uploadfotoalbum',
+						'cancelImg' : '/assets/uploadify-v2.1.4/cancel.png',
+						'folder'    : '/uploads/perfis/',
+						'multi'     : true,		
+						'auto'      : true,
+						'fileExt'   : '*.jpg;*.gif;*.png;*.iso',
+						'fileDesc'  : 'Image Files (.JPG, .GIF, .PNG)',
+						'removeCompleted': true,
+						'scriptData'  : {'id_usuario': $("#id_usuario").val(), 'id_album' : $("#id_album").val()},
+						'buttonClass' : 'buttonClass',
+						'buttonText': 'Adicionar imagens',
+						onSelectOnce : function(event,data) {
+								  $('#status-message').text(data.filesSelected + ' files have been added to the queue.');
+								  $('#file_upload_fotos').uploadifySettings('scriptData',{'id_usuario': $("#id_usuario").val(), 'id_album' : $("#id_album").val()});
+						},
+						onAllComplete  : function(event,data) {
+						  $('#status-message').text(data.filesUploaded + ' files uploaded, ' + data.errors + ' errors.');
+					      buscaImagens($("#id_album").val());
+						},
+						onComplete  : function(event, ID, fileObj, response, data) {
+						 
+							
+						 console.log(response);	
+						 
+						  var json = jQuery.parseJSON(response);
+						  var msg = json.msg;
+						  if(json.erro == "true")
+						  {
+							  alert(msg);
+						  }
+						
+						
+						},
+						onError     : function (event,ID,fileObj,errorObj) {
+
+						  	alert(errorObj.type + ' Error: ' + errorObj.info);
+						}
+					  });
+	
+});
+</script>

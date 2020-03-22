@@ -1,0 +1,239 @@
+<?php $this->placeholder('multiscripts')->captureStart();?>
+
+
+<style>
+body
+{
+	margin: 0px 0px 0px 0px;
+}
+#main {
+	  padding-top: 0;
+}
+
+.linha:hover
+{
+	background-color:#FFC;
+	cursor:pointer;
+
+}
+</style>
+
+<link rel="stylesheet" href="/assets/portal/default/css/default.css" media="screen" />
+<link rel="stylesheet" href="/assets/portal/default/css/style.css" media="screen" />
+
+<script>
+  
+window.parent.$(document).ready(function(){
+
+});
+
+
+</script>
+
+<?php $this->placeholder('multiscripts')->captureEnd() ?>
+
+
+<?php
+function formataNome($nome)
+{	
+	$nome = strtolower($nome);
+	$preposicoes = array(" da ", " do ", " de ", " das ", " dos ");
+	$nome = str_replace($preposicoes, " ", $nome);	
+	$exp = explode(" ", $nome);
+	if(count($exp) > 1)
+	{
+		$nome = ucfirst($exp[0]) . " " . (count($exp) >= 2 ? ($exp[1] == "" ? ucfirst($exp[2]) : ucfirst($exp[1])) : ucfirst($exp[1]));	
+	}else
+	{
+		$nome = ucfirst($exp[0]);		
+	}
+	return $nome;
+}
+?>
+
+<section id="content">
+
+<div id="recados">
+
+<form id="form1" name="form1" method="post">
+<h3>Atualizações Recentes <a href="/conta/atualizacoes"><img src="/assets/btnRefresh.png" width="16" height="16" border="0" /></a></h3>
+<hr />
+
+<table width="100%" cellspacing="5" cellpadding="5">
+<?
+$i=1;
+if(count($this->modelo) > 0)
+{
+
+/*echo "<pre>";
+print_r($this->modelo);
+echo "</pre>";
+die('aqui');*/
+
+
+
+foreach($this->modelo as $chave => $valor)
+{
+	
+if($i % 2 == 0)
+{
+	$cor = "#FFFFFF";
+}else
+{
+	$cor = "#f9f9f9";	
+}
+	
+?>
+
+
+<tr id="linha" class="linha" bgcolor="<?=$cor?>">
+	<td width="22" align="center" valign="middle">
+    
+    <a title="Visualizar perfil de: <?=formataNome($valor->QUEM_CURTIU_NOME . " " . $valor->QUEM_CURTIU_SOBRENOME)?>" href="javascript:chamaUrl('/<?=$valor->SLUG?>-<?=$valor->QUEM_CURTIU_ID?>')">
+    <img src="/thumbs/index/w/40/h/40/type/2/file/<?=$valor->QUEM_CURTIU_FOTO?>" border="0" />
+    </a>
+    
+    
+    
+    </td>
+   	<td  width="190" valign="middle">
+    
+    <a  rel="normal_request" href="javascript:void(0);"  onclick="javascript:window.parent.$.fn.InterfaceUsuario.metodos.MensagensPegaUnica('<?=$valor->ID?>');">
+    
+    <?php if($valor->QUEM_CURTIU_ID == $valor->DONO_ID){ ?>
+    
+    <b><?=formataNome($valor->QUEM_CURTIU_NOME . " " . $valor->QUEM_CURTIU_SOBRENOME)?></b> <?=utf8_encode($valor->MSG)?> : "<?=strip_tags(substr(stripslashes($valor->DETALHES), 0, 30))?>" 
+    
+    <?php }else{?>
+    
+    <?php if($valor->TIPO == "compartilhamento"){?>  
+    <b><?=formataNome($valor->QUEM_CURTIU_NOME . " " . $valor->QUEM_CURTIU_SOBRENOME)?></b> compartilhou uma publicação sua: "<?=strip_tags(substr(stripslashes($valor->DETALHES), 0, 30))?>" 
+    <?php }else{ ?>
+    <b><?=formataNome($valor->QUEM_CURTIU_NOME . " " . $valor->QUEM_CURTIU_SOBRENOME)?></b> <?=utf8_encode($valor->MSG)?> <b><?=formataNome($valor->DONO_NOME . " " . $valor->DONO_SOBRENOME)?></b>: "<?=strip_tags(substr(stripslashes($valor->DETALHES), 0, 30))?>" 
+    <?php } ?>    
+    
+    
+    
+    <?php }?>
+    
+    </a>
+    
+    <br />
+    
+    <span style="font-size:10px;">há <?=My_Sites_Glove::formatar_tempo(My_Sites_Glove::convert_datetime($valor->DATA_HORA_ACAO));?></span>
+    </td>
+    
+</tr>
+
+
+
+
+
+
+
+<?
+$i++;
+}
+}else{
+?>
+<p align="center">nenhuma atualização recente.</p>
+<?php } ?>
+</table>
+
+
+
+
+<style>
+.table_paginacao a
+{
+	text-decoration:none;
+	color:#000000;
+	padding:4px;
+}
+
+.table_paginacao td
+{
+padding-left: 5px;
+padding-right: 5px;
+text-decoration:none;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+color:#CCCCCC;
+font-size:10px;
+border: 1px #999999 solid;
+padding:2px;
+}
+
+.table_paginacao td:hover
+{
+background-color:#ffffff;
+
+}
+</style>
+
+
+<div style="width:100%; min-height:1px; overflow:hidden; padding-top:30px;">
+
+<?php 
+
+
+
+$pags = $this->total_paginas;
+
+
+
+if($pags > 1):
+$pgmod = 1;
+$mod_atual = 1;
+?>
+
+
+<table border="1" class="table_paginacao">
+      <tr>
+   
+<?php
+
+
+
+$p = isset($this->pagina_atual) ? $this->pagina_atual : 1;
+
+if(isset($p)) {
+	$p = $p;
+} else {
+	$p = 1;
+}
+
+$qnt = 8;
+$inicio = ($p*$qnt) - $qnt;
+$max_links = 8;
+
+echo "<td><a href=\"javascript:void(0);\" onclick=\"javascript:window.parent.parent.$.fn.InterfaceUsuario.metodos.AtualizacoesPega(1)\" title=\"Ir à primeira página\"> << </a> </td>";
+
+for($i = $p-$max_links; $i <= $p-1; $i++) {
+if($i <=0) {
+} else {
+echo "<td><a href=\"javascript:void(0);\" onclick=\"javascript:window.parent.parent.$.fn.InterfaceUsuario.metodos.AtualizacoesPega(".$i.")\">".$i."</a></td> ";
+}
+}
+	echo "<td class=\"ativa\" style=\"padding:4px;\">".$p."</td>";
+	for($i = $p+1; $i <= $p+$max_links; $i++) {
+	if($i > $pags)
+	{
+	
+	}
+	else
+	{
+		echo "<td><a href=\"javascript:void(0);\" onclick=\"javascript:window.parent.parent.$.fn.InterfaceUsuario.metodos.AtualizacoesPega(".$i.")\">".$i."</a></td> ";
+	}
+	}
+	echo "<td class=\"classe_td_no_border\"><a href=\"javascript:void(0);\" onclick=\"javascript:window.parent.parent.$.fn.InterfaceUsuario.metodos.AtualizacoesPega(".$pags.")\" title=\"Ir à última página\"> >> </a></td> ";
+	?>
+</tr>
+    </table>
+ <?php endif; ?>
+</form>
+
+
+
+</div>
+</section>
+

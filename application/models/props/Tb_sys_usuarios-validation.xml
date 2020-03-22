@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE lumine-validator SYSTEM "validator.dtd">
+
+<lumine-validator>
+	
+	
+	
+  <field name="tb_sys_empresa">
+	
+        <validator type="requiredString" msg="Informe a empresa a qual o usuário pertence."/>
+				
+  </field>
+  
+	
+	<field name="NOME">
+	
+        <validator type="requiredString" msg="Informe o seu nome."/>
+				
+  </field>
+  
+  	<field name="EMAIL">
+	
+        <validator type="requiredString" msg="Informe o seu e-mail."/>
+		<validator type="requiredEmail" msg="Formato de e-mail inválido"></validator>
+		<validator type="unique" msg="Já existe um usuário com este e-mail, informe outro."></validator>
+				
+  </field>
+  
+  
+  
+  	<field name="SENHA">
+	
+        <validator type="requiredString" msg="Informe uma senha para o usuário."/>
+				
+  </field>
+  
+  
+    <field name="tb_sys_cidade">
+	
+        <validator type="requiredString" msg="Informe a cidade do usuário."/>
+				
+  </field>
+  
+  
+   <field name="tb_sys_grupos">
+	
+        <validator type="requiredString" msg="Informe o grupo deste usuário."/>
+				
+  </field>
+  
+  
+   <!--<field name="ACEITOUTERMOS">
+	
+        <validator type="requiredString" msg="Você precisa aceitar os termos de uso do GUIA COOL"/>
+				
+  </field>-->
+  
+  
+  
+
+	
+	
+	
+</lumine-validator>
+
